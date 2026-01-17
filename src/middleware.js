@@ -2,22 +2,20 @@ import { NextResponse } from "next/server";
 
 export function middleware(request) {
   const path = request.nextUrl.pathname;
-  const token = request.cookies.get("admin_session")?.value || "";
+  const token = request.cookies.get("auth-token")?.value || "";
 
-  // 1. Definisikan Halaman yang dilindungi
-  const isProtected = path.startsWith("/admin/dashboard");
+  // Definisikan status halaman
+  const isAdminPath = path.startsWith("/admin");
+  const isLoginPage = path === "/admin/login";
 
-  // 2. Definisikan Halaman Login
-  const isLoginPage = path.startsWith("/admin/login");
-
-  // A. Kalau mau masuk Dashboard tapi belum login -> Tendang ke Login
-  if (isProtected && !token) {
+  // 1. Jika mencoba akses area admin tapi belum login (dan bukan halaman login)
+  if (isAdminPath && !isLoginPage && !token) {
     return NextResponse.redirect(new URL("/admin/login", request.nextUrl));
   }
 
-  // B. Kalau sudah login tapi buka halaman Login lagi -> Lempar ke Dashboard
+  // 2. Jika sudah login tapi mencoba akses halaman login lagi
   if (isLoginPage && token) {
-    return NextResponse.redirect(new URL("/admin/dashboard", request.nextUrl));
+    return NextResponse.redirect(new URL("/admin", request.nextUrl));
   }
 
   return NextResponse.next();
@@ -25,5 +23,5 @@ export function middleware(request) {
 
 // Config matcher agar middleware memantau URL yang relevan saja
 export const config = {
-  matcher: ["/admin/dashboard/:path*", "/admin/login"],
+  matcher: ["/admin/:path*"],
 };

@@ -1,92 +1,91 @@
-# Struktur Project SyntaxWeb (Enterprise Standard)
+# Struktur Project SyntaxWeb - Final Version
 
-Berikut adalah struktur folder lengkap project SyntaxWeb. Struktur ini mengadopsi pola "Feature-First" dan "Layered Architecture" yang sangat umum digunakan di project Next.js berskala besar (Enterprise).
+## 📁 Struktur Direktori
+
+```
+src/
+├─ app/
+│  ├─ (public)/                    # Public pages group
+│  │  ├─ layout.jsx                # Public navbar & footer ✅
+│  │  ├─ page.jsx                  # Landing page ✅
+│  │  └─ about/
+│  │     └─ page.jsx               # About page ✅
+│  │
+│  ├─ admin/                       # Admin panel group
+│  │  ├─ layout.jsx                # Admin shell (Sidebar & Topbar) ✅
+│  │  ├─ page.jsx                  # Dashboard overview ✅
+│  │  │
+│  │  ├─ login/
+│  │  │  └─ page.jsx               # Admin login page ✅
+│  │  │
+│  │  ├─ projects/
+│  │  │  └─ page.jsx               # Projects management ✅
+│  │  └─ users/
+│  │     └─ page.jsx               # Users management ✅
+│  │
+│  ├─ api/                         # API routes
+│  │  └─ admin/
+│  │     └─ auth/
+│  │        └─ route.js            # Admin Auth API ✅
+│  │
+│  ├─ globals.css                  # Global styles ✅
+│  └─ layout.jsx                   # Root layout ✅
+│
+├─ components/                     # Component Library
+│  ├─ admin/
+│  │  ├─ LoginForm.jsx             # Login component ✅
+│  │  ├─ Sidebar.jsx               # Navigation sidebar ✅
+│  │  └─ Topbar.jsx                # Header bar ✅
+│  ├─ layout/
+│  │  └─ Navbar.jsx                # Public navigation ✅
+│  └─ ui/
+│     ├─ Button.jsx                # Styled button component ✅
+│     └─ Input.jsx                 # Styled input component ✅
+│
+├─ lib/                            # Shared logic
+│  ├─ prisma.js                    # Database client ✅
+│  ├─ auth.js                      # Auth helpers ✅
+│  └─ utils.js                     # Utility functions ✅
+│
+├─ prisma/
+│  └─ schema.prisma                # Database schema ✅
+│
+└─ middleware.js                   # Route protection ✅
+```
+
+## 🆕 Perubahan yang Dilakukan
+
+### 1. **Component-Based Architecture**
+
+- Memindahkan semua komponen UI ke `src/components/ui`.
+- Memindahkan komponen khusus admin ke `src/components/admin`.
+- Memisahkan komponen layout publik ke `src/components/layout`.
+
+### 2. **Refined Admin Structure**
+
+- Semua rute administratif kini disatukan di bawah `/admin`.
+- Login admin dipindahkan ke `/admin/login`.
+- `admin/layout.jsx` cerdas: secara otomatis menyembunyikan Sidebar & Topbar saat di halaman login.
+
+### 3. **Public Branding**
+
+- Menambahkan `(public)/layout.jsx` yang memberikan Navbar transparan (glassmorphism) dan Footer yang konsisten di semua rute publik.
+
+### 4. **API Restructuring**
+
+- Route autentikasi sekarang berada di `/api/admin/auth` untuk membedakannya dengan potensi API publik di masa depan.
+
+### 5. **Modern JSX Extension**
+
+- Mengubah semua file `.js` React menjadi `.jsx` untuk standar penamaan yang lebih baik.
+
+## 🚀 Fitur yang Tersedia
+
+- **Autentikasi**: Sistem Login & Logout yang aman menggunakan JWT & Cookies.
+- **Admin Dashboard**: Layout premium dengan Sidebar yang interaktif.
+- **Responsive Design**: Navbar publik yang modern dan mobile-friendly.
+- **Clean UI Components**: Komponen Button dan Input yang siap pakai dan konsisten.
 
 ---
 
-## 📂 `src/` (Root Source)
-
-Semua kode sumber aplikasi berada di sini.
-
-### 1. `src/app/` (Router & Pages)
-
-Menggunakan **App Router**, struktur folder di sini menentukan URL website.
-
-- **`(public)/`** (Grouping Folder)
-  - _Deskripsi_: Kelompok halaman yang bisa diakses siapa saja (pengunjung umum). Nama foldernya pakai kurung `()` agar tidak muncul di URL.
-  - `about/`: Halaman Tentang Kami (`/about`).
-  - `services/`: Halaman Layanan (`/services`).
-  - `page.js`: Halaman Depan / Landing Page (`/`).
-- **`(admin)/`** (Grouping Folder)
-  - _Deskripsi_: Area khusus admin yang butuh login.
-  - `dashboard/`: Halaman utama admin (`/dashboard`).
-- **`(auth)/`** (Grouping Folder)
-  - _Deskripsi_: Area autentikasi.
-  - `login/`: Halaman login (`/login`).
-- **`api/`**
-  - _Deskripsi_: REST API Endpoints untuk komunikasi dengan pihak ketiga (Mobile Apps, Webhook).
-
----
-
-### 2. `src/actions/` (Server Actions)
-
-- _Analogi (Laravel)_: **Controller**.
-- _Fungsi_: Berisi fungsi-fungsi backend (Node.js) yang dipanggil langsung oleh Frontend. Menggantikan peran "API internal".
-- _Contoh Penggunaan_: Fungsi `login(formData)` dipanggil saat tombol submit dikocok.
-
----
-
-### 3. `src/components/` (UI Library)
-
-Tempat semua potongan tampilan (React Components).
-
-- **`ui/`** (Atomic / Base Components)
-  - _Fungsi_: Komponen kecil, _stateless_, dan reusable. Tidak boleh ada _business logic_ di sini.
-  - _Isi_: `Button`, `Input`, `Card`, `Modal`, `Checkbox`.
-- **`modules/`** (Feature Modules / Widget)
-  - _Fungsi_: Gabungan dari beberapa komponen UI yang membentuk fitur spesifik.
-  - _Isi_: `Navbar` (berisi Link + Logo + UserMenu), `HeroSection` (berisi Judul + Button + Image), `Sidebar`.
-
----
-
-### 4. `src/lib/` (Libraries & Configuration)
-
-- _Fungsi_: Tempat inisialisasi library eksternal. File di sini biasanya "Single Instance" (dibuat sekali dipakai selamanya).
-- _Isi_:
-  - `prisma.js`: Koneksi database utama.
-  - `utils.js`: Fungsi helper umum (misal format tanggal, format rupiah).
-
----
-
-### 5. `src/middleware.js` (Security Gatekeeper)
-
-- _Lokasi_: Harus di root `src/`, tidak boleh di dalam folder lain.
-- _Fungsi_: Kode yang dieksekusi **paling pertama** sebelum request masuk ke halaman manapun.
-- _Tugas Utama_: Cek Cookie Session. Kalau mau masuk `/dashboard` tapi tidak punya cookie, tendang ke `/login`.
-
----
-
-### 6. `src/clients/` (Third Party Clients)
-
-- _Fungsi_: Jika web kita butuh ngobrol sama API orang lain.
-- _Contoh_: `axiosInstance.js`, `googleDrveClient.js`.
-
----
-
-### 7. Lain-lain
-
-- `.env`: Kunci rahasia (Password DB, API Key). **JANGAN DISHARE**.
-- `prisma/schema.prisma`: Denah Database. Semua tabel didefinisikan di sini.
-- `prisma/seed.mjs`: Script untuk mengisi data awal (Admin pertama, Kategori awal).
-
----
-
-## 📌 Rangkuman Alur Kerja
-
-1.  **Pengunjung** buka `syntaxweb.com/dashboard`.
-2.  **Middleware** (`src/middleware.js`) menyetop di pintu gerbang. "Mana tiket (cookie)-mu?".
-3.  Jika punya tiket -> Boleh masuk ke folder `src/app/(admin)/dashboard`.
-4.  Halaman Dashboard merender komponen dari `src/components/modules/Sidebar`.
-5.  Dashboard memanggil `src/actions/getStats` untuk minta data statistik.
-6.  Action `getStats` meminjam `src/lib/prisma` untuk ambil data dari MySQL.
-7.  Data dikirim balik ke Dashboard -> Tampil di layar.
+**Status**: ✅ Restrukturisasi final selesai sesuai permintaan!
