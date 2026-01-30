@@ -92,28 +92,28 @@ export default function Portfolio() {
     : projects.filter(p => p.category === activeFilter);
 
   return (
-    <section className="py-20 bg-gray-50">
+    <section className="py-24 bg-gray-50 dark:bg-gray-950/50 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Portfolio Kami
+        <div className="text-center mb-12 animate-fade-in-up">
+          <h2 className="text-4xl md:text-5xl font-black text-gray-950 dark:text-white mb-4">
+            Portfolio <span className="text-brand-red">Kami</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Lihat beberapa project yang telah kami kerjakan
+          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
+            Eksplorasi karya terbaik kami yang menggabungkan estetika dan fungsionalitas.
           </p>
         </div>
 
         {/* Filter */}
-        <div className="flex flex-wrap justify-center gap-4 mb-12">
+        <div className="flex flex-wrap justify-center gap-2 mb-12 animate-fade-in text-gray-400">
           {filters.map(filter => (
             <button
               key={filter.id}
               onClick={() => setActiveFilter(filter.id)}
-              className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
+              className={`px-6 py-2 rounded-full font-bold text-xs uppercase tracking-widest transition-all duration-300 ${
                 activeFilter === filter.id
-                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
-                  : 'bg-white text-gray-700 hover:bg-gray-100'
+                  ? 'bg-brand-red text-white shadow-lg shadow-brand-red/10 animate-fade-in'
+                  : 'bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
               }`}
             >
               {filter.label}
@@ -121,64 +121,61 @@ export default function Portfolio() {
           ))}
         </div>
 
+
         {/* Projects Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredProjects.map((project) => (
+          {filteredProjects.map((project, index) => (
             <div
               key={project.id}
-              className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
+              className="group bg-white dark:bg-gray-900/50 rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-800 hover:border-brand-red/30 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-brand-red/5 animate-fade-in-up"
+              style={{ animationDelay: `${index * 100}ms` }}
             >
-              {/* Image */}
-              <div className="relative h-48 bg-gradient-to-br from-blue-100 to-purple-100 overflow-hidden">
-                <div className="absolute inset-0 flex items-center justify-center text-gray-400">
-                  <span className="text-sm">Project Image</span>
+              {/* Image Container */}
+              <div className="relative h-56 bg-gradient-to-br from-brand-maroon/10 to-brand-orange/10 overflow-hidden">
+                <div className="absolute inset-0 flex items-center justify-center text-gray-400 dark:text-gray-600">
+                  <span className="text-xs font-bold uppercase tracking-widest">Project Preview</span>
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </div>
-
-              {/* Content */}
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
-                  {project.title}
-                </h3>
-                <p className="text-gray-600 text-sm mb-4">
-                  {project.description}
-                </p>
-
-                {/* Tech Stack */}
-                <div className="flex flex-wrap gap-2 mb-4">
+                <div className="absolute inset-0 bg-gradient-to-t from-gray-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                
+                {/* Tech Badges on Image */}
+                <div className="absolute bottom-4 left-4 flex flex-wrap gap-2 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500">
                   {project.tech.map((tech, idx) => (
-                    <span
-                      key={idx}
-                      className="px-3 py-1 bg-blue-50 text-blue-600 text-xs rounded-full"
-                    >
+                    <span key={idx} className="px-2 py-1 bg-white/10 backdrop-blur-md text-white text-[10px] font-bold rounded-lg border border-white/20">
                       {tech}
                     </span>
                   ))}
                 </div>
+              </div>
 
-                {/* Links */}
-                <div className="flex gap-3">
-                  <a
-                    href={project.link}
-                    className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 font-medium"
-                  >
-                    <ExternalLink size={16} />
-                    Live Demo
-                  </a>
-                  <a
-                    href={project.github}
-                    className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-700 font-medium"
-                  >
-                    <Github size={16} />
-                    Code
-                  </a>
+              {/* Content */}
+              <div className="p-8">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <span className="text-[10px] font-black text-brand-red dark:text-brand-orange uppercase tracking-[0.2em]">
+                      {project.category}
+                    </span>
+                    <h3 className="text-xl font-bold text-gray-950 dark:text-white mt-1">
+                      {project.title}
+                    </h3>
+                  </div>
+                  <div className="flex gap-2">
+                    <a href={project.link} className="p-2 bg-gray-100 dark:bg-gray-800 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-brand-red hover:text-white transition-all shadow-sm">
+                      <ExternalLink size={18} />
+                    </a>
+                    <a href={project.github} className="p-2 bg-gray-100 dark:bg-gray-800 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-brand-maroon hover:text-white transition-all shadow-sm">
+                      <Github size={18} />
+                    </a>
+                  </div>
                 </div>
+                <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-6">
+                  {project.description}
+                </p>
               </div>
             </div>
           ))}
         </div>
       </div>
     </section>
+
   );
 }

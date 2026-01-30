@@ -43,15 +43,15 @@ export default function Services() {
   ];
 
   return (
-    <section className="py-20 bg-white">
+    <section className="py-24 bg-white dark:bg-gray-950 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Layanan Kami
+        <div className="text-center mb-16 animate-fade-in-up">
+          <h2 className="text-4xl md:text-5xl font-black text-gray-950 dark:text-white mb-4">
+            Layanan <span className="text-brand-red">Kami</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Solusi lengkap untuk semua kebutuhan web development Anda
+          <p className="text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed uppercase tracking-widest text-[10px] font-bold">
+            Digital Solution Partners
           </p>
         </div>
 
@@ -62,15 +62,15 @@ export default function Services() {
             return (
               <div
                 key={index}
-                className="group p-8 bg-white rounded-2xl border-2 border-gray-100 hover:border-transparent hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
+                className="group p-8 bg-gray-50 dark:bg-gray-900/40 rounded-3xl border border-gray-100 dark:border-gray-800 hover:border-brand-red/20 transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl hover:shadow-brand-red/5"
               >
-                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${service.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                  <Icon size={28} className="text-white" />
+                <div className="w-12 h-12 rounded-2xl bg-white dark:bg-gray-800 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 border border-gray-100 dark:border-gray-700 shadow-sm">
+                  <Icon size={24} className="text-brand-red dark:text-brand-orange" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                <h3 className="text-lg font-bold text-gray-950 dark:text-white mb-3">
                   {service.title}
                 </h3>
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-gray-500 dark:text-gray-400 leading-relaxed text-sm">
                   {service.description}
                 </p>
               </div>
@@ -79,5 +79,7 @@ export default function Services() {
         </div>
       </div>
     </section>
+
+
   );
 }
