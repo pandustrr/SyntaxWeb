@@ -9,10 +9,20 @@ datasource db {
 
 model User {
   id        Int      @id @default(autoincrement())
-  username  String   @unique
+  email     String   @unique
+  username  String?  @unique
   password  String
-  name      String?
+  name      String
+  role      String   @default("user")
   createdAt DateTime @default(now())
+}
+
+model Project {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String   @db.Text
+  status      String   @default("active")
+  createdAt   DateTime @default(now())
 }
 
 model Service {
