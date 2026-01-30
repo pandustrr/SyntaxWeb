@@ -94,4 +94,34 @@
   .animation-delay-4000 {
     animation-delay: 4s;
   }
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
+    }
+
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .animate-marquee {
+    animation: marquee 30s linear infinite;
+  }
+
+  @media (min-width: 1024px) {
+    .desktop-body-zoom {
+      zoom: 0.95;
+    }
+
+    /* Fallback untuk browser yang tidak mendukung zoom (seperti Firefox) */
+    @supports not (zoom: 0.95) {
+      .desktop-body-zoom {
+        transform: scale(0.95);
+        transform-origin: top center;
+        width: 105.263158%;
+        margin-left: -2.631579%;
+      }
+    }
+  }
 }

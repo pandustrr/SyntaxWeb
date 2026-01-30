@@ -1,17 +1,20 @@
 'use client';
 
 import { useState } from 'react';
-import { ExternalLink, Github } from 'lucide-react';
+import { ExternalLink, Github, Monitor, Smartphone, Layout, ArrowUpRight } from 'lucide-react';
+import Image from 'next/image';
 
 interface Project {
   id: number;
   title: string;
   category: string;
+  categoryLabel: string;
   image: string;
   description: string;
   tech: string[];
   link: string;
   github: string;
+  color: string;
 }
 
 export default function Portfolio() {
@@ -20,71 +23,83 @@ export default function Portfolio() {
   const projects: Project[] = [
     {
       id: 1,
-      title: 'E-Commerce Platform',
+      title: 'Global Retail CRM',
       category: 'web',
-      image: '/images/project-1.jpg',
-      description: 'Platform e-commerce modern dengan fitur lengkap',
-      tech: ['Next.js', 'Tailwind', 'Prisma'],
+      categoryLabel: 'WEB APPLICATION',
+      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800',
+      description: 'Sistem manajemen hubungan pelanggan untuk skala enterprise dengan analytics real-time.',
+      tech: ['Next.js', 'PostgreSQL', 'Tailwind'],
       link: '#',
       github: '#',
+      color: 'from-brand-red to-brand-maroon',
     },
     {
       id: 2,
-      title: 'Corporate Website',
-      category: 'web',
-      image: '/images/project-2.jpg',
-      description: 'Website perusahaan dengan desain profesional',
-      tech: ['React', 'Node.js', 'MongoDB'],
+      title: 'Fintech Dashboard',
+      category: 'dashboard',
+      categoryLabel: 'DASHBOARD',
+      image: 'https://images.unsplash.com/photo-1551288049-bbda38a5f85d?auto=format&fit=crop&q=80&w=800',
+      description: 'Visualisasi data keuangan yang kompleks dengan tingkat keamanan perbankan.',
+      tech: ['React', 'D3.js', 'Node.js'],
       link: '#',
       github: '#',
+      color: 'from-brand-orange to-amber-500',
     },
     {
       id: 3,
-      title: 'Mobile App Landing',
-      category: 'landing',
-      image: '/images/project-3.jpg',
-      description: 'Landing page untuk aplikasi mobile',
-      tech: ['Next.js', 'Framer Motion'],
+      title: 'Premium Watch E-Store',
+      category: 'web',
+      categoryLabel: 'E-COMMERCE',
+      image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=800',
+      description: 'Pengalaman berbelanja online eksklusif untuk produk jam tangan mewah.',
+      tech: ['Next.js', 'Shopify', 'Framer'],
       link: '#',
       github: '#',
+      color: 'from-indigo-500 to-purple-600',
     },
     {
       id: 4,
-      title: 'Dashboard Analytics',
-      category: 'dashboard',
-      image: '/images/project-4.jpg',
-      description: 'Dashboard analytics dengan visualisasi data',
-      tech: ['React', 'Chart.js', 'Express'],
+      title: 'Eco-System Landing',
+      category: 'landing',
+      categoryLabel: 'LANDING PAGE',
+      image: 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=800',
+      description: 'Halaman kampanye lingkungan dengan story-telling visual yang imersif.',
+      tech: ['Next.js', 'Three.js', 'Tailwind'],
       link: '#',
       github: '#',
+      color: 'from-emerald-500 to-teal-600',
     },
     {
       id: 5,
-      title: 'Portfolio Personal',
-      category: 'landing',
-      image: '/images/project-5.jpg',
-      description: 'Portfolio website untuk freelancer',
-      tech: ['Next.js', 'Tailwind'],
+      title: 'SaaS Builder Pro',
+      category: 'web',
+      categoryLabel: 'SAAS PLATFORM',
+      image: 'https://images.unsplash.com/photo-1557821552-17105176677c?auto=format&fit=crop&q=80&w=800',
+      description: 'Alat otomatisasi bisnis yang powerful untuk startup dan tim modern.',
+      tech: ['React', 'Firebase', 'Recoil'],
       link: '#',
       github: '#',
+      color: 'from-red-600 to-rose-700',
     },
     {
       id: 6,
-      title: 'Admin Panel',
-      category: 'dashboard',
-      image: '/images/project-6.jpg',
-      description: 'Admin panel dengan fitur CRUD lengkap',
-      tech: ['React', 'Material UI', 'Firebase'],
+      title: 'Arch-Interior Showcase',
+      category: 'landing',
+      categoryLabel: 'PORTFOLIO',
+      image: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=800',
+      description: 'Galeri karya arsitektur minimalis dengan fokus pada detail dan pencahayaan.',
+      tech: ['Next.js', 'GSAP', 'Sanity'],
       link: '#',
       github: '#',
+      color: 'from-gray-700 to-black',
     },
   ];
 
   const filters = [
-    { id: 'all', label: 'Semua' },
-    { id: 'web', label: 'Website' },
-    { id: 'landing', label: 'Landing Page' },
-    { id: 'dashboard', label: 'Dashboard' },
+    { id: 'all', label: 'SEMUA KARYA' },
+    { id: 'web', label: 'WEBSITE' },
+    { id: 'landing', label: 'LANDING PAGE' },
+    { id: 'dashboard', label: 'DASHBOARD' },
   ];
 
   const filteredProjects = activeFilter === 'all' 
@@ -92,90 +107,108 @@ export default function Portfolio() {
     : projects.filter(p => p.category === activeFilter);
 
   return (
-    <section className="py-24 bg-gray-50 dark:bg-gray-950/50 transition-colors duration-300">
+    <section className="relative py-32 bg-gray-50 dark:bg-gray-950/50 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-12 animate-fade-in-up">
-          <h2 className="text-4xl md:text-5xl font-black text-gray-950 dark:text-white mb-4">
-            Portfolio <span className="text-brand-red">Kami</span>
-          </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
-            Eksplorasi karya terbaik kami yang menggabungkan estetika dan fungsionalitas.
-          </p>
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
+          <div className="max-w-2xl animate-fade-in-up">
+            <div className="text-brand-red font-black text-xs tracking-[0.3em] uppercase mb-4">Our Masterpieces</div>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-950 dark:text-white leading-[1.1]">
+              Karya Yang Berbicara <br /> <span className="text-brand-red italic">Lebih Keras</span> Dari Kata.
+            </h2>
+          </div>
+          
+          {/* Filter */}
+          <div className="flex flex-wrap gap-2 animate-fade-in shrink-0">
+            {filters.map(filter => (
+              <button
+                key={filter.id}
+                onClick={() => setActiveFilter(filter.id)}
+                className={`px-6 py-3 rounded-xl font-black text-[10px] tracking-widest transition-all duration-300 border ${
+                  activeFilter === filter.id
+                    ? 'bg-gray-950 dark:bg-white text-white dark:text-gray-950 border-gray-950 dark:border-white shadow-xl translate-y-[-2px]'
+                    : 'bg-white dark:bg-gray-900 text-gray-400 dark:text-gray-500 border-gray-100 dark:border-gray-800 hover:border-brand-red/30'
+                }`}
+              >
+                {filter.label}
+              </button>
+            ))}
+          </div>
         </div>
-
-        {/* Filter */}
-        <div className="flex flex-wrap justify-center gap-2 mb-12 animate-fade-in text-gray-400">
-          {filters.map(filter => (
-            <button
-              key={filter.id}
-              onClick={() => setActiveFilter(filter.id)}
-              className={`px-6 py-2 rounded-full font-bold text-xs uppercase tracking-widest transition-all duration-300 ${
-                activeFilter === filter.id
-                  ? 'bg-brand-red text-white shadow-lg shadow-brand-red/10 animate-fade-in'
-                  : 'bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
-              }`}
-            >
-              {filter.label}
-            </button>
-          ))}
-        </div>
-
 
         {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
           {filteredProjects.map((project, index) => (
             <div
               key={project.id}
-              className="group bg-white dark:bg-gray-900/50 rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-800 hover:border-brand-red/30 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-brand-red/5 animate-fade-in-up"
+              className="group animate-fade-in-up"
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              {/* Image Container */}
-              <div className="relative h-56 bg-gradient-to-br from-brand-maroon/10 to-brand-orange/10 overflow-hidden">
-                <div className="absolute inset-0 flex items-center justify-center text-gray-400 dark:text-gray-600">
-                  <span className="text-xs font-bold uppercase tracking-widest">Project Preview</span>
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-gray-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              {/* Card Container */}
+              <div className="relative bg-white dark:bg-gray-900 rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-800 transition-all duration-500 group-hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.15)] group-hover:translate-y-[-8px]">
                 
-                {/* Tech Badges on Image */}
-                <div className="absolute bottom-4 left-4 flex flex-wrap gap-2 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500">
-                  {project.tech.map((tech, idx) => (
-                    <span key={idx} className="px-2 py-1 bg-white/10 backdrop-blur-md text-white text-[10px] font-bold rounded-lg border border-white/20">
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-              </div>
+                {/* Image Section */}
+                <div className="relative h-64 overflow-hidden">
+                   <img
+                    src={project.image}
+                    alt={project.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                   />
+                   <div className={`absolute inset-0 bg-gradient-to-t ${project.color} opacity-0 group-hover:opacity-80 transition-opacity duration-500`} />
+                   
+                   {/* Centered Button on Hover */}
+                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-4 group-hover:translate-y-0">
+                      <a href={project.link} className="px-8 py-3 bg-white text-gray-950 font-black rounded-xl flex items-center gap-2 shadow-2xl hover:scale-105 transition-transform text-xs">
+                        Lihat Case Study <ArrowUpRight size={16} />
+                      </a>
+                   </div>
 
-              {/* Content */}
-              <div className="p-8">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <span className="text-[10px] font-black text-brand-red dark:text-brand-orange uppercase tracking-[0.2em]">
-                      {project.category}
-                    </span>
-                    <h3 className="text-xl font-bold text-gray-950 dark:text-white mt-1">
-                      {project.title}
-                    </h3>
-                  </div>
-                  <div className="flex gap-2">
-                    <a href={project.link} className="p-2 bg-gray-100 dark:bg-gray-800 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-brand-red hover:text-white transition-all shadow-sm">
-                      <ExternalLink size={18} />
-                    </a>
-                    <a href={project.github} className="p-2 bg-gray-100 dark:bg-gray-800 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-brand-maroon hover:text-white transition-all shadow-sm">
-                      <Github size={18} />
-                    </a>
-                  </div>
+                   {/* Tech Tags on top left */}
+                   <div className="absolute top-6 left-6 flex flex-wrap gap-2">
+                       {project.tech.slice(0, 2).map((t, i) => (
+                         <span key={i} className="px-3 py-1 bg-white/10 backdrop-blur-md text-white text-[10px] font-bold rounded-lg border border-white/20 uppercase">
+                            {t}
+                         </span>
+                       ))}
+                   </div>
                 </div>
-                <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-6">
-                  {project.description}
-                </p>
+
+                {/* Content Section */}
+                <div className="p-10">
+                   <div className="flex justify-between items-start mb-4">
+                      <span className="text-[10px] font-black text-brand-red dark:text-brand-orange uppercase tracking-[.2em]">
+                        {project.categoryLabel}
+                      </span>
+                      <div className="flex gap-2">
+                         <a href={project.github} className="text-gray-400 hover:text-gray-950 dark:hover:text-white transition-colors">
+                            <Github size={18} />
+                         </a>
+                      </div>
+                   </div>
+                   
+                   <h3 className="text-2xl font-black text-gray-950 dark:text-white mb-4 group-hover:text-brand-red transition-colors">
+                      {project.title}
+                   </h3>
+                   
+                   <p className="text-gray-500 dark:text-gray-400 text-base leading-relaxed font-medium">
+                      {project.description}
+                   </p>
+                </div>
               </div>
             </div>
           ))}
         </div>
+        
+        {/* Footer Link */}
+        <div className="mt-20 text-center">
+           <a href="/portfolio" className="inline-flex items-center gap-4 text-gray-950 dark:text-white font-black hover:text-brand-red transition-all group">
+              <span className="text-lg">Lihat Seluruh Portofolio</span>
+              <div className="w-12 h-12 rounded-full border border-gray-200 dark:border-gray-800 flex items-center justify-center group-hover:bg-brand-red group-hover:text-white group-hover:border-brand-red transition-all">
+                 <ArrowUpRight size={20} />
+              </div>
+           </a>
+        </div>
       </div>
     </section>
-
   );
 }

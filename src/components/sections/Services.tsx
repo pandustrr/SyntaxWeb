@@ -1,57 +1,73 @@
 'use client';
 
-import { Code, Smartphone, Palette, Zap, Shield, Headphones } from 'lucide-react';
+import { Code2, Smartphone, Palette, Zap, ShieldCheck, Headphones, Layers, Layout, Rocket } from 'lucide-react';
 
 export default function Services() {
   const services = [
     {
-      icon: Code,
+      icon: Code2,
       title: 'Web Development',
-      description: 'Pembuatan website custom dengan teknologi terkini seperti Next.js, React, dan Node.js.',
-      color: 'from-blue-500 to-blue-600',
+      description: 'Layanan pengembangan website kustom menggunakan tech stack modern untuk performa dan skalabilitas tinggi.',
+      color: 'text-brand-red',
+      bgColor: 'bg-brand-red/10',
     },
     {
       icon: Smartphone,
-      title: 'Responsive Design',
-      description: 'Website yang tampil sempurna di semua perangkat, dari desktop hingga smartphone.',
-      color: 'from-purple-500 to-purple-600',
+      title: 'Responsive Apps',
+      description: 'Menjamin pengalaman pengguna yang konsisten di semua perangkat dan ukuran layar secara seamless.',
+      color: 'text-brand-orange',
+      bgColor: 'bg-brand-orange/10',
     },
     {
       icon: Palette,
       title: 'UI/UX Design',
-      description: 'Desain antarmuka yang menarik dan pengalaman pengguna yang intuitif.',
-      color: 'from-pink-500 to-pink-600',
+      description: 'Desain visual yang memukau dan pengalaman pengguna yang intuitif untuk meningkatkan konversi.',
+      color: 'text-indigo-500',
+      bgColor: 'bg-indigo-500/10',
     },
     {
       icon: Zap,
-      title: 'Performance Optimization',
-      description: 'Website yang cepat dan optimal dengan performa terbaik di kelasnya.',
-      color: 'from-yellow-500 to-yellow-600',
+      title: 'Performance',
+      description: 'Optimasi kecepatan loading dan efisiensi kode untuk Core Web Vitals yang sempurna.',
+      color: 'text-yellow-500',
+      bgColor: 'bg-yellow-500/10',
     },
     {
-      icon: Shield,
-      title: 'Security',
-      description: 'Keamanan website terjamin dengan implementasi best practices terkini.',
-      color: 'from-green-500 to-green-600',
+      icon: ShieldCheck,
+      title: 'Cyber Security',
+      description: 'Implementasi standar keamanan tertinggi untuk melindungi data bisnis dan pengguna Anda.',
+      color: 'text-emerald-500',
+      bgColor: 'bg-emerald-500/10',
     },
     {
-      icon: Headphones,
-      title: 'Support & Maintenance',
-      description: 'Dukungan teknis dan maintenance berkelanjutan untuk website Anda.',
-      color: 'from-red-500 to-red-600',
+      icon: Rocket,
+      title: 'Digital Growth',
+      description: 'Strategi teknis untuk membantu bisnis Anda tumbuh dan mendominasi pasar digital.',
+      color: 'text-brand-maroon',
+      bgColor: 'bg-brand-maroon/10',
     },
   ];
 
   return (
-    <section className="py-24 bg-white dark:bg-gray-950 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="relative py-32 bg-white dark:bg-gray-950 transition-colors duration-300 overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-brand-red/5 rounded-full blur-[100px] -mr-48 -mt-48" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-brand-orange/5 rounded-full blur-[100px] -ml-48 -mb-48" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
-        <div className="text-center mb-16 animate-fade-in-up">
-          <h2 className="text-4xl md:text-5xl font-black text-gray-950 dark:text-white mb-4">
-            Layanan <span className="text-brand-red">Kami</span>
+        <div className="text-center mb-24 animate-fade-in-up">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 mb-6">
+            <span className="w-1.5 h-1.5 rounded-full bg-brand-red animate-pulse" />
+            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+              Layanan Eksklusif
+            </span>
+          </div>
+          <h2 className="text-4xl md:text-5xl font-black text-gray-950 dark:text-white mb-6">
+            Solusi <span className="text-brand-red">End-to-End</span> Untuk Anda.
           </h2>
-          <p className="text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed uppercase tracking-widest text-[10px] font-bold">
-            Digital Solution Partners
+          <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto text-lg leading-relaxed">
+            Kami menyediakan layanan teknologi komprehensif untuk membantu tranformasi digital bisnis Anda menjadi lebih kuat.
           </p>
         </div>
 
@@ -62,24 +78,30 @@ export default function Services() {
             return (
               <div
                 key={index}
-                className="group p-8 bg-gray-50 dark:bg-gray-900/40 rounded-3xl border border-gray-100 dark:border-gray-800 hover:border-brand-red/20 transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl hover:shadow-brand-red/5"
+                className="group p-10 bg-gray-50 dark:bg-gray-900/40 rounded-3xl border border-gray-100 dark:border-gray-800/50 hover:bg-white dark:hover:bg-gray-900 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] relative overflow-hidden"
               >
-                <div className="w-12 h-12 rounded-2xl bg-white dark:bg-gray-800 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 border border-gray-100 dark:border-gray-700 shadow-sm">
-                  <Icon size={24} className="text-brand-red dark:text-brand-orange" />
+                {/* Hover Glow */}
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand-red to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                
+                <div className={`w-14 h-14 rounded-2xl ${service.bgColor} flex items-center justify-center mb-8 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-sm`}>
+                  <Icon size={28} className={service.color} />
                 </div>
-                <h3 className="text-lg font-bold text-gray-950 dark:text-white mb-3">
+                
+                <h3 className="text-xl font-bold text-gray-950 dark:text-white mb-4">
                   {service.title}
                 </h3>
-                <p className="text-gray-500 dark:text-gray-400 leading-relaxed text-sm">
+                <p className="text-gray-500 dark:text-gray-400 leading-relaxed font-medium">
                   {service.description}
                 </p>
+
+                <div className="mt-8 flex items-center gap-2 text-xs font-black text-brand-red uppercase tracking-wider opacity-0 group-hover:opacity-100 translate-x-[-10px] group-hover:translate-x-0 transition-all duration-300">
+                  Pelajari Lebih Lanjut <Zap size={12} className="fill-brand-red" />
+                </div>
               </div>
             );
           })}
         </div>
       </div>
     </section>
-
-
   );
 }
