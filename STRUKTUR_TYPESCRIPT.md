@@ -119,53 +119,86 @@ src/
 - **TypeScript** - Type safety
 - **Tailwind CSS** - Styling
 - **Prisma** - Database ORM
+- **MySQL** - Database Engine
 - **Lucide React** - Icons
 - **clsx & tailwind-merge** - Utility untuk className
 
-## 📝 Catatan Penting
+## 🚀 Cara Menjalankan Project
 
-1. **TypeScript**: Semua file sudah menggunakan `.tsx` untuk komponen React dan `.ts` untuk utility files
-2. **Path Alias**: Menggunakan `@/*` untuk import dari folder `src/`
-3. **Animasi**: Custom animations sudah ditambahkan di `globals.css`
-4. **Session**: Menggunakan cookies untuk session management
-5. **Middleware**: Protect admin routes dari unauthorized access
+### 1. Persiapan Database (MySQL)
 
-## 🚀 Cara Menjalankan
+- Pastikan **XAMPP** atau **MySQL Service** sudah berjalan (Running).
+- Buat database baru dengan nama `syntaxweb_db` di phpMyAdmin atau MySQL Client Anda.
+- Cek file `.env` dan pastikan `DATABASE_URL` sudah benar:
+  ```env
+  DATABASE_URL="mysql://root@localhost:3306/syntaxweb_db"
+  ```
+
+### 2. Instalasi & Setup
+
+Buka terminal dan jalankan perintah berikut secara berurutan:
 
 ```bash
-# Install dependencies
+# Install library/dependencies
 npm install
 
-# Setup database (jika menggunakan Prisma)
+# Generate Prisma Client (Matikan npm run dev jika error EPERM)
 npx prisma generate
-npx prisma db push
 
-# Run development server
+# Sinkronisasi schema ke database
+npx prisma db push
+```
+
+### 3. Menjalankan Server
+
+```bash
+# Jalankan mode development
 npm run dev
 ```
 
-## 📌 TODO
+Akses aplikasi di `http://localhost:3000`.
 
-- [ ] Implementasi password hashing dengan bcrypt
-- [ ] Tambahkan validation lebih lengkap
-- [ ] Implementasi upload image untuk projects
-- [ ] Tambahkan pagination untuk tabel
-- [ ] Implementasi search dan filter
-- [ ] Tambahkan unit tests
-- [ ] Setup environment variables
-- [ ] Implementasi email notifications
+---
 
-## 🔐 Security Notes
+## 📊 Database Flow & Schema
 
-- Password saat ini belum di-hash (TODO: implement bcrypt)
-- Session menggunakan simple cookie (TODO: implement JWT atau session store)
-- Perlu tambahkan CSRF protection
-- Perlu tambahkan rate limiting untuk API
+Project ini menggunakan **Prisma ORM** untuk berinteraksi dengan MySQL. Schema didefinisikan di `prisma/schema.prisma`.
 
-## 📱 Responsive Design
+### Model Utama:
 
-Semua komponen sudah responsive dengan breakpoints:
+1.  **User**: Menyimpan data akun admin (email, username, password, name, role).
+2.  **Project**: Menyimpan data portfolio project yang ditampilkan di halaman publik (name, description, status).
+3.  **Service**: Menyimpan data layanan yang ditawarkan.
+4.  **Portfolio**: Data tambahan untuk galeri project.
 
-- Mobile: < 768px
-- Tablet: 768px - 1024px
-- Desktop: > 1024px
+### Flow Database:
+
+- **Admin Panel** (`/admin`) -> Mengirim request ke **API Routes** (`/api/admin/*`) -> **Prisma Client** melakukan operasi CRUD ke **MySQL Database**.
+- **Public Page** (`/`) -> Melakukan fetch data melalui API atau langsung menggunakan Prisma (Server Component) untuk menampilkan data project/layanan ke pengunjung.
+
+---
+
+## 🔄 Workflow System
+
+### 1. Authentication Flow
+
+- User akses `/admin`.
+- `middleware.ts` mengecek cookie `session`.
+- Jika tidak ada, di-redirect ke `/admin/login`.
+- Di `/admin/login`, user memasukkan email & password -> `/api/admin/auth` memverifikasi data DB -> Jika benar, cookie `session` dibuat -> User masuk ke Dashboard.
+
+### 2. Content Management Flow
+
+- Admin menambah project baru di `/admin/projects`.
+- Data dikirim ke `/api/admin/projects` (POST).
+- Prisma menyimpan data ke tabel `Project`.
+- Halaman publik (`/`) secara otomatis akan menampilkan project terbaru tersebut karena datanya diambil langsung dari database.
+
+---
+
+## 🔐 Keamanan & Catatan
+
+- **Middleware**: Memastikan area `/admin` tidak bisa diakses tanpa login.
+- **TypeScript**: Memberikan proteksi terhadap error tipe data saat development.
+- **Port In Use**: Jika port 3000 error, pastikan tidak ada terminal lain yang sedang menjalankan `npm run dev`.
+- **EPERM Error**: Jika muncul saat `prisma generate`, hentikan dulu terminal yang menjalankan server Next.js.

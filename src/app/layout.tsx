@@ -6,16 +6,26 @@ export const metadata: Metadata = {
   description: 'Solusi web development profesional untuk bisnis Anda',
 };
 
+import { ThemeProvider } from '@/components/ThemeProvider';
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id">
+    <html lang="id" suppressHydrationWarning>
       <body className="antialiased">
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
 }
+

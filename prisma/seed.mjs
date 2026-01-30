@@ -1,28 +1,31 @@
 import { PrismaClient } from "@prisma/client";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("Memulai seed...");
-  try {
-    const admin = await prisma.user.upsert({
-      where: { username: "admin" },
-      update: {},
-      create: {
-        username: "admin",
-        password: "admin123", // Password sederhana untuk demo
-        name: "Pandu Admin",
-      },
-    });
-    console.log("Seed berhasil. Admin created:", admin.username);
-  } catch (err) {
-    console.error("Error saat seeding:", err);
-  } finally {
-    await prisma.$disconnect();
-  }
+  console.log("Memulai seeding data admin...");
+
+  const admin = await prisma.user.upsert({
+    where: { email: "admin@syntaxweb.com" },
+    update: {},
+    create: {
+      email: "admin@syntaxweb.com",
+      username: "admin",
+      password: "admin123", // Gantilah dengan password yang lebih kuat nanti
+      name: "SyntaxWeb Admin",
+      role: "admin",
+    },
+  });
+
+  console.log({ admin });
+  console.log("Seeding selesai!");
 }
 
-main();
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

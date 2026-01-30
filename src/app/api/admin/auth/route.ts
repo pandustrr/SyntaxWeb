@@ -14,10 +14,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Cari user di database
-    // TODO: Implement proper password hashing dengan bcrypt
-    const user = await prisma.user.findUnique({
-      where: { email },
+    // Cari user berdasarkan email ATAU username
+    // Kita gunakan casting 'any' sementara jika Typescript client belum sinkron sempurna
+    const user = await (prisma.user as any).findFirst({
+      where: {
+        OR: [
+          { email: email },
+          { username: email }
+        ]
+      },
     });
 
     if (!user || user.password !== password) {
@@ -30,13 +35,21 @@ export async function POST(request: NextRequest) {
     // Set session
     await setSession({
       id: user.id,
-      email: user.email,
+      email: (user as any).email || user.username,
       name: user.name,
-      role: user.role,
+      role: (user as any).role || 'admin',
     });
 
     return NextResponse.json(
-      { message: 'Login berhasil', user: { id: user.id, email: user.email, name: user.name, role: user.role } },
+      { 
+        message: 'Login berhasil', 
+        user: { 
+          id: user.id, 
+          email: (user as any).email || user.username, 
+          name: user.name, 
+          role: (user as any).role || 'admin' 
+        } 
+      },
       { status: 200 }
     );
   } catch (error) {

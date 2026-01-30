@@ -51,9 +51,9 @@ export default function LoginForm() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <Input
-              type="email"
-              label="Email"
-              placeholder="admin@syntaxweb.com"
+              type="text"
+              label="Email atau Username"
+              placeholder="admin atau admin@syntaxweb.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
