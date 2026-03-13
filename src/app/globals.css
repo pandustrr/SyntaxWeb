@@ -3,8 +3,17 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --primary: #050505;
+    --secondary: #121212;
+    --accent: #800000;
+    --accent-glow: #D4AF37;
+    --text: #FFFFFF;
+  }
+
   body {
-    @apply bg-white text-gray-900;
+    @apply bg-[#050505] text-[#FFFFFF] overflow-hidden;
+    font-feature-settings: "cv11", "ss01";
   }
 }
 

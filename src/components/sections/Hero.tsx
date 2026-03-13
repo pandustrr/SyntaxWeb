@@ -1,68 +1,137 @@
 'use client';
 
-import Link from 'next/link';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Sparkles } from 'lucide-react';
 
 export default function Hero() {
+  const containerVariants = {
+    initial: {},
+    animate: {
+      transition: {
+        staggerChildren: 0.15,
+        delayChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    initial: { y: "110%" },
+    animate: {
+      y: 0,
+      transition: { duration: 1.2, ease: "circOut" as any }
+    }
+  };
+
   return (
-    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Decorative Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000" />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000" />
-      </div>
-
-      {/* Content */}
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-medium mb-8 animate-fade-in">
-          <Sparkles size={16} />
-          <span>Solusi Web Development Profesional</span>
-        </div>
-
-        <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 animate-fade-in-up">
-          Wujudkan Website
-          <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Impian Anda
-          </span>
-        </h1>
-
-        <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto animate-fade-in-up animation-delay-200">
-          Kami menciptakan website modern, responsif, dan berkualitas tinggi 
-          yang membantu bisnis Anda berkembang di era digital.
-        </p>
-
-        <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up animation-delay-400">
-          <Link
-            href="/contact"
-            className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-medium hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
-          >
-            Mulai Sekarang
-            <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-          </Link>
-          <Link
-            href="/about"
-            className="px-8 py-4 bg-white text-gray-700 rounded-xl font-medium border-2 border-gray-200 hover:border-blue-600 hover:text-blue-600 transition-all duration-300"
-          >
-            Pelajari Lebih Lanjut
-          </Link>
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-8 mt-20 max-w-3xl mx-auto animate-fade-in-up animation-delay-600">
-          <div>
-            <div className="text-4xl font-bold text-gray-900 mb-2">100+</div>
-            <div className="text-gray-600">Project Selesai</div>
+    <section className="relative h-screen flex items-center justify-center overflow-hidden bg-transparent snap-start">
+      <div className="max-w-7xl mx-auto px-6 relative z-10 w-full">
+        <motion.div
+          variants={containerVariants}
+          initial="initial"
+          whileInView="animate"
+          viewport={{ once: true }}
+          className="flex flex-col items-center text-center"
+        >
+          {/* Badge */}
+          <div className="overflow-hidden mb-10">
+            <motion.div
+              variants={itemVariants}
+              className="px-5 py-2 border border-[#B6B09F]/20 flex items-center gap-3"
+            >
+              <Sparkles size={14} className="text-[#B6B09F]" />
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#B6B09F]">
+                Architecting Excellence
+              </span>
+            </motion.div>
           </div>
-          <div>
-            <div className="text-4xl font-bold text-gray-900 mb-2">50+</div>
-            <div className="text-gray-600">Klien Puas</div>
+
+          {/* Heading with Masked Reveals */}
+          <div className="mb-12">
+            <div className="overflow-hidden mb-2">
+              <motion.h1
+                variants={itemVariants}
+                className="text-7xl md:text-[10rem] font-black text-[#F2F2F2] leading-[0.85] tracking-tighter"
+              >
+                CRAFTING
+              </motion.h1>
+            </div>
+            <div className="overflow-hidden mb-2">
+              <motion.h1
+                variants={itemVariants}
+                className="text-7xl md:text-[10rem] font-black text-[#B6B09F] leading-[0.85] tracking-tighter"
+              >
+                DIGITAL
+              </motion.h1>
+            </div>
+            <div className="overflow-hidden">
+              <motion.h1
+                variants={itemVariants}
+                className="text-7xl md:text-[10rem] font-black text-[#F2F2F2] leading-[0.85] tracking-tighter"
+              >
+                LEGACIES
+              </motion.h1>
+            </div>
           </div>
-          <div>
-            <div className="text-4xl font-bold text-gray-900 mb-2">5+</div>
-            <div className="text-gray-600">Tahun Pengalaman</div>
+
+          {/* Subtext */}
+          <div className="overflow-hidden mb-14 max-w-2xl px-4">
+            <motion.p
+              variants={itemVariants}
+              className="text-lg md:text-xl text-gray-400 font-medium tracking-tight leading-relaxed"
+            >
+              Transforming complex visions into high-performance digital systems.
+              Our architectural approach ensures precision and longevity.
+            </motion.p>
           </div>
-        </div>
+
+          {/* CTA */}
+          <div className="overflow-hidden">
+            <motion.button
+              variants={itemVariants}
+              whileHover={{
+                backgroundColor: "#F2F2F2",
+                color: "#000000",
+                letterSpacing: "0.5em"
+              }}
+              className="px-12 py-6 border border-[#F2F2F2] text-[#F2F2F2] text-[10px] font-black uppercase tracking-[0.3em] transition-all duration-700"
+            >
+              View Work
+            </motion.button>
+          </div>
+        </motion.div>
+
+        {/* Stats - Architectural style */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ delay: 1, duration: 1.5 }}
+          viewport={{ once: true }}
+          className="absolute bottom-12 right-6 hidden lg:flex gap-16 border-r border-[#B6B09F]/10 pr-12"
+        >
+          <div className="text-right">
+            <div className="text-4xl font-black text-[#F2F2F2] tracking-tighter">150+</div>
+            <div className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mt-1">Systems</div>
+          </div>
+          <div className="text-right">
+            <div className="text-4xl font-black text-[#F2F2F2] tracking-tighter">99.9%</div>
+            <div className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mt-1">Up-time</div>
+          </div>
+        </motion.div>
+
+        {/* Scroll Indicator */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.5, duration: 1 }}
+          className="absolute bottom-10 left-12 flex flex-col items-center gap-6"
+        >
+          <span className="text-[10px] font-black uppercase tracking-[0.5em] text-gray-600 [writing-mode:vertical-lr]">EXPLORE</span>
+          <motion.div
+            animate={{ scaleY: [0, 1, 0], originY: [0, 0, 1] }}
+            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+            className="w-[1px] h-16 bg-[#B6B09F]"
+          />
+        </motion.div>
       </div>
     </section>
   );

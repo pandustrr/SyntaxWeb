@@ -4,63 +4,71 @@ import Link from 'next/link';
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-50 border-t border-gray-100 py-12 mt-20">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer className="bg-[#000000] border-t border-white/5 py-40 pb-64 snap-start relative z-10">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-20">
           {/* Brand */}
           <div className="col-span-1 md:col-span-2">
-            <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
-              SyntaxWeb
-            </h3>
-            <p className="text-gray-600 text-sm mb-4">
-              Solusi web development profesional untuk bisnis Anda. 
-              Kami menciptakan website yang modern, responsif, dan berkualitas tinggi.
+            <a
+              href="#home"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById('home')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="mb-12 block"
+            >
+              <span className="text-4xl font-black text-[#F2F2F2] tracking-tighter uppercase whitespace-nowrap">SYNTAX<span className="text-[#B6B09F]">WEB</span></span>
+            </a>
+            <p className="text-gray-600 text-lg leading-relaxed max-w-md font-medium tracking-tight">
+              Bespoke digital architecture for enterprises and forward-thinking brands.
+              Engineering excellence at every pixel, established MMXXIV.
             </p>
           </div>
 
-          {/* Quick Links */}
+          {/* Navigation */}
           <div>
-            <h4 className="font-semibold text-gray-900 mb-4">Navigasi</h4>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/" className="text-gray-600 hover:text-blue-600 text-sm transition-colors">
-                  Beranda
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="text-gray-600 hover:text-blue-600 text-sm transition-colors">
-                  Tentang Kami
-                </Link>
-              </li>
-              <li>
-                <Link href="/services" className="text-gray-600 hover:text-blue-600 text-sm transition-colors">
-                  Layanan
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="text-gray-600 hover:text-blue-600 text-sm transition-colors">
-                  Kontak
-                </Link>
-              </li>
+            <h4 className="font-black text-[#F2F2F2] text-[10px] uppercase tracking-[0.5em] mb-10">Navigation</h4>
+            <ul className="space-y-4">
+              {['Home', 'About', 'Services', 'Portfolio', 'Contact'].map((item) => (
+                <li key={item}>
+                  <a
+                    href={`#${item.toLowerCase()}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      document.getElementById(item.toLowerCase())?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="text-gray-600 hover:text-[#B6B09F] text-xs font-black uppercase tracking-widest transition-all duration-500"
+                  >
+                    {item}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Contact Info */}
+          {/* Architecture (formerly Contact) */}
           <div>
-            <h4 className="font-semibold text-gray-900 mb-4">Kontak</h4>
-            <ul className="space-y-2 text-sm text-gray-600">
-              <li>Email: info@syntaxweb.com</li>
-              <li>Phone: +62 123 4567 890</li>
-              <li>Alamat: Jakarta, Indonesia</li>
+            <h4 className="font-black text-[#F2F2F2] text-[10px] uppercase tracking-[0.5em] mb-10">Architecture</h4>
+            <ul className="space-y-4 text-xs font-black uppercase tracking-widest text-gray-600">
+              <li className="hover:text-[#F2F2F2] transition-all duration-500 cursor-pointer">Syntax Tower, 88</li>
+              <li className="hover:text-[#F2F2F2] transition-all duration-500 cursor-pointer">Jakarta, Indonesia</li>
+              <li className="pt-4">
+                <a href="mailto:office@syntaxweb.com" className="text-[#B6B09F] hover:tracking-widest transition-all duration-700">
+                  office@syntaxweb.com
+                </a>
+              </li>
             </ul>
           </div>
         </div>
 
         {/* Copyright */}
-        <div className="border-t border-gray-200 mt-8 pt-8 text-center">
-          <p className="text-gray-500 text-sm">
-            &copy; {new Date().getFullYear()} SyntaxWeb. All rights reserved.
+        <div className="border-t border-white/5 mt-40 pt-12 flex flex-col md:flex-row justify-between items-center gap-8">
+          <p className="text-gray-700 text-[10px] font-black uppercase tracking-[0.6em]">
+            © MMXXIV SYNTAXWEB. ALL RIGHTS RESERVED.
           </p>
+          <div className="flex gap-16">
+            <Link href="/terms" className="text-gray-800 hover:text-[#B6B09F] text-[10px] font-black uppercase tracking-widest transition-colors">Terms of Work</Link>
+          </div>
         </div>
       </div>
     </footer>

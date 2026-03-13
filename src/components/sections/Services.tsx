@@ -1,5 +1,6 @@
 'use client';
 
+import { motion } from 'framer-motion';
 import { Code, Smartphone, Palette, Zap, Shield, Headphones } from 'lucide-react';
 
 export default function Services() {
@@ -43,37 +44,46 @@ export default function Services() {
   ];
 
   return (
-    <section className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Layanan Kami
+    <section id="services" className="h-screen flex items-center py-32 bg-transparent relative overflow-hidden snap-start">
+      <div className="max-w-7xl mx-auto px-6 relative z-10 w-full">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="text-start mb-24"
+        >
+          <h2 className="text-5xl md:text-7xl font-black text-[#F2F2F2] mb-6 leading-tight tracking-tighter">
+            Architectural <span className="text-[#B6B09F]">Solutions</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Solusi lengkap untuk semua kebutuhan web development Anda
+          <p className="text-lg text-gray-400 max-w-2xl font-medium tracking-tight">
+            Next-generation engineering for ambitious brands looking to dominate the digital landscape.
           </p>
-        </div>
+        </motion.div>
 
         {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0">
           {services.map((service, index) => {
             const Icon = service.icon;
             return (
-              <div
+              <motion.div
                 key={index}
-                className="group p-8 bg-white rounded-2xl border-2 border-gray-100 hover:border-transparent hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="group p-12 bg-transparent border border-white/5 hover:bg-white/[0.02] transition-all duration-700 flex flex-col items-start"
               >
-                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${service.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                  <Icon size={28} className="text-white" />
+                <div className="w-12 h-12 flex items-center justify-center mb-10 group-hover:scale-110 transition-transform duration-500">
+                  <Icon size={32} className="text-[#B6B09F] stroke-[1]" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                <h3 className="text-xl font-black text-[#F2F2F2] mb-6 tracking-tight uppercase">
                   {service.title}
                 </h3>
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-gray-500 leading-relaxed font-medium text-sm">
                   {service.description}
                 </p>
-              </div>
+              </motion.div>
             );
           })}
         </div>

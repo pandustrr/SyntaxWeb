@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { ExternalLink, Github } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface Project {
   id: number;
@@ -87,95 +88,108 @@ export default function Portfolio() {
     { id: 'dashboard', label: 'Dashboard' },
   ];
 
-  const filteredProjects = activeFilter === 'all' 
-    ? projects 
+  const filteredProjects = activeFilter === 'all'
+    ? projects
     : projects.filter(p => p.category === activeFilter);
 
   return (
-    <section className="py-20 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="portfolio" className="min-h-screen flex items-center py-32 bg-transparent relative overflow-hidden snap-start">
+      <div className="max-w-7xl mx-auto px-6 w-full">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Portfolio Kami
-          </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Lihat beberapa project yang telah kami kerjakan
-          </p>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="text-start flex flex-col md:flex-row md:items-end justify-between mb-24 gap-8"
+        >
+          <div>
+            <h2 className="text-5xl md:text-8xl font-black text-[#F2F2F2] mb-6 tracking-tighter">
+              Selected <span className="text-[#B6B09F]">Artifacts</span>
+            </h2>
+            <p className="text-lg text-gray-500 max-w-xl font-medium tracking-tight">
+              A curated collection of our most impactful digital constructions and architectural experiments.
+            </p>
+          </div>
 
-        {/* Filter */}
-        <div className="flex flex-wrap justify-center gap-4 mb-12">
-          {filters.map(filter => (
-            <button
-              key={filter.id}
-              onClick={() => setActiveFilter(filter.id)}
-              className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
-                activeFilter === filter.id
-                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
-                  : 'bg-white text-gray-700 hover:bg-gray-100'
-              }`}
-            >
-              {filter.label}
-            </button>
-          ))}
-        </div>
+          {/* Filter */}
+          <div className="flex flex-wrap gap-6 border-b border-white/5 pb-4">
+            {filters.map(filter => (
+              <button
+                key={filter.id}
+                onClick={() => setActiveFilter(filter.id)}
+                className={`text-[10px] font-black uppercase tracking-[0.4em] transition-all duration-700 pb-2 border-b-2
+                  ${activeFilter === filter.id
+                    ? 'text-[#B6B09F] border-[#B6B09F]'
+                    : 'text-gray-700 border-transparent hover:text-[#F2F2F2]'
+                  }`}
+              >
+                {filter.label}
+              </button>
+            ))}
+          </div>
+        </motion.div>
 
         {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredProjects.map((project) => (
-            <div
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border-t border-white/5">
+          {filteredProjects.map((project, index) => (
+            <motion.div
               key={project.id}
-              className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 1.2, delay: index * 0.1 }}
+              viewport={{ once: true }}
+              className="group relative bg-[#000000] border-r border-b border-white/5 overflow-hidden transition-all duration-700 aspect-square"
             >
-              {/* Image */}
-              <div className="relative h-48 bg-gradient-to-br from-blue-100 to-purple-100 overflow-hidden">
-                <div className="absolute inset-0 flex items-center justify-center text-gray-400">
-                  <span className="text-sm">Project Image</span>
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              {/* Background Geometric Pattern */}
+              <div className="absolute inset-0 opacity-40 group-hover:opacity-100 transition-opacity duration-1000">
+                <div className="absolute inset-0 bg-[linear-gradient(45deg,#B6B09F08_25%,transparent_25%,transparent_50%,#B6B09F08_50%,#B6B09F08_75%,transparent_75%,transparent)] bg-[size:24px_24px]" />
+                <div className="absolute inset-0 bg-[#000000]/60 group-hover:bg-[#000000]/20 transition-colors duration-700" />
               </div>
 
-              {/* Content */}
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
-                  {project.title}
-                </h3>
-                <p className="text-gray-600 text-sm mb-4">
-                  {project.description}
-                </p>
-
-                {/* Tech Stack */}
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {project.tech.map((tech, idx) => (
-                    <span
-                      key={idx}
-                      className="px-3 py-1 bg-blue-50 text-blue-600 text-xs rounded-full"
-                    >
-                      {tech}
-                    </span>
-                  ))}
+              {/* Content Overlay */}
+              <div className="absolute inset-0 p-12 flex flex-col justify-end z-10">
+                <div className="overflow-hidden mb-4">
+                  <motion.div
+                    initial={{ y: "100%" }}
+                    whileInView={{ y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
+                    className="flex flex-wrap gap-4"
+                  >
+                    {project.tech.map((tech, idx) => (
+                      <span key={idx} className="text-[9px] font-black uppercase tracking-[0.3em] text-[#B6B09F]">
+                        {tech}
+                      </span>
+                    ))}
+                  </motion.div>
                 </div>
 
-                {/* Links */}
-                <div className="flex gap-3">
-                  <a
-                    href={project.link}
-                    className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 font-medium"
+                <div className="overflow-hidden mb-8">
+                  <motion.h3
+                    initial={{ y: "100%" }}
+                    whileInView={{ y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.3 }}
+                    className="text-3xl md:text-4xl font-black text-[#F2F2F2] tracking-tighter uppercase leading-[0.9]"
                   >
-                    <ExternalLink size={16} />
-                    Live Demo
-                  </a>
-                  <a
-                    href={project.github}
-                    className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-700 font-medium"
-                  >
-                    <Github size={16} />
-                    Code
-                  </a>
+                    {project.title}
+                  </motion.h3>
                 </div>
+
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  transition={{ duration: 0.8, delay: 0.6 }}
+                  className="flex gap-8 group/link"
+                >
+                  <a href={project.link} className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-white hover:text-[#B6B09F] transition-all duration-500">
+                    Explore <ExternalLink size={12} className="group-hover/link:translate-x-1 group-hover/link:-translate-y-1 transition-transform" />
+                  </a>
+                </motion.div>
               </div>
-            </div>
+
+              {/* Architectural Frame - very subtle */}
+              <div className="absolute inset-[2px] border border-[#B6B09F]/0 group-hover:border-[#B6B09F]/20 transition-all duration-1000 pointer-events-none" />
+            </motion.div>
           ))}
         </div>
       </div>
