@@ -10,6 +10,14 @@ export default function BackgroundKinetic() {
 
     return (
         <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-[#000000]">
+            {/* Architectural Grid Lines */}
+            <div className="absolute inset-0 flex justify-between px-[10%] pointer-events-none opacity-[0.05]">
+                <div className="w-[1px] h-full bg-[#B6B09F]" />
+                <div className="w-[1px] h-full bg-[#B6B09F]" />
+                <div className="w-[1px] h-full bg-[#B6B09F]" />
+                <div className="w-[1px] h-full bg-[#B6B09F]" />
+            </div>
+
             {/* Architectural Geometric Grid Element */}
             <motion.div
                 style={{ rotate, opacity }}
@@ -25,11 +33,11 @@ export default function BackgroundKinetic() {
                 </svg>
             </motion.div>
 
-            {/* Noise Overlay - Essential for premium texture */}
-            <div className="absolute inset-0 opacity-[0.04] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-repeat" />
+            {/* Subtle Gradient for depth */}
+            <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_20%_20%,rgba(182,176,159,0.03)_0%,transparent_50%)]" />
 
             {/* Vignette for focus */}
-            <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.6)_100%)]" />
+            <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.8)_100%)]" />
         </div>
     );
 }

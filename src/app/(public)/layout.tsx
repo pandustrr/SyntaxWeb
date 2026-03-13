@@ -4,6 +4,7 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import BackgroundKinetic from '@/components/layout/BackgroundKinetic';
 import IntroLoader from '@/components/layout/IntroLoader';
+import ScrollProgress from '@/components/ui/ScrollProgress';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 
@@ -21,6 +22,7 @@ export default function PublicLayout({
       </AnimatePresence>
 
       <BackgroundKinetic />
+      <ScrollProgress />
 
       <motion.div
         initial={{ opacity: 0 }}

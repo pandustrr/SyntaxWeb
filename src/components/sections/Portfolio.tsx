@@ -97,19 +97,36 @@ export default function Portfolio() {
       <div className="max-w-7xl mx-auto px-6 w-full">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          initial="initial"
+          whileInView="animate"
           viewport={{ once: true }}
+          transition={{ staggerChildren: 0.1 }}
           className="text-start flex flex-col md:flex-row md:items-end justify-between mb-24 gap-8"
         >
           <div>
-            <h2 className="text-5xl md:text-8xl font-black text-[#F2F2F2] mb-6 tracking-tighter">
-              Selected <span className="text-[#B6B09F]">Artifacts</span>
-            </h2>
-            <p className="text-lg text-gray-500 max-w-xl font-medium tracking-tight">
-              A curated collection of our most impactful digital constructions and architectural experiments.
-            </p>
+            <div className="overflow-hidden mb-6">
+              <motion.h2
+                variants={{
+                  initial: { y: "110%" },
+                  animate: { y: 0, transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] } }
+                }}
+                className="text-5xl md:text-8xl font-black text-[#F2F2F2] tracking-tighter"
+              >
+                Selected <span className="text-[#B6B09F]">Artifacts</span>
+              </motion.h2>
+            </div>
+
+            <div className="overflow-hidden">
+              <motion.p
+                variants={{
+                  initial: { y: "110%" },
+                  animate: { y: 0, transition: { duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] } }
+                }}
+                className="text-lg text-gray-500 max-w-xl font-medium tracking-tight"
+              >
+                A curated collection of our most impactful digital constructions and architectural experiments.
+              </motion.p>
+            </div>
           </div>
 
           {/* Filter */}
@@ -141,11 +158,14 @@ export default function Portfolio() {
               viewport={{ once: true }}
               className="group relative bg-[#000000] border-r border-b border-white/5 overflow-hidden transition-all duration-700 aspect-square"
             >
-              {/* Background Geometric Pattern */}
-              <div className="absolute inset-0 opacity-40 group-hover:opacity-100 transition-opacity duration-1000">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 1.2, ease: "circOut" }}
+                className="absolute inset-0 opacity-40 group-hover:opacity-100 transition-opacity duration-1000"
+              >
                 <div className="absolute inset-0 bg-[linear-gradient(45deg,#B6B09F08_25%,transparent_25%,transparent_50%,#B6B09F08_50%,#B6B09F08_75%,transparent_75%,transparent)] bg-[size:24px_24px]" />
                 <div className="absolute inset-0 bg-[#000000]/60 group-hover:bg-[#000000]/20 transition-colors duration-700" />
-              </div>
+              </motion.div>
 
               {/* Content Overlay */}
               <div className="absolute inset-0 p-12 flex flex-col justify-end z-10">

@@ -12,19 +12,36 @@ export default function Contact() {
             <div className="max-w-7xl mx-auto px-6 relative z-10 w-full">
                 <div className="grid lg:grid-cols-2 gap-24 items-start">
                     <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 1 }}
+                        initial="initial"
+                        whileInView="animate"
                         viewport={{ once: true }}
+                        transition={{ staggerChildren: 0.1 }}
                     >
-                        <h2 className="text-5xl md:text-[8rem] font-black text-[#F2F2F2] mb-12 tracking-tighter uppercase leading-[0.85]">
-                            Let's <br />
-                            <span className="text-[#B6B09F]">Construct</span>
-                        </h2>
-                        <p className="text-lg text-gray-500 mb-16 font-medium tracking-tight leading-relaxed max-w-md">
-                            Ready to elevate your digital presence? We are available for specialized partnerships
-                            starting MMXXIV.
-                        </p>
+                        <div className="overflow-hidden mb-12">
+                            <motion.h2
+                                variants={{
+                                    initial: { y: "110%" },
+                                    animate: { y: 0, transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] } }
+                                }}
+                                className="text-5xl md:text-[8rem] font-black text-[#F2F2F2] tracking-tighter uppercase leading-[0.85]"
+                            >
+                                Let's <br />
+                                <span className="text-[#B6B09F]">Construct</span>
+                            </motion.h2>
+                        </div>
+
+                        <div className="overflow-hidden mb-16">
+                            <motion.p
+                                variants={{
+                                    initial: { y: "110%" },
+                                    animate: { y: 0, transition: { duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] } }
+                                }}
+                                className="text-lg text-gray-500 font-medium tracking-tight leading-relaxed max-w-md"
+                            >
+                                Ready to elevate your digital presence? We are available for specialized partnerships
+                                starting MMXXIV.
+                            </motion.p>
+                        </div>
 
                         <div className="space-y-8">
                             <a href="mailto:office@syntaxweb.com" className="group flex items-center gap-6 text-[#F2F2F2] hover:text-[#B6B09F] transition-colors duration-500">

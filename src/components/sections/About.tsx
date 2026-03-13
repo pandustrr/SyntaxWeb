@@ -8,20 +8,37 @@ export default function About() {
             <div className="max-w-7xl mx-auto px-6 relative z-10 w-full">
                 <div className="grid lg:grid-cols-2 gap-24 items-center">
                     <motion.div
-                        initial={{ opacity: 0, x: -50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                        initial="initial"
+                        whileInView="animate"
                         viewport={{ once: true }}
+                        transition={{ staggerChildren: 0.15 }}
                     >
-                        <h2 className="text-5xl md:text-8xl font-black text-[#F2F2F2] mb-12 tracking-tighter uppercase leading-[0.85]">
-                            Structural <br />
-                            <span className="text-[#B6B09F]">Philosophy</span>
-                        </h2>
-                        <p className="text-lg md:text-xl text-gray-500 mb-12 font-medium tracking-tight leading-relaxed max-w-xl">
-                            We believe in the integrity of digital structures. Beyond mere aesthetics, we architect
-                            systems that prioritize performance, scalability, and technical longevity.
-                            Our mission is to build the foundations of the next internet generation.
-                        </p>
+                        <div className="overflow-hidden mb-12">
+                            <motion.h2
+                                variants={{
+                                    initial: { y: "110%" },
+                                    animate: { y: 0, transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] } }
+                                }}
+                                className="text-5xl md:text-8xl font-black text-[#F2F2F2] tracking-tighter uppercase leading-[0.85]"
+                            >
+                                Structural <br />
+                                <span className="text-[#B6B09F]">Philosophy</span>
+                            </motion.h2>
+                        </div>
+
+                        <div className="overflow-hidden mb-12">
+                            <motion.p
+                                variants={{
+                                    initial: { y: "110%" },
+                                    animate: { y: 0, transition: { duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] } }
+                                }}
+                                className="text-lg md:text-xl text-gray-500 font-medium tracking-tight leading-relaxed max-w-xl"
+                            >
+                                We believe in the integrity of digital structures. Beyond mere aesthetics, we architect
+                                systems that prioritize performance, scalability, and technical longevity.
+                                Our mission is to build the foundations of the next internet generation.
+                            </motion.p>
+                        </div>
 
                         <div className="grid grid-cols-2 gap-12 pt-12 border-t border-white/5">
                             <div>

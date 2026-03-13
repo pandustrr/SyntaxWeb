@@ -47,18 +47,35 @@ export default function Services() {
     <section id="services" className="h-screen flex items-center py-32 bg-transparent relative overflow-hidden snap-start">
       <div className="max-w-7xl mx-auto px-6 relative z-10 w-full">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          initial="initial"
+          whileInView="animate"
           viewport={{ once: true }}
+          transition={{ staggerChildren: 0.1 }}
           className="text-start mb-24"
         >
-          <h2 className="text-5xl md:text-7xl font-black text-[#F2F2F2] mb-6 leading-tight tracking-tighter">
-            Architectural <span className="text-[#B6B09F]">Solutions</span>
-          </h2>
-          <p className="text-lg text-gray-400 max-w-2xl font-medium tracking-tight">
-            Next-generation engineering for ambitious brands looking to dominate the digital landscape.
-          </p>
+          <div className="overflow-hidden mb-6">
+            <motion.h2
+              variants={{
+                initial: { y: "110%" },
+                animate: { y: 0, transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] } }
+              }}
+              className="text-5xl md:text-7xl font-black text-[#F2F2F2] leading-tight tracking-tighter"
+            >
+              Architectural <span className="text-[#B6B09F]">Solutions</span>
+            </motion.h2>
+          </div>
+
+          <div className="overflow-hidden">
+            <motion.p
+              variants={{
+                initial: { y: "110%" },
+                animate: { y: 0, transition: { duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] } }
+              }}
+              className="text-lg text-gray-400 max-w-2xl font-medium tracking-tight"
+            >
+              Next-generation engineering for ambitious brands looking to dominate the digital landscape.
+            </motion.p>
+          </div>
         </motion.div>
 
         {/* Services Grid */}
