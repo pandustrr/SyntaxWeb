@@ -77,7 +77,7 @@ export default function Hero() {
           <div className="overflow-hidden mb-14 max-w-2xl px-4">
             <motion.p
               variants={itemVariants}
-              className="text-lg md:text-xl text-gray-400 font-medium tracking-tight leading-relaxed"
+              className="text-lg md:text-xl text-gray-500 font-medium tracking-tight leading-relaxed"
             >
               Transforming complex visions into high-performance digital systems.
               Our architectural approach ensures precision and longevity.
@@ -110,11 +110,11 @@ export default function Hero() {
         >
           <div className="text-right">
             <div className="text-4xl font-black text-[#F2F2F2] tracking-tighter">150+</div>
-            <div className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mt-1">Systems</div>
+            <div className="text-[10px] uppercase tracking-widest text-[#B6B09F]/40 font-bold mt-1">Systems</div>
           </div>
           <div className="text-right">
             <div className="text-4xl font-black text-[#F2F2F2] tracking-tighter">99.9%</div>
-            <div className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mt-1">Up-time</div>
+            <div className="text-[10px] uppercase tracking-widest text-[#B6B09F]/40 font-bold mt-1">Up-time</div>
           </div>
         </motion.div>
 
@@ -125,11 +125,11 @@ export default function Hero() {
           transition={{ delay: 1.5, duration: 1 }}
           className="absolute bottom-10 left-12 flex flex-col items-center gap-6"
         >
-          <span className="text-[10px] font-black uppercase tracking-[0.5em] text-gray-600 [writing-mode:vertical-lr]">EXPLORE</span>
+          <span className="text-[10px] font-black uppercase tracking-[0.5em] text-[#B6B09F]/30 [writing-mode:vertical-lr]">EXPLORE</span>
           <motion.div
             animate={{ scaleY: [0, 1, 0], originY: [0, 0, 1] }}
             transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-            className="w-[1px] h-16 bg-[#B6B09F]"
+            className="w-[1px] h-16 bg-[#B6B09F]/40"
           />
         </motion.div>
       </div>

@@ -71,7 +71,7 @@ export default function Services() {
                 initial: { y: "110%" },
                 animate: { y: 0, transition: { duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] } }
               }}
-              className="text-lg text-gray-400 max-w-2xl font-medium tracking-tight"
+              className="text-lg text-[#B6B09F]/60 max-w-2xl font-medium tracking-tight"
             >
               Next-generation engineering for ambitious brands looking to dominate the digital landscape.
             </motion.p>
@@ -89,8 +89,11 @@ export default function Services() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="group p-12 bg-transparent border border-white/5 hover:bg-white/[0.02] transition-all duration-700 flex flex-col items-start"
+                className="group p-12 bg-transparent border border-white/5 hover:bg-white/[0.02] transition-all duration-700 flex flex-col items-start relative overflow-hidden"
               >
+                {/* Hover Glow Effect */}
+                <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#B6B09F]/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+
                 <div className="w-12 h-12 flex items-center justify-center mb-10 group-hover:scale-110 transition-transform duration-500">
                   <Icon size={32} className="text-[#B6B09F] stroke-[1]" />
                 </div>

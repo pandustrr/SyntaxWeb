@@ -16,7 +16,7 @@ export default function PublicLayout({
   const [loading, setLoading] = useState(true);
 
   return (
-    <div className="relative h-screen bg-[#000000] selection:bg-[#B6B09F] selection:text-black overflow-hidden">
+    <div className="relative bg-[#000000] selection:bg-[#B6B09F] selection:text-black">
       <AnimatePresence mode="wait">
         {loading && <IntroLoader onComplete={() => setLoading(false)} />}
       </AnimatePresence>
@@ -28,7 +28,7 @@ export default function PublicLayout({
         initial={{ opacity: 0 }}
         animate={{ opacity: loading ? 0 : 1 }}
         transition={{ duration: 1 }}
-        className="relative z-10 h-full overflow-y-auto snap-y snap-mandatory scroll-smooth"
+        className="relative z-10"
       >
         <main>
           {children}

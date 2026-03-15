@@ -3,16 +3,21 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    @apply scroll-auto;
+  }
+
   :root {
     --primary: #050505;
-    --secondary: #121212;
-    --accent: #800000;
-    --accent-glow: #D4AF37;
-    --text: #FFFFFF;
+    --secondary: #0A0A0A;
+    --accent: #B6B09F;
+    --accent-glow: #B6B09F;
+    --text: #F2F2F2;
+    --text-muted: #666666;
   }
 
   body {
-    @apply bg-[#050505] text-[#FFFFFF] overflow-hidden;
+    @apply bg-[#050505] text-[#FFFFFF] overflow-x-hidden;
     font-feature-settings: "cv11", "ss01";
   }
 }
