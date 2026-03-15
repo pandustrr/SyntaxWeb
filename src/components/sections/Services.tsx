@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
+import SplitText from '@/components/animations/SplitText';
 import { 
   Code2, 
   Smartphone, 
@@ -27,17 +28,13 @@ export default function Services() {
     <section id="services" className="min-h-screen py-20 lg:py-32 bg-transparent relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 relative z-10 w-full">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12 mb-20 md:mb-32">
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1 }}
-            viewport={{ once: true }}
-          >
+          <div className="overflow-hidden">
             <h2 className="text-5xl md:text-9xl font-black text-black tracking-tighter uppercase font-['Teko'] leading-none">
-              {t.services.title} <br />
-              <span className="text-[#EEEEEE] hover:text-[#22D3EE] transition-colors duration-700">{t.services.subtitle}</span>
+              <SplitText text={t.services.title} className="text-black" />
+              <SplitText text={t.services.subtitle} className="text-[#EEEEEE]" />
             </h2>
-          </motion.div>
+          </div>
+
           <motion.p
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}

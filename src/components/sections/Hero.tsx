@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
 import { Sparkles, ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
+import DecryptedText from '@/components/animations/DecryptedText';
 
 const HeroScene = dynamic(() => import('@/components/ui/HeroScene'), { ssr: false });
 
@@ -56,21 +57,18 @@ export default function Hero() {
         >
           {/* Huge Heading Container - Optimized Spacing */}
           <div className="relative w-full flex items-center justify-center min-h-[30vh] md:min-h-[45vh] mt-4 md:mt-8">
-            {/* Huge SYNTAX Text */}
-            <motion.h1
-              variants={{
-                initial: { opacity: 0, scale: 0.9, letterSpacing: "-0.05em" },
-                animate: { 
-                    opacity: 1, 
-                    scale: 1, 
-                    letterSpacing: "-0.02em", 
-                    transition: { duration: 1.5, ease: [0.16, 1, 0.3, 1] } 
-                }
-              }}
-              className="text-[22vw] md:text-[18vw] font-bold text-black tracking-tighter uppercase font-['Teko'] leading-none relative z-10 select-none pointer-events-none"
-            >
-              SYNTAX
-            </motion.h1>
+            {/* Huge SYNTAX Text with Decrypted Animation */}
+            <h1 className="text-[22vw] md:text-[20vw] font-bold text-black tracking-tighter uppercase font-['Teko'] leading-none relative z-10 select-none pointer-events-none">
+              <DecryptedText 
+                text="SYNTAX" 
+                animateOn="view" 
+                revealDirection="center"
+                speed={70}
+                className="text-black"
+                encryptedClassName="text-[#22D3EE]/30"
+                sequential={true}
+              />
+            </h1>
           </div>
 
           {/* Subtext & CTA - Refined and Visible */}
@@ -84,8 +82,12 @@ export default function Hero() {
                 animate={{ width: 30 }}
                 className="h-[1px] bg-[#22D3EE]"
               />
-              <p className="text-[10px] md:text-xs font-bold text-black/60 uppercase tracking-[0.4em] leading-relaxed">
-                 Mengubah konsep berani menjadi <br className="hidden md:block" /> inovasi digital yang cerdas
+              <p className="text-[10px] md:text-sm font-bold text-black/60 uppercase tracking-[0.4em] leading-relaxed">
+                 <DecryptedText 
+                    text="Mengubah konsep berani menjadi invoasi digital" 
+                    animateOn="view"
+                    speed={40}
+                 />
               </p>
             </div>
             
@@ -104,6 +106,7 @@ export default function Hero() {
             </motion.a>
           </motion.div>
         </motion.div>
+
 
         {/* Scroll Indicator */}
         <motion.div
