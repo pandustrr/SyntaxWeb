@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { ExternalLink, Github } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { useState, useRef, useMemo } from 'react';
+import { motion, useScroll, useTransform, useSpring, AnimatePresence } from 'framer-motion';
+import { useLanguage } from '@/context/LanguageContext';
+import { ArrowUpRight, Plus, X } from 'lucide-react';
 
 interface Project {
   id: number;
@@ -11,208 +12,264 @@ interface Project {
   image: string;
   description: string;
   tech: string[];
-  link: string;
-  github: string;
+  client: string;
+  year: string;
+  role: string;
 }
 
 export default function Portfolio() {
-  const [activeFilter, setActiveFilter] = useState('all');
+  const { t } = useLanguage();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
-  const projects: Project[] = [
+  const projects: Project[] = useMemo(() => [
     {
       id: 1,
-      title: 'E-Commerce Platform',
-      category: 'web',
-      image: '/images/project-1.jpg',
-      description: 'Platform e-commerce modern dengan fitur lengkap',
-      tech: ['Next.js', 'Tailwind', 'Prisma'],
-      link: '#',
-      github: '#',
+      title: 'Global Retail CRM',
+      category: 'WEB APPLICATION',
+      image: 'https://images.unsplash.com/photo-1542744094-24638eff58bb?auto=format&fit=crop&q=80&w=1200',
+      description: 'Sistem manajemen hubungan pelanggan untuk skala enterprise dengan analytics real-time.',
+      tech: ['Next.js', 'PostgreSQL', 'Tailwind'],
+      client: 'Acme Corp',
+      year: '2024',
+      role: 'Full-stack Development',
     },
     {
       id: 2,
-      title: 'Corporate Website',
-      category: 'web',
-      image: '/images/project-2.jpg',
-      description: 'Website perusahaan dengan desain profesional',
-      tech: ['React', 'Node.js', 'MongoDB'],
-      link: '#',
-      github: '#',
+      title: 'Fintech Dashboard',
+      category: 'DASHBOARD',
+      image: 'https://images.unsplash.com/photo-1551288049-bbda38a5f85d?auto=format&fit=crop&q=80&w=1200',
+      description: 'Visualisasi data keuangan yang kompleks dengan tingkat keamanan perbankan.',
+      tech: ['React', 'D3.js', 'Node.js'],
+      client: 'FinBank Global',
+      year: '2023',
+      role: 'Frontend Engineering',
     },
     {
       id: 3,
-      title: 'Mobile App Landing',
-      category: 'landing',
-      image: '/images/project-3.jpg',
-      description: 'Landing page untuk aplikasi mobile',
-      tech: ['Next.js', 'Framer Motion'],
-      link: '#',
-      github: '#',
+      title: 'Premium Watch E-Store',
+      category: 'E-COMMERCE',
+      image: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&q=80&w=1200',
+      description: 'Pengalaman berbelanja online eksklusif untuk produk jam tangan mewah.',
+      tech: ['Next.js', 'Shopify', 'Framer'],
+      client: 'Luxury Time',
+      year: '2024',
+      role: 'UI/UX & Frontend',
     },
     {
       id: 4,
-      title: 'Dashboard Analytics',
-      category: 'dashboard',
-      image: '/images/project-4.jpg',
-      description: 'Dashboard analytics dengan visualisasi data',
-      tech: ['React', 'Chart.js', 'Express'],
-      link: '#',
-      github: '#',
+      title: 'Eco-System Landing',
+      category: 'LANDING PAGE',
+      image: 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=1200',
+      description: 'Halaman kampanye lingkungan dengan story-telling visual yang imersif.',
+      tech: ['Next.js', 'Three.js', 'Tailwind'],
+      client: 'Green Earth',
+      year: '2023',
+      role: 'Creative Development',
     },
     {
       id: 5,
-      title: 'Portfolio Personal',
-      category: 'landing',
-      image: '/images/project-5.jpg',
-      description: 'Portfolio website untuk freelancer',
-      tech: ['Next.js', 'Tailwind'],
-      link: '#',
-      github: '#',
-    },
-    {
-      id: 6,
-      title: 'Admin Panel',
-      category: 'dashboard',
-      image: '/images/project-6.jpg',
-      description: 'Admin panel dengan fitur CRUD lengkap',
-      tech: ['React', 'Material UI', 'Firebase'],
-      link: '#',
-      github: '#',
-    },
-  ];
+      title: 'SaaS Builder Pro',
+      category: 'SAAS PLATFORM',
+      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1200',
+      description: 'Alat otomatisasi bisnis yang powerful untuk startup dan tim modern.',
+      tech: ['React', 'Firebase', 'Recoil'],
+      client: 'StartupLab',
+      year: '2024',
+      role: 'Lead Implementation',
+    }
+  ], []);
 
-  const filters = [
-    { id: 'all', label: 'Semua' },
-    { id: 'web', label: 'Website' },
-    { id: 'landing', label: 'Landing Page' },
-    { id: 'dashboard', label: 'Dashboard' },
-  ];
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"]
+  });
 
-  const filteredProjects = activeFilter === 'all'
-    ? projects
-    : projects.filter(p => p.category === activeFilter);
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
+
+  const radius = 1000;
+  const totalProjects = projects.length;
+  const angleStep = 360 / totalProjects;
 
   return (
-    <section id="portfolio" className="min-h-screen flex items-center py-32 bg-transparent relative overflow-hidden snap-start">
-      <div className="max-w-7xl mx-auto px-6 w-full">
-        {/* Header */}
-        <motion.div
-          initial="initial"
-          whileInView="animate"
-          viewport={{ once: true }}
-          transition={{ staggerChildren: 0.1 }}
-          className="text-start flex flex-col md:flex-row md:items-end justify-between mb-24 gap-8"
-        >
-          <div>
-            <div className="overflow-hidden mb-6">
-              <motion.h2
-                variants={{
-                  initial: { y: "110%" },
-                  animate: { y: 0, transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] } }
-                }}
-                className="text-5xl md:text-8xl font-black text-[#F2F2F2] tracking-tighter"
-              >
-                Selected <span className="text-[#B6B09F]">Artifacts</span>
-              </motion.h2>
-            </div>
+    <section 
+      ref={containerRef} 
+      id="portfolio" 
+      className="relative h-[400vh] bg-white overflow-visible"
+    >
+      <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center">
+        {/* Title Layer */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+          <motion.h2 
+            style={{ 
+              opacity: useTransform(smoothProgress, [0, 0.1, 0.9, 1], [0, 0.05, 0.05, 0]),
+              scale: useTransform(smoothProgress, [0, 1], [0.8, 1.2])
+            }}
+            className="text-[15vw] lg:text-[20vw] font-black text-black uppercase tracking-tighter font-['Teko'] whitespace-nowrap"
+          >
+            P O R T F O L I O
+          </motion.h2>
+        </div>
 
-            <div className="overflow-hidden">
-              <motion.p
-                variants={{
-                  initial: { y: "110%" },
-                  animate: { y: 0, transition: { duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] } }
-                }}
-                className="text-lg text-gray-500 max-w-xl font-medium tracking-tight"
-              >
-                A curated collection of our most impactful digital constructions and architectural experiments.
-              </motion.p>
-            </div>
-          </div>
-
-          {/* Filter */}
-          <div className="flex flex-wrap gap-6 border-b border-white/5 pb-4">
-            {filters.map(filter => (
-              <button
-                key={filter.id}
-                onClick={() => setActiveFilter(filter.id)}
-                className={`text-[10px] font-black uppercase tracking-[0.4em] transition-all duration-700 pb-2 border-b-2
-                  ${activeFilter === filter.id
-                    ? 'text-[#B6B09F] border-[#B6B09F]'
-                    : 'text-gray-700 border-transparent hover:text-[#F2F2F2]'
-                  }`}
-              >
-                {filter.label}
-              </button>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border-t border-white/5">
-          {filteredProjects.map((project, index) => (
-            <motion.div
-              key={project.id}
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 1.2, delay: index * 0.1 }}
-              viewport={{ once: true }}
-              className="group relative bg-[#000000] border-r border-b border-white/5 overflow-hidden transition-all duration-700 aspect-square"
-            >
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 1.2, ease: "circOut" }}
-                className="absolute inset-0 opacity-40 group-hover:opacity-100 transition-opacity duration-1000"
-              >
-                <div className="absolute inset-0 bg-[linear-gradient(45deg,#B6B09F08_25%,transparent_25%,transparent_50%,#B6B09F08_50%,#B6B09F08_75%,transparent_75%,transparent)] bg-[size:24px_24px]" />
-                <div className="absolute inset-0 bg-[#000000]/60 group-hover:bg-[#000000]/20 transition-colors duration-700" />
-              </motion.div>
-
-              {/* Content Overlay */}
-              <div className="absolute inset-0 p-12 flex flex-col justify-end z-10">
-                <div className="overflow-hidden mb-4">
-                  <motion.div
-                    initial={{ y: "100%" }}
-                    whileInView={{ y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.2 }}
-                    className="flex flex-wrap gap-4"
-                  >
-                    {project.tech.map((tech, idx) => (
-                      <span key={idx} className="text-[9px] font-black uppercase tracking-[0.3em] text-[#B6B09F]">
-                        {tech}
-                      </span>
-                    ))}
-                  </motion.div>
-                </div>
-
-                <div className="overflow-hidden mb-8">
-                  <motion.h3
-                    initial={{ y: "100%" }}
-                    whileInView={{ y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.3 }}
-                    className="text-3xl md:text-4xl font-black text-[#F2F2F2] tracking-tighter uppercase leading-[0.9]"
-                  >
-                    {project.title}
-                  </motion.h3>
-                </div>
-
+        {/* 3D Carousel */}
+        <div className="relative w-full h-full flex items-center justify-center perspective-[3000px]">
+          <motion.div 
+            style={{ 
+              rotateY: useTransform(smoothProgress, [0, 1], [0, -360]),
+            }}
+            className="relative w-full h-full flex items-center justify-center transform-style-3d"
+          >
+            {projects.map((project, index) => {
+              const angle = index * angleStep;
+              return (
                 <motion.div
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  transition={{ duration: 0.8, delay: 0.6 }}
-                  className="flex gap-8 group/link"
+                  key={project.id}
+                  style={{
+                    transform: `rotateY(${angle}deg) translateZ(${radius}px)`,
+                  }}
+                  className="absolute w-[300px] md:w-[480px] aspect-[4/5] bg-white border border-black/5 overflow-hidden group cursor-pointer shadow-2xl shadow-black/5"
+                  onClick={() => setSelectedProject(project)}
                 >
-                  <a href={project.link} className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-white hover:text-[#B6B09F] transition-all duration-500">
-                    Explore <ExternalLink size={12} className="group-hover/link:translate-x-1 group-hover/link:-translate-y-1 transition-transform" />
-                  </a>
+                  <div className="relative w-full h-full transition-all duration-1000">
+                    <img 
+                      src={project.image} 
+                      alt={project.title} 
+                      className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-1000"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent opacity-90" />
+                    
+                    <div className="absolute bottom-0 left-0 p-10 w-full translate-y-4 group-hover:translate-y-0 transition-transform duration-700">
+                      <p className="text-[10px] font-bold text-black/40 group-hover:text-[#22D3EE] tracking-[0.4em] mb-4 uppercase transition-colors">
+                        {project.category}
+                      </p>
+                      <h3 className="text-4xl md:text-5xl font-black text-black uppercase tracking-tighter leading-none mb-6 font-['Teko']">
+                        {project.title}
+                      </h3>
+                      <div className="w-12 h-12 rounded-full border border-black/10 flex items-center justify-center group-hover:bg-[#22D3EE] group-hover:border-[#22D3EE] group-hover:text-black transition-all duration-700 text-black">
+                        <Plus size={24} />
+                      </div>
+                    </div>
+                  </div>
                 </motion.div>
-              </div>
+              );
+            })}
+          </motion.div>
+        </div>
 
-              {/* Architectural Frame - very subtle */}
-              <div className="absolute inset-[2px] border border-[#B6B09F]/0 group-hover:border-[#B6B09F]/20 transition-all duration-1000 pointer-events-none" />
-            </motion.div>
-          ))}
+        {/* Scroll Bar */}
+        <div className="absolute bottom-24 left-1/2 -translate-x-1/2 flex flex-col items-center z-20">
+           <span className="text-[10px] font-black text-black/10 tracking-[0.5em] uppercase mb-4">MAPPING COLLECTION</span>
+           <div className="w-[200px] h-[1px] bg-black/5 relative overflow-hidden">
+             <motion.div 
+               style={{ scaleX: smoothProgress }}
+               className="absolute inset-0 bg-[#22D3EE] origin-left shadow-[0_0_20px_rgba(34,211,238,0.3)]"
+             />
+           </div>
         </div>
       </div>
+
+      <AnimatePresence>
+        {selectedProject && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-white overflow-y-auto no-scrollbar"
+          >
+            <motion.button 
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              onClick={() => setSelectedProject(null)}
+              className="fixed top-8 right-8 z-[110] w-14 h-14 bg-black text-white flex items-center justify-center rounded-full hover:bg-[#22D3EE] hover:text-black transition-all shadow-2xl"
+            >
+              <X size={28} />
+            </motion.button>
+
+            <div className="min-h-screen w-full flex flex-col">
+              <motion.div 
+                initial={{ scale: 1.1, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 1.5 }}
+                className="w-full h-[70vh] relative overflow-hidden"
+              >
+                <img src={selectedProject.image} className="w-full h-full object-cover" alt="" />
+                <div className="absolute inset-0 bg-gradient-to-t from-white to-transparent" />
+                <div className="absolute bottom-16 left-0 w-full px-6 lg:px-24">
+                  <motion.h1 
+                    initial={{ y: 50, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.5 }}
+                    className="text-7xl md:text-[14rem] font-black text-black uppercase tracking-tighter leading-none font-['Teko']"
+                  >
+                    {selectedProject.title}
+                  </motion.h1>
+                </div>
+              </motion.div>
+
+              <div className="px-6 lg:px-24 py-32 grid grid-cols-1 md:grid-cols-4 gap-16 border-b border-black/5 bg-white">
+                <div className="space-y-4">
+                  <p className="text-[10px] font-black text-black/20 uppercase tracking-[0.5em]">Project</p>
+                  <p className="text-xl font-black text-black uppercase font-['Teko']">{selectedProject.title}</p>
+                </div>
+                <div className="space-y-4">
+                  <p className="text-[10px] font-black text-black/20 uppercase tracking-[0.5em]">Role</p>
+                  <p className="text-xl font-black text-black uppercase font-['Teko']">{selectedProject.role}</p>
+                </div>
+                <div className="space-y-4">
+                  <p className="text-[10px] font-black text-black/20 uppercase tracking-[0.5em]">Year</p>
+                  <p className="text-xl font-black text-black uppercase font-['Teko']">{selectedProject.year}</p>
+                </div>
+                <div className="space-y-4">
+                  <p className="text-[10px] font-black text-black/20 uppercase tracking-[0.5em]">Tech</p>
+                  <div className="flex flex-wrap gap-3">
+                    {selectedProject.tech.map(t => (
+                      <span key={t} className="px-4 py-2 border border-black/10 text-[10px] font-black text-black uppercase hover:border-[#22D3EE] hover:text-[#22D3EE] transition-colors">{t}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+               <div className="px-6 lg:px-24 py-32 flex flex-col lg:flex-row gap-32 items-start bg-white">
+                <div className="lg:w-1/2">
+                   <h2 className="text-5xl font-black text-black uppercase tracking-tighter mb-10 font-['Teko']">VISION & <span className="text-[#EEEEEE]">EXECUTION</span></h2>
+                   <p className="text-xl text-slate-500 leading-relaxed font-medium">
+                     {selectedProject.description}
+                     <br /><br />
+                     Menciptakan standar baru dalam desain antarmuka melalui rekayasa modern yang mengutamakan performa tanpa kompromi. Setiap elemen visual adalah hasil dari eksplorasi arsitektural yang mendalam.
+                   </p>
+                </div>
+                <div className="lg:w-1/2 w-full aspect-video bg-black/[0.02] border border-black/5 flex items-center justify-center group overflow-hidden relative">
+                   <img src={selectedProject.image} className="w-full h-full object-cover opacity-20 group-hover:opacity-40 transition-opacity" alt="" />
+                   <div className="absolute flex flex-col items-center">
+                     <div className="w-20 h-20 rounded-full border border-black/10 flex items-center justify-center mb-6 group-hover:bg-[#22D3EE] group-hover:text-black transition-all">
+                       <ArrowUpRight size={32} className="text-black" />
+                     </div>
+                     <span className="text-[10px] font-black tracking-[0.5em] text-black/50 group-hover:text-black">VISIT ARCHIVE</span>
+                   </div>
+                </div>
+              </div>
+
+              <div className="px-6 lg:px-24 py-32 mb-20 bg-white text-center">
+                <button 
+                  onClick={() => setSelectedProject(null)}
+                  className="text-[10px] font-black text-black/20 uppercase tracking-[1em] hover:text-[#22D3EE] transition-all hover:tracking-[1.5em]"
+                >
+                  RETURN TO SELECTION
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <style jsx global>{`
+        .transform-style-3d { transform-style: preserve-3d; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+      `}</style>
     </section>
   );
 }
