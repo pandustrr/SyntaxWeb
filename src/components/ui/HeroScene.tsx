@@ -1,31 +1,23 @@
 /// <reference types="@react-three/fiber" />
 'use client';
 
-import { Canvas } from '@react-three/fiber';
 import { Suspense } from 'react';
-import Object3D from './Object';
-import * as THREE from 'three';
+import Scene from './Scene';
 
-export default function HeroScene() {
+export default function HeroScene({
+  activeProject = null,
+  isFocused = false,
+  progress = 0
+}: {
+  activeProject?: string | null,
+  isFocused?: boolean,
+  progress?: number
+}) {
   return (
-    <div className="w-screen h-screen fixed inset-0 z-0">
-      <Canvas
-        camera={{ position: [0, 0, 5], fov: 35 }}
-        style={{ width: '100vw', height: '100vh', pointerEvents: 'none' }}
-        dpr={Math.min(window?.devicePixelRatio ?? 1, 1.5)}
-        gl={{ 
-          antialias: false,
-          alpha: true,
-          powerPreference: "high-performance"
-        }}
-        shadows={false}
-      >
-        <Suspense fallback={null}>
-          <ambientLight intensity={0.6} />
-          <directionalLight position={[5, 8, 5]} intensity={1} />
-          <Object3D />
-        </Suspense>
-      </Canvas>
+    <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+      <Suspense fallback={null}>
+        <Scene activeProject={activeProject} isFocused={isFocused} progress={progress} />
+      </Suspense>
     </div>
   );
 }
