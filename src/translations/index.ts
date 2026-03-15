@@ -1,0 +1,292 @@
+export type Language = 'id' | 'en';
+
+export const translations = {
+  id: {
+    nav: {
+      contact: 'Kontak',
+      home: 'Beranda',
+      pricelist: 'Daftar Harga',
+      partners: 'Partner',
+    },
+    pricelist: {
+      title: 'Investasi',
+      subtitle: 'Digital',
+      description: 'Dari Konsep Menuju Inovasi Cerdas. Pilih paket yang sesuai dengan kebutuhan bisnis Anda.',
+      plans: [
+        { 
+          name: 'Starter Website', 
+          price: 'Rp 999.000', 
+          desc: 'Cocok untuk UMKM atau personal brand yang baru mulai online.',
+          pages: ['Landing Page', 'Home', 'About', 'Layanan', 'Contact'],
+          features: ['Website statis (fast loading)', 'Responsive design', 'Admin panel sederhana', 'Manajemen akun admin'] 
+        },
+        { 
+          name: 'Business Website', 
+          price: 'Mulai Rp 1.399.000', 
+          desc: 'Cocok untuk bisnis yang ingin website lebih profesional dan dinamis.',
+          pages: ['Home', 'About', 'Layanan', 'Contact'],
+          features: ['Admin panel management', 'CRUD hero background', 'Responsive design', 'Struktur website dinamis'] 
+        },
+        { 
+          name: 'Professional', 
+          price: 'Rp 2.499.000', 
+          desc: 'Cocok untuk perusahaan yang membutuhkan website lengkap dan fleksibel.',
+          pages: ['Home', 'About', 'Layanan', 'Contact', 'Partner / Portfolio'],
+          features: ['Admin panel full control', 'CRUD semua konten', 'Manajemen halaman', 'Sistem website scalable'] 
+        },
+        { 
+          name: 'AI Intelligent', 
+          price: 'Mulai Rp 3.999.000', 
+          desc: 'Website dengan fitur AI untuk interaksi pelanggan dan automasi bisnis.',
+          pages: ['All Professional Features'],
+          features: ['Integrasi AI Chatbot', 'AI Auto Customer Response', 'Automasi interaksi', 'Integrasi database & API'] 
+        }
+      ],
+      addons: {
+        title: 'Add-On Features',
+        items: [
+          { name: 'Halaman tambahan', price: 'Rp 200.000' },
+          { name: 'Partner / Portofolio page', price: 'Rp 300.000' },
+          { name: 'Multi bahasa', price: 'Rp 800.000' },
+          { name: 'Maintenance website', price: 'Rp 500.000 / bln' },
+          { name: 'Setup hosting & domain', price: 'Rp 500.000' },
+          { name: 'Custom fitur / sistem', price: 'By Request' }
+        ]
+      }
+    },
+    hero: {
+      tagline: 'From Concept to Intelligent Innovation',
+      heading1: 'MERANCANG',
+      heading2: 'WARISAN',
+      heading3: 'DIGITAL',
+      subtext: 'Mengubah konsep berani menjadi inovasi digital yang cerdas. Kami merancang sistem yang menggabungkan rekayasa modern dengan AI masa depan.',
+      cta: 'Lihat Karya',
+      stats: {
+        systems: 'Sistem',
+        uptime: 'Waktu Aktif',
+      },
+    },
+    about: {
+      heading: 'Konsep ke',
+      subheading: 'Inovasi',
+      description: 'Kami percaya setiap ide berani layak mendapatkan eksekusi yang cerdas. Di Syntax Web, kami mengambil konsep awal Anda dan mengembangkannya menjadi ekosistem digital yang inovatif, memanfaatkan AI mutakhir dan rekayasa modern untuk membangun solusi yang mendorong kemajuan nyata.',
+      intelligent: {
+        title: 'Cerdas',
+        desc: 'Sistem bertenaga AI yang dirancang untuk efisiensi puncak.',
+      },
+      evolution: {
+        title: 'Evolusi',
+        desc: 'Platform terukur yang tumbuh bersama bisnis Anda.',
+      },
+    },
+    services: {
+      title: 'Solusi',
+      subtitle: 'Arsitektural',
+      description: 'Rekayasa generasi baru untuk brand ambisius yang ingin mendominasi lanskap digital.',
+      list: {
+        web: {
+          title: 'AI-Enhanced Dev',
+          desc: 'Membangun ekosistem web modern yang terintegrasi dengan teknologi AI untuk efisiensi maksimal.',
+        },
+        responsive: {
+          title: 'Desain Responsif',
+          desc: 'Pengalaman pengguna yang mulus di semua perangkat dan ukuran layar.',
+        },
+        design: {
+          title: 'Desain UI/UX',
+          desc: 'Desain visual yang memukau dan pengalaman pengguna yang intuitif untuk mendorong konversi.',
+        },
+        performance: {
+          title: 'Optimasi Performa',
+          desc: 'Kecepatan pemuatan yang dioptimalkan dan kode efisien untuk Core Web Vitals yang sempurna.',
+        },
+        security: {
+          title: 'Keamanan Siber',
+          desc: 'Implementasi standar keamanan tertinggi untuk melindungi data bisnis Anda.',
+        },
+        intelligent: {
+          title: 'Sistem Cerdas',
+          desc: 'Otomatisasi bisnis melalui solusi digital cerdas yang dirancang untuk pertumbuhan eksponensial.',
+        },
+      },
+    },
+    portfolio: {
+      title: 'Artefak',
+      subtitle: 'Pilihan',
+      description: 'Koleksi kurasi dari konstruksi digital paling berdampak dan eksperimen arsitektural kami.',
+      filters: {
+        all: 'SEMUA KARYA',
+        web: 'WEBSITE',
+        landing: 'LANDING PAGE',
+        dashboard: 'DASHBOARD',
+      },
+      viewAll: 'Lihat Semua Arsip',
+      explore: 'Eksplorasi',
+    },
+    contact: {
+      heading: 'Mari',
+      subheading: 'Membangun',
+      description: 'Siap untuk meningkatkan kehadiran digital Anda? Kami tersedia untuk kemitraan khusus mulai MMXXIV.',
+      emailLabel: 'Surat Elektronik',
+      form: {
+        nameLabel: 'Nama / Perusahaan',
+        namePlaceholder: 'contoh: PT Maju Jaya',
+        messageLabel: 'Detail Pertanyaan',
+        messagePlaceholder: 'Jelaskan visi Anda',
+        submit: 'Mulai Proyek',
+      },
+    },
+    footer: {
+      description: 'Arsitektur digital kustom untuk perusahaan dan brand yang berpikiran maju. Keunggulan rekayasa di setiap piksel.',
+      navigation: 'Navigasi',
+      architecture: 'Arsitektur',
+      rights: 'HAK CIPTA DILINDUNGI.',
+      terms: 'Ketentuan Kerja',
+      privacy: 'Privasi',
+    },
+  },
+  en: {
+    nav: {
+      contact: 'Contact',
+      home: 'Home',
+      pricelist: 'Pricelist',
+      partners: 'Partners',
+    },
+    pricelist: {
+      title: 'Digital',
+      subtitle: 'Investment',
+      description: 'From Concept to Intelligent Innovation. Choose a plan that fits your business needs.',
+      plans: [
+        { 
+          name: 'Starter Website', 
+          price: 'Rp 999.000', 
+          desc: 'Perfect for SMEs or personal brands just starting online.',
+          pages: ['Landing Page', 'Home', 'About', 'Services', 'Contact'],
+          features: ['Static website (fast loading)', 'Responsive design', 'Simple admin panel', 'Admin account management'] 
+        },
+        { 
+          name: 'Business Website', 
+          price: 'Starts Rp 1.399.000', 
+          desc: 'For businesses wanting a professional and dynamic website.',
+          pages: ['Home', 'About', 'Services', 'Contact'],
+          features: ['Admin panel management', 'CRUD hero background', 'Responsive design', 'Dynamic website structure'] 
+        },
+        { 
+          name: 'Professional', 
+          price: 'Rp 2.499.000', 
+          desc: 'For companies needing a complete and flexible website.',
+          pages: ['Home', 'About', 'Services', 'Contact', 'Partner / Portfolio'],
+          features: ['Full control admin panel', 'CRUD all content', 'Page management', 'Scalable website system'] 
+        },
+        { 
+          name: 'AI Intelligent', 
+          price: 'Starts Rp 3.999.000', 
+          desc: 'AI-powered website for customer interaction and business automation.',
+          pages: ['All Professional Features'],
+          features: ['AI Chatbot integration', 'AI Auto Customer Response', 'User interaction automation', 'Database & API integration'] 
+        }
+      ],
+      addons: {
+        title: 'Add-On Features',
+        items: [
+          { name: 'Additional page', price: 'Rp 200.000' },
+          { name: 'Partner / Portfolio page', price: 'Rp 300.000' },
+          { name: 'Multi language', price: 'Rp 800.000' },
+          { name: 'Website maintenance', price: 'Rp 500.000 / mo' },
+          { name: 'Hosting & domain setup', price: 'Rp 500.000' },
+          { name: 'Custom features / system', price: 'By Request' }
+        ]
+      }
+    },
+    hero: {
+      tagline: 'From Concept to Intelligent Innovation',
+      heading1: 'CRAFTING',
+      heading2: 'DIGITAL',
+      heading3: 'LEGACIES',
+      subtext: 'Turning bold concepts into intelligent digital innovations. We architect systems that combine modern engineering with future-ready AI.',
+      cta: 'View Work',
+      stats: {
+        systems: 'Systems',
+        uptime: 'Up-time',
+      },
+    },
+    about: {
+      heading: 'Concept to',
+      subheading: 'Innovation',
+      description: 'We believe every bold idea deserves an intelligent execution. At Syntax Web, we take your initial concepts and evolve them into innovative digital ecosystems, leveraging cutting-edge AI and modern engineering to build solutions that drive real progress.',
+      intelligent: {
+        title: 'Intelligent',
+        desc: 'AI-powered systems engineered for peak efficiency.',
+      },
+      evolution: {
+        title: 'Evolution',
+        desc: 'Scalable platforms that grow alongside your business.',
+      },
+    },
+    services: {
+      title: 'Architectural',
+      subtitle: 'Solutions',
+      description: 'Next-generation engineering for ambitious brands looking to dominate the digital landscape.',
+      list: {
+        web: {
+          title: 'AI-Enhanced Dev',
+          desc: 'Building modern web ecosystems integrated with AI technology for maximum efficiency.',
+        },
+        responsive: {
+          title: 'Responsive Design',
+          desc: 'Seamless user experience across all devices and screen sizes.',
+        },
+        design: {
+          title: 'UI/UX Design',
+          desc: 'Stunning visual designs and intuitive user experiences to drive conversion.',
+        },
+        performance: {
+          title: 'Performance Optimization',
+          desc: 'Optimized loading speeds and efficient code for perfect Core Web Vitals.',
+        },
+        security: {
+          title: 'Cyber Security',
+          desc: 'Implementation of highest security standards to protect your business data.',
+        },
+        intelligent: {
+          title: 'Intelligent Systems',
+          desc: 'Business automation through smart digital solutions designed for exponential growth.',
+        },
+      },
+    },
+    portfolio: {
+      title: 'Selected',
+      subtitle: 'Artifacts',
+      description: 'A curated collection of our most impactful digital constructions and architectural experiments.',
+      filters: {
+        all: 'ALL WORKS',
+        web: 'WEBSITE',
+        landing: 'LANDING PAGE',
+        dashboard: 'DASHBOARD',
+      },
+      viewAll: 'View Full Archive',
+      explore: 'Explore',
+    },
+    contact: {
+      heading: "Let's",
+      subheading: 'Construct',
+      description: 'Ready to elevate your digital presence? We are available for specialized partnerships starting MMXXIV.',
+      emailLabel: 'Electronic Mail',
+      form: {
+        nameLabel: 'Name / Enterprise',
+        namePlaceholder: 'e.g. Acme Corp',
+        messageLabel: 'Inquiry Details',
+        messagePlaceholder: 'Describe your vision',
+        submit: 'Assemble Project',
+      },
+    },
+    footer: {
+      description: 'Bespoke digital architecture for enterprises and forward-thinking brands. Engineering excellence at every pixel.',
+      navigation: 'Navigation',
+      architecture: 'Architecture',
+      rights: 'ALL RIGHTS RESERVED.',
+      terms: 'Terms of Work',
+      privacy: 'Privacy',
+    },
+  },
+};

@@ -53,7 +53,7 @@ export default function AdminSidebar({ onToggle }: SidebarProps) {
       {/* Toggle Button */}
       <button
         onClick={toggleSidebar}
-        className="absolute -right-3 top-24 bg-blue-600 text-white p-1 rounded-full shadow-lg z-50 hover:scale-110 active:scale-95 transition-all"
+        className="absolute -right-3 top-24 bg-[#3B82F6] text-white p-1 rounded-full shadow-lg z-50 hover:scale-110 active:scale-95 transition-all"
       >
         {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
       </button>
@@ -61,7 +61,7 @@ export default function AdminSidebar({ onToggle }: SidebarProps) {
       {/* Brand */}
       <div className="h-20 flex items-center px-6 border-b border-gray-100 dark:border-gray-800 overflow-hidden whitespace-nowrap">
         <Link href="/admin" className="flex items-center gap-2 group">
-          <div className="min-w-[32px] w-8 h-8 bg-gradient-to-tr from-blue-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold group-hover:scale-110 transition-transform text-sm">
+          <div className="min-w-[32px] w-8 h-8 bg-gradient-to-tr from-[#3B82F6] to-[#22D3EE] rounded-lg flex items-center justify-center text-white font-bold group-hover:scale-110 transition-transform text-sm">
             S
           </div>
           {!isCollapsed && (
@@ -85,8 +85,8 @@ export default function AdminSidebar({ onToggle }: SidebarProps) {
               title={isCollapsed ? item.name : ''}
               className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 overflow-hidden whitespace-nowrap ${
                 isActive
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-200 dark:shadow-none font-medium'
-                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-blue-600 dark:hover:text-blue-400'
+                  ? 'bg-[#3B82F6] text-white shadow-lg shadow-blue-200 dark:shadow-none font-medium'
+                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-[#3B82F6] dark:hover:text-[#22D3EE]'
               }`}
             >
               <div className="min-w-[20px]">

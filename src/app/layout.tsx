@@ -2,11 +2,12 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'SyntaxWeb - Web Development Solutions',
-  description: 'Solusi web development profesional untuk bisnis Anda',
+  title: 'Syntax Web | From Concept to Intelligent Innovation',
+  description: 'Transforming ideas into intelligent digital innovations. Expert web development powered by modern AI and architectural excellence.',
 };
 
 import { ThemeProvider } from '@/components/ThemeProvider';
+import { LanguageProvider } from '@/context/LanguageContext';
 
 export default function RootLayout({
   children,
@@ -15,17 +16,21 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id" suppressHydrationWarning>
-      <body className="antialiased">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
+      <head>
+        <link href="https://fonts.googleapis.com/css2?family=Teko:wght@300..700&family=IBM+Plex+Sans:wght@100..700&display=swap" rel="stylesheet" />
+      </head>
+      <body className="antialiased font-['IBM_Plex_Sans'] relative">
+        <LanguageProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </LanguageProvider>
       </body>
     </html>
   );
 }
-

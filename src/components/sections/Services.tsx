@@ -1,111 +1,82 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Code, Smartphone, Palette, Zap, Shield, Headphones } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
+import SplitText from '@/components/animations/SplitText';
+import {
+  Code2,
+  Smartphone,
+  Layout,
+  Zap,
+  ShieldCheck,
+  Cpu
+} from 'lucide-react';
 
 export default function Services() {
+  const { t } = useLanguage();
+
   const services = [
-    {
-      icon: Code,
-      title: 'Web Development',
-      description: 'Pembuatan website custom dengan teknologi terkini seperti Next.js, React, dan Node.js.',
-      color: 'from-blue-500 to-blue-600',
-    },
-    {
-      icon: Smartphone,
-      title: 'Responsive Design',
-      description: 'Website yang tampil sempurna di semua perangkat, dari desktop hingga smartphone.',
-      color: 'from-purple-500 to-purple-600',
-    },
-    {
-      icon: Palette,
-      title: 'UI/UX Design',
-      description: 'Desain antarmuka yang menarik dan pengalaman pengguna yang intuitif.',
-      color: 'from-pink-500 to-pink-600',
-    },
-    {
-      icon: Zap,
-      title: 'Performance Optimization',
-      description: 'Website yang cepat dan optimal dengan performa terbaik di kelasnya.',
-      color: 'from-yellow-500 to-yellow-600',
-    },
-    {
-      icon: Shield,
-      title: 'Security',
-      description: 'Keamanan website terjamin dengan implementasi best practices terkini.',
-      color: 'from-green-500 to-green-600',
-    },
-    {
-      icon: Headphones,
-      title: 'Support & Maintenance',
-      description: 'Dukungan teknis dan maintenance berkelanjutan untuk website Anda.',
-      color: 'from-red-500 to-red-600',
-    },
+    { icon: Code2, title: t.services.list.web.title, desc: t.services.list.web.desc },
+    { icon: Smartphone, title: t.services.list.responsive.title, desc: t.services.list.responsive.desc },
+    { icon: Layout, title: t.services.list.design.title, desc: t.services.list.design.desc },
+    { icon: Zap, title: t.services.list.performance.title, desc: t.services.list.performance.desc },
+    { icon: ShieldCheck, title: t.services.list.security.title, desc: t.services.list.security.desc },
+    { icon: Cpu, title: t.services.list.intelligent.title, desc: t.services.list.intelligent.desc },
   ];
 
   return (
-    <section id="services" className="h-screen flex items-center py-32 bg-transparent relative overflow-hidden snap-start">
+    <section id="services" className="min-h-screen py-20 lg:py-32 bg-transparent relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 relative z-10 w-full">
-        <motion.div
-          initial="initial"
-          whileInView="animate"
-          viewport={{ once: true }}
-          transition={{ staggerChildren: 0.1 }}
-          className="text-start mb-24"
-        >
-          <div className="overflow-hidden mb-6">
-            <motion.h2
-              variants={{
-                initial: { y: "110%" },
-                animate: { y: 0, transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] } }
-              }}
-              className="text-5xl md:text-7xl font-black text-[#F2F2F2] leading-tight tracking-tighter"
-            >
-              Architectural <span className="text-[#B6B09F]">Solutions</span>
-            </motion.h2>
-          </div>
-
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12 mb-20 md:mb-32">
           <div className="overflow-hidden">
-            <motion.p
-              variants={{
-                initial: { y: "110%" },
-                animate: { y: 0, transition: { duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] } }
-              }}
-              className="text-lg text-[#B6B09F]/60 max-w-2xl font-medium tracking-tight"
-            >
-              Next-generation engineering for ambitious brands looking to dominate the digital landscape.
-            </motion.p>
+            <h2 className="text-5xl md:text-9xl font-black text-foreground tracking-tighter uppercase font-['Teko'] leading-none">
+              <SplitText text={t.services.title} className="text-foreground" />
+              <SplitText text={t.services.subtitle} className="text-foreground/10" />
+            </h2>
           </div>
-        </motion.div>
 
-        {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0">
-          {services.map((service, index) => {
-            const Icon = service.icon;
-            return (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="group p-12 bg-transparent border border-white/5 hover:bg-white/[0.02] transition-all duration-700 flex flex-col items-start relative overflow-hidden"
-              >
-                {/* Hover Glow Effect */}
-                <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#B6B09F]/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+          <motion.p
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="text-foreground/60 text-base md:text-lg max-w-sm font-medium tracking-tight leading-relaxed"
+          >
+            {t.services.description}
+          </motion.p>
+        </div>
 
-                <div className="w-12 h-12 flex items-center justify-center mb-10 group-hover:scale-110 transition-transform duration-500">
-                  <Icon size={32} className="text-[#B6B09F] stroke-[1]" />
-                </div>
-                <h3 className="text-xl font-black text-[#F2F2F2] mb-6 tracking-tight uppercase">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-4 md:gap-x-12 gap-y-12 md:gap-y-24">
+          {services.map((service, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: index * 0.1 }}
+              viewport={{ once: true }}
+              className="group relative flex flex-col items-start gap-4 md:gap-8"
+            >
+              <div className="w-10 h-10 md:w-14 md:h-14 border border-border flex items-center justify-center text-foreground bg-foreground/[0.03] group-hover:bg-[#22D3EE] group-hover:text-black group-hover:border-[#22D3EE] transition-all duration-500 rounded-lg">
+                <service.icon size={20} strokeWidth={1.5} className="md:w-7 md:h-7" />
+              </div>
+              <div className="space-y-2 md:space-y-4">
+                <h3 className="text-lg md:text-2xl font-black text-foreground uppercase tracking-tighter font-['Teko'] group-hover:text-[#22D3EE] transition-colors leading-tight">
                   {service.title}
                 </h3>
-                <p className="text-gray-500 leading-relaxed font-medium text-sm">
-                  {service.description}
+                <p className="text-foreground/60 text-[10px] md:text-sm font-medium leading-relaxed max-w-full">
+                  {service.desc}
                 </p>
-              </motion.div>
-            );
-          })}
+
+                <div className="mt-8 flex items-center gap-2 text-[10px] font-black text-[#22D3EE] uppercase tracking-wider opacity-0 group-hover:opacity-100 translate-x-[-10px] group-hover:translate-x-0 transition-all duration-300">
+                  Pelajari Lebih Lanjut <Zap size={10} className="fill-[#22D3EE]" />
+                </div>
+              </div>
+              {/* Decorative Index */}
+              <div className="absolute -top-6 -right-2 text-6xl font-black text-foreground/[0.03] group-hover:text-[#22D3EE]/10 transition-colors uppercase font-['Teko']">
+                0{index + 1}
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>

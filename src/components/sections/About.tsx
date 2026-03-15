@@ -1,29 +1,41 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useLanguage } from '@/context/LanguageContext';
+import dynamic from 'next/dynamic';
+import SplitText from '@/components/animations/SplitText';
+import TrueFocus from '@/components/animations/TrueFocus';
+
+const TeamScene = dynamic(() => import('@/components/ui/TeamScene'), { ssr: false });
 
 export default function About() {
+    const { t } = useLanguage();
+
     return (
-        <section id="about" className="min-h-screen flex items-center py-32 bg-transparent relative overflow-hidden snap-start">
+        <section id="about" className="min-h-screen flex items-center py-20 lg:py-32 bg-transparent relative overflow-hidden">
             <div className="max-w-7xl mx-auto px-6 relative z-10 w-full">
-                <div className="grid lg:grid-cols-2 gap-24 items-center">
+                <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
                     <motion.div
                         initial="initial"
                         whileInView="animate"
                         viewport={{ once: true }}
-                        transition={{ staggerChildren: 0.15 }}
+                        transition={{ staggerChildren: 0.1 }}
                     >
-                        <div className="overflow-hidden mb-12">
-                            <motion.h2
-                                variants={{
-                                    initial: { y: "110%" },
-                                    animate: { y: 0, transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] } }
-                                }}
-                                className="text-5xl md:text-8xl font-black text-[#F2F2F2] tracking-tighter uppercase leading-[0.85]"
-                            >
-                                Structural <br />
-                                <span className="text-[#B6B09F]">Philosophy</span>
-                            </motion.h2>
+                        <div className="mb-4">
+                            <TrueFocus
+                                sentence="INNOVATION"
+                                blurAmount={3}
+                                borderColor="#22D3EE"
+                                glowColor="rgba(34, 211, 238, 0.4)"
+                                className="!justify-start"
+                            />
+                        </div>
+
+                        <div className="overflow-hidden mb-8 lg:mb-12">
+                            <h2 className="text-5xl md:text-8xl font-black text-foreground tracking-tighter uppercase font-['Teko'] leading-[0.85]">
+                                <SplitText text={t.about.heading} className="text-foreground" />
+                                <SplitText text={t.about.subheading} className="text-foreground/10" />
+                            </h2>
                         </div>
 
                         <div className="overflow-hidden mb-12">
@@ -32,45 +44,41 @@ export default function About() {
                                     initial: { y: "110%" },
                                     animate: { y: 0, transition: { duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] } }
                                 }}
-                                className="text-lg md:text-xl text-gray-500 font-medium tracking-tight leading-relaxed max-w-xl"
+                                className="text-base md:text-lg text-foreground/60 font-medium tracking-tight leading-relaxed max-w-xl"
                             >
-                                We believe in the integrity of digital structures. Beyond mere aesthetics, we architect
-                                systems that prioritize performance, scalability, and technical longevity.
-                                Our mission is to build the foundations of the next internet generation.
+                                {t.about.description}
                             </motion.p>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-12 pt-12 border-t border-white/5">
-                            <div>
-                                <h4 className="text-[#F2F2F2] font-black uppercase tracking-[0.4em] text-[10px] mb-4">Integrity</h4>
-                                <p className="text-gray-600 text-sm font-medium">Clean code as a non-negotiable standard.</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-12 pt-12 border-t border-border">
+                            <div className="group">
+                                <h4 className="text-foreground font-black uppercase tracking-[0.4em] text-[10px] mb-3 group-hover:text-[#22D3EE] transition-colors">{t.about.intelligent.title}</h4>
+                                <p className="text-foreground/60 text-sm font-medium">{t.about.intelligent.desc}</p>
                             </div>
-                            <div>
-                                <h4 className="text-[#F2F2F2] font-black uppercase tracking-[0.4em] text-[10px] mb-4">Precision</h4>
-                                <p className="text-gray-600 text-sm font-medium">Every interaction calculated for impact.</p>
+                            <div className="group">
+                                <h4 className="text-foreground font-black uppercase tracking-[0.4em] text-[10px] mb-3 group-hover:text-[#22D3EE] transition-colors">{t.about.evolution.title}</h4>
+                                <p className="text-foreground/60 text-sm font-medium">{t.about.evolution.desc}</p>
                             </div>
                         </div>
                     </motion.div>
 
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
+                        initial={{ opacity: 0, scale: 0.95 }}
                         whileInView={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+                        transition={{ duration: 1.5 }}
                         viewport={{ once: true }}
-                        className="relative aspect-square border border-[#B6B09F]/20 flex items-center justify-center p-12 overflow-hidden"
+                        className="relative h-[500px] flex items-center justify-center overflow-visible group"
                     >
-                        {/* Minimalist Graphic Element */}
-                        <div className="absolute inset-0 opacity-10">
-                            <div className="absolute inset-0 bg-[linear-gradient(45deg,#B6B09F05_25%,transparent_25%,transparent_50%,#B6B09F05_50%,#B6B09F05_75%,transparent_75%,transparent)] bg-[size:10px_10px]" />
+                        {/* 3D Team Scene Integration */}
+                        <div className="w-full h-full absolute inset-0 z-0">
+                            <TeamScene />
                         </div>
-                        <svg viewBox="0 0 400 400" className="w-full h-full stroke-[#B6B09F] stroke-[0.5] fill-transparent opacity-40">
-                            <rect x="50" y="50" width="300" height="300" />
-                            <rect x="100" y="100" width="200" height="200" />
-                            <line x1="0" y1="0" x2="400" y2="400" />
-                            <line x1="400" y1="0" x2="0" y2="400" />
-                        </svg>
-                        <div className="absolute bottom-12 left-12">
-                            <span className="text-[10px] font-black text-[#B6B09F] uppercase tracking-[0.5em]">blueprint_v01</span>
+
+                        {/* Visual Decorative Accent */}
+                        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#050505] to-transparent z-10 pointer-events-none" />
+
+                        <div className="absolute top-0 right-0 p-8 z-10 pointer-events-none opacity-20 hidden md:block">
+                            <span className="text-[10px] font-black text-white uppercase tracking-[0.5em] font-['Teko'] group-hover:text-[#22D3EE] transition-colors">TEAM_CORE_V4</span>
                         </div>
                     </motion.div>
                 </div>
