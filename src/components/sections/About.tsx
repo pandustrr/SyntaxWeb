@@ -3,6 +3,8 @@
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
 import dynamic from 'next/dynamic';
+import SplitText from '@/components/animations/SplitText';
+import TrueFocus from '@/components/animations/TrueFocus';
 
 const TeamScene = dynamic(() => import('@/components/ui/TeamScene'), { ssr: false });
 
@@ -19,17 +21,21 @@ export default function About() {
                         viewport={{ once: true }}
                         transition={{ staggerChildren: 0.1 }}
                     >
+                        <div className="mb-4">
+                            <TrueFocus 
+                                sentence="INNOVATION"
+                                blurAmount={3}
+                                borderColor="#22D3EE"
+                                glowColor="rgba(34, 211, 238, 0.4)"
+                                className="!justify-start"
+                            />
+                        </div>
+
                         <div className="overflow-hidden mb-8 lg:mb-12">
-                            <motion.h2
-                                variants={{
-                                    initial: { y: "110%" },
-                                    animate: { y: 0, transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] } }
-                                }}
-                                className="text-5xl md:text-8xl font-black text-black tracking-tighter uppercase font-['Teko'] leading-[0.85]"
-                            >
-                                {t.about.heading} <br />
-                                <span className="text-[#CCCCCC] group-hover:text-black transition-colors">{t.about.subheading}</span>
-                            </motion.h2>
+                            <h2 className="text-5xl md:text-8xl font-black text-black tracking-tighter uppercase font-['Teko'] leading-[0.85]">
+                                <SplitText text={t.about.heading} className="text-black" />
+                                <SplitText text={t.about.subheading} className="text-[#CCCCCC]" />
+                            </h2>
                         </div>
 
                         <div className="overflow-hidden mb-12">

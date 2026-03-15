@@ -4,6 +4,8 @@ import { useState, useRef, useMemo, useEffect } from 'react';
 import { motion, useScroll, useTransform, useSpring, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
 import { ArrowUpRight, Plus, X, ExternalLink } from 'lucide-react';
+import Link from 'next/link';
+import SpotlightCard from '@/components/animations/SpotlightCard';
 import Image from 'next/image';
 
 interface Project {
@@ -183,29 +185,36 @@ export default function Portfolio() {
                   style={{
                     transform: `rotateY(${angle}deg) translateZ(${radius}px)`,
                   }}
-                  className="absolute w-[300px] md:w-[480px] aspect-[4/5] bg-white border border-black/5 overflow-hidden group cursor-pointer shadow-2xl shadow-black/5"
-                  onClick={() => setSelectedProject(project)}
+                  className="absolute w-[300px] md:w-[480px] aspect-[4/5] transform-style-3d"
                 >
-                  <div className="relative w-full h-full transition-all duration-1000">
-                    <img 
-                      src={project.image} 
-                      alt={project.title} 
-                      className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-1000"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent opacity-90" />
-                    
-                    <div className="absolute bottom-0 left-0 p-10 w-full translate-y-4 group-hover:translate-y-0 transition-transform duration-700">
-                      <p className="text-[10px] font-bold text-black/40 group-hover:text-[#22D3EE] tracking-[0.4em] mb-4 uppercase transition-colors">
-                        {project.category}
-                      </p>
-                      <h3 className="text-4xl md:text-5xl font-black text-black uppercase tracking-tighter leading-none mb-6 font-['Teko']">
-                        {project.title}
-                      </h3>
-                      <div className="w-12 h-12 rounded-full border border-black/10 flex items-center justify-center group-hover:bg-[#22D3EE] group-hover:border-[#22D3EE] group-hover:text-black transition-all duration-700 text-black">
-                        <Plus size={24} />
+                  <SpotlightCard 
+                    className="w-full h-full bg-white border border-black/5 overflow-hidden group cursor-pointer shadow-2xl shadow-black/5"
+                    spotlightColor="rgba(34, 211, 238, 0.1)"
+                  >
+                    <div 
+                      className="relative w-full h-full transition-all duration-1000"
+                      onClick={() => setSelectedProject(project)}
+                    >
+                      <img 
+                        src={project.image} 
+                        alt={project.title} 
+                        className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-1000"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent opacity-90" />
+                      
+                      <div className="absolute bottom-0 left-0 p-10 w-full translate-y-4 group-hover:translate-y-0 transition-transform duration-700">
+                        <p className="text-[10px] font-bold text-black/40 group-hover:text-[#22D3EE] tracking-[0.4em] mb-4 uppercase transition-colors">
+                          {project.category}
+                        </p>
+                        <h3 className="text-4xl md:text-5xl font-black text-black uppercase tracking-tighter leading-none mb-6 font-['Teko']">
+                          {project.title}
+                        </h3>
+                        <div className="w-12 h-12 rounded-full border border-black/10 flex items-center justify-center group-hover:bg-[#22D3EE] group-hover:border-[#22D3EE] group-hover:text-black transition-all duration-700 text-black">
+                          <Plus size={24} />
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  </SpotlightCard>
                 </motion.div>
               );
             })}
