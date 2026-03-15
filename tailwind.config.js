@@ -10,8 +10,14 @@ module.exports = {
     extend: {
       colors: {
         brand: {
+<<<<<<< HEAD
           blue: "#22D3EE",
           cyan: "#22D3EE",
+=======
+          maroon: "#4c0519", // rose-900
+          red: "#dc2626", // red-600
+          orange: "#f97316", // orange-500
+>>>>>>> a316ab4802c9de0f5bd06de45ab4442322c3ec35
         },
       },
       backgroundImage: {

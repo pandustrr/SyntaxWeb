@@ -1,5 +1,9 @@
 'use client';
 
+<<<<<<< HEAD
+=======
+import { useEffect } from 'react';
+>>>>>>> a316ab4802c9de0f5bd06de45ab4442322c3ec35
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import BackgroundKinetic from '@/components/layout/BackgroundKinetic';
@@ -15,6 +19,7 @@ export default function PublicLayout({
 }: {
   children: React.ReactNode;
 }) {
+<<<<<<< HEAD
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -78,6 +83,25 @@ export default function PublicLayout({
       </motion.div>
 
       {!loading && <Navbar />}
+=======
+  useEffect(() => {
+    // Tambahkan class zoom ke body saat di halaman publik
+    document.body.classList.add('desktop-body-zoom');
+    
+    return () => {
+      // Hapus class saat meninggalkan halaman publik
+      document.body.classList.remove('desktop-body-zoom');
+    };
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors duration-300">
+      <Navbar />
+      <main>
+        {children}
+      </main>
+      <Footer />
+>>>>>>> a316ab4802c9de0f5bd06de45ab4442322c3ec35
     </div>
   );
 }

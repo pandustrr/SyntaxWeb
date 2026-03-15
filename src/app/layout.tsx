@@ -19,7 +19,7 @@ export default function RootLayout({
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Teko:wght@300..700&family=IBM+Plex+Sans:wght@100..700&display=swap" rel="stylesheet" />
       </head>
-      <body className="antialiased font-['IBM_Plex_Sans'] relative">
+      <body className="antialiased font-['IBM_Plex_Sans'] relative bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-300 overflow-x-hidden">
         <LanguageProvider>
           <ThemeProvider
             attribute="class"
@@ -34,4 +34,3 @@ export default function RootLayout({
     </html>
   );
 }
-
