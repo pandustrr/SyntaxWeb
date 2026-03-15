@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { ArrowRight, Code2, Rocket, ShieldCheck, Zap, Laptop, Smartphone, Globe, BarChart3, ChevronRight, Globe2, Sparkles, Star } from 'lucide-react';
 import Services from '@/components/sections/Services';
 import Portfolio from '@/components/sections/Portfolio';
+import Pricelist from '@/components/sections/Pricelist';
 
 export default function Home() {
   const marqueeItems = [
@@ -173,6 +174,8 @@ export default function Home() {
              </div>
           </div>
         </section>
+
+        <Pricelist />
 
         <Portfolio />
 
