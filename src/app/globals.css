@@ -54,6 +54,8 @@
   html {
     @apply h-full;
     position: relative;
+    scroll-behavior: auto !important;
+    /* Force auto when using Lenis */
   }
 
   body {
@@ -88,6 +90,7 @@
     pointer-events: none;
     background-image: url("https://grainy-gradients.vercel.app/noise.svg");
     filter: invert(var(--noise-invert));
+    will-change: opacity;
   }
 
   /* Animations */
@@ -139,6 +142,7 @@
 
   .animate-scanline {
     animation: scanline 10s linear infinite;
+    will-change: transform;
   }
 
   .animate-blob {

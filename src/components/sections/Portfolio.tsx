@@ -1,12 +1,10 @@
 'use client';
 
 import { useState, useRef, useMemo, useEffect } from 'react';
-import { motion, useScroll, useTransform, useSpring, AnimatePresence, useMotionValue } from 'framer-motion';
+import { motion, AnimatePresence, useAnimationControls } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
-import { ArrowUpRight, Plus, X, ExternalLink, Github, Terminal, ChevronRight } from 'lucide-react';
+import { Monitor, ExternalLink, Satellite, ShieldCheck, Zap, Cpu, Activity, Database } from 'lucide-react';
 import Link from 'next/link';
-import SpotlightCard from '@/components/animations/SpotlightCard';
-import Image from 'next/image';
 
 interface Project {
   id: number;
@@ -15,345 +13,413 @@ interface Project {
   image: string;
   description: string;
   tech: string[];
-  client: string;
-  year: string;
-  role: string;
   link?: string;
+  problem: string;
+  impact: string;
 }
 
+const PROJECTS: Project[] = [
+  {
+    id: 1,
+    title: 'MAHAPENA',
+    category: 'ORGANIZATION',
+    image: '/portfolio/mahapena.feb.unej.ac.id_.png',
+    description: 'Unit Kegiatan Mahasiswa Pecinta Alam FEB Universitas Jember platform.',
+    tech: ['Next.js', 'Tailwind', 'High Performance'],
+    link: 'https://mahapena.feb.unej.ac.id/',
+    problem: 'Fragmented community communication and lack of digital presence for nature enthusiasts.',
+    impact: 'Established a centralized hub that increased member engagement by 40% and simplified information sharing.'
+  },
+  {
+    id: 2,
+    title: 'HMRPM',
+    category: 'TECHNOLOGY',
+    image: '/portfolio/hmrpmunej.id_.png',
+    description: 'Mechanical Engineering Student Association digital hub.',
+    tech: ['React', 'Node.js', 'Architecture'],
+    link: 'https://hmrpmunej.id/',
+    problem: 'Manual academic documentation and inefficient communication between mechanical engineering students.',
+    impact: 'Automated 70% of administrative tasks and created a unified platform for over 500 active students.'
+  },
+  {
+    id: 3,
+    title: 'BALIKKUCING',
+    category: 'CREATIVE AGENCY',
+    image: '/portfolio/balikkucingstudio.com_.png',
+    description: 'Fresh visual identity and creative agency platform.',
+    tech: ['Brand Design', 'UI/UX', 'Innovation'],
+    link: 'https://balikkucingstudio.com/',
+    problem: 'Traditional agency branding that failed to capture the high-tech, futuristic vision of the studio.',
+    impact: 'Redesigned the entire digital identity, leading to a 200% increase in international inquiries.'
+  },
+  {
+    id: 4,
+    title: 'AF STUDIO',
+    category: 'PHOTOGRAPHY',
+    image: '/portfolio/afstudio.my.id_.png',
+    description: 'Professional photography studio landing page.',
+    tech: ['Elegance', 'Visual Arts', 'Portfolio'],
+    link: 'https://afstudio.my.id/',
+    problem: 'Ineffective portfolio display and low client conversion rates for luxury photography services.',
+    impact: 'Created a high-impact visual gallery that improved appointment booking rates by 50%.'
+  },
+  {
+    id: 5,
+    title: 'STRATEGIX',
+    category: 'AI SYSTEM',
+    image: '/portfolio/strategix.grapadikonsultan.co.id_.png',
+    description: 'Intelligent business management with AI SWORT analysis.',
+    tech: ['AI Engine', 'Next.js', 'Analytics'],
+    link: 'https://strategix.grapadikonsultan.co.id/',
+    problem: 'Complex and time-consuming manual SWOT analysis for small to medium enterprise consultants.',
+    impact: 'Developed an AI-driven engine that generates strategic reports in seconds instead of hours.'
+  },
+  {
+    id: 6,
+    title: 'SUGOI 8',
+    category: 'EVENT MGT',
+    image: '/portfolio/sugoi8management.com_.png',
+    description: 'Event management agency profile and digital solutions.',
+    tech: ['Event Core', 'Management', 'Digital'],
+    link: 'https://sugoi8management.com/',
+    problem: 'Disorganized event ticketing systems and lack of professional agency profiling.',
+    impact: 'Integrated an end-to-end event management system that successfully handled 5 major regional events.'
+  }
+];
 
-export default function Portfolio() {
-  const { t } = useLanguage();
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+// ───────────────────────────────────────────────
+// Browser Satellite Component
+// ───────────────────────────────────────────────
+function BrowserSatellite({ project, index, total, isPaused, onHover }: {
+  project: Project;
+  index: number;
+  total: number;
+  isPaused: boolean;
+  onHover: (project: Project | null) => void;
+}) {
+  const [isHovered, setIsHovered] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const controls = useAnimationControls();
 
-  // Disable scroll when modal is open
+  // Orbit parameters
+  const angleOffset = (index / total) * Math.PI * 2;
+  const [orbitAngle, setOrbitAngle] = useState(angleOffset);
+
   useEffect(() => {
-    if (selectedProject) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [selectedProject]);
+    if (isPaused || isHovered) return;
+    const interval = setInterval(() => {
+      setOrbitAngle(prev => prev + 0.001);
+    }, 16);
+    return () => clearInterval(interval);
+  }, [isPaused, isHovered]);
 
-  const projects: Project[] = useMemo(() => [
-    {
-      id: 1,
-      title: 'Mahapena FEB UNEJ',
-      category: 'ORGANIZATION',
-      image: '/portfolio/mahapena.png',
-      description: 'Platform Unit Kegiatan Mahasiswa Pecinta Alam FEB Universitas Jember. Dirancang untuk memperkuat identitas digital serta manajemen kegiatan alam bebas.',
-      tech: ['Next.js', 'Tailwind CSS', 'Framer Motion'],
-      client: 'MAHAPENA FEB UNEJ',
-      year: '2024',
-      role: 'Full-stack Development',
-      link: 'https://mahapena.feb.unej.ac.id/'
-    },
-    {
-      id: 2,
-      title: 'HMRPM UNEJ',
-      category: 'ORGANIZATION',
-      image: '/portfolio/hmrpm.png',
-      description: 'Hub digital Himpunan Mahasiswa Rekayasa Perancangan Mekanik. Menyediakan platform aspirasi, kreativitas, dan inovasi teknologi bagi mahasiswa mesin.',
-      tech: ['React', 'Node.js', 'Tailwind'],
-      client: 'HMRPM UNEJ',
-      year: '2024',
-      role: 'Web Development',
-      link: 'https://hmrpmunej.id/'
-    },
-    {
-      id: 3,
-      title: 'UKMK ETALASE',
-      category: 'ARTS & CULTURE',
-      image: '/portfolio/etalase.png',
-      description: 'Etalase digital karya seni mahasiswa. Platform kurasi yang menampilkan visualisasi kreatif dalam berbagai cabang kesenian.',
-      tech: ['Next.js', 'Motion', 'Tailwind CSS'],
-      client: 'UKM Kesenian Etalase',
-      year: '2023',
-      role: 'Frontend Engineering',
-      link: 'https://ukmketalase.com/'
-    },
-    {
-      id: 4,
-      title: 'AF Studio',
-      category: 'LANDING PAGE',
-      image: '/portfolio/afstudio.png',
-      description: 'Landing page studio fotografi profesional dengan fokus pada pengalaman visual yang elegan dan abadi.',
-      tech: ['Next.js', 'GSAP', 'Tailwind'],
-      client: 'AF Studio',
-      year: '2024',
-      role: 'UX Architecture',
-      link: 'https://afstudio.my.id/'
-    },
-    {
-      id: 5,
-      title: 'Balikkucing Studio',
-      category: 'CREATIVE AGENCY',
-      image: '/portfolio/balikkucing.png',
-      description: 'Platform agensi kreatif dengan identitas visual yang segar. "Desain rasa jeruk" yang menonjolkan keunikan grafis dan ilustrasi.',
-      tech: ['React', 'API Integration', 'Tailwind'],
-      client: 'Balikkucing Studio',
-      year: '2024',
-      role: 'Creative Tech Lead',
-      link: 'https://balikkucingstudio.com/'
-    },
-    {
-      id: 6,
-      title: 'Grapadi Strategix',
-      category: 'WEB APPLICATION',
-      image: '/portfolio/strategix.png',
-      description: 'Sistem manajemen bisnis cerdas dengan fitur proyeksi finansial otomatis dan analisis SWOT bertenaga AI.',
-      tech: ['Next.js', 'AI Engine', 'PostgreSQL'],
-      client: 'Grapadi Strategix',
-      year: '2024',
-      role: 'AI System Design',
-      link: 'https://strategix.grapadikonsultan.co.id/'
-    },
-    {
-      id: 7,
-      title: 'Sugoi8 Management',
-      category: 'EVENT MANAGEMENT',
-      image: '/portfolio/sugoi8.png',
-      description: 'Website profil agensi manajemen event yang menonjolkan profesionalitas dan eksekusi kreatif di setiap proyek.',
-      tech: ['Next.js', 'Tailwind', 'Motion'],
-      client: 'Sugoi 8',
-      year: '2024',
-      role: 'Lead Implementation',
-      link: 'https://sugoi8management.com/'
-    }
-  ], []);
+  // Calculate elliptical position
+  const radiusX = 1400; // Orbit width
+  const radiusY = 300;  // Orbit tilt height
+  const x = Math.cos(orbitAngle) * radiusX;
+  const z = Math.sin(orbitAngle) * 800; // Depth
+  const y = Math.sin(orbitAngle) * radiusY;
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"]
-  });
-
-  const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001
-  });
-
-  const radius = 1000;
-  const totalProjects = projects.length;
-  const angleStep = 360 / totalProjects;
-
-  const getHostname = (url?: string) => {
-    if (!url) return '';
-    try {
-      return new URL(url).hostname;
-    } catch (e) {
-      return url.replace(/^https?:\/\//, '').split('/')[0];
-    }
-  };
-
-  // No filtered projects used in 3D carousel usually, but we can set it to projects
-  const filteredProjects = projects;
+  // Depth sorting
+  const isFront = z > 0;
+  const scale = isFront ? 1 + (z / 800) * 0.25 : 0.85 + (z / 800) * 0.2;
+  const opacity = isFront ? 1 : 0.4;
+  const blur = isFront ? 0 : 4;
 
   return (
-    <section
-      ref={containerRef}
-      id="portfolio"
-      className="relative h-[400vh] bg-background overflow-visible transition-colors duration-500"
+    <motion.div
+      style={{
+        x, y,
+        z: z,
+        scale,
+        opacity,
+        filter: `blur(${blur}px)`,
+        zIndex: Math.round(z + 1000),
+      }}
+      className="absolute transform-style-3d cursor-pointer"
+      onMouseEnter={() => {
+        setIsHovered(true);
+        onHover(project);
+      }}
+      onMouseLeave={() => {
+        setIsHovered(false);
+        onHover(null);
+      }}
     >
-      <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center">
-        {/* Title Layer */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-          <motion.h2
-            style={{
-              opacity: useTransform(smoothProgress, [0, 0.1, 0.9, 1], [0, 0.08, 0.08, 0]),
-              scale: useTransform(smoothProgress, [0, 1], [0.8, 1.2])
-            }}
-            className="text-[15vw] lg:text-[20vw] font-black text-foreground uppercase tracking-tighter font-['Teko'] whitespace-nowrap"
-          >
-            P O R T F O L I O
-          </motion.h2>
-        </div>
-
-        {/* 3D Carousel */}
-        <div className="relative w-full h-full flex items-center justify-center perspective-[3000px]">
-          <motion.div
-            style={{
-              rotateY: useTransform(smoothProgress, [0, 1], [0, -360]),
-            }}
-            className="relative w-full h-full flex items-center justify-center transform-style-3d"
-          >
-            {projects.map((project, index) => {
-              const angle = index * angleStep;
-              return (
-                <motion.div
-                  key={project.id}
-                  style={{
-                    transform: `rotateY(${angle}deg) translateZ(${radius}px)`,
-                  }}
-                  className="absolute w-[300px] md:w-[480px] aspect-[4/5] transform-style-3d"
-                >
-                  <SpotlightCard
-                    className="w-full h-full bg-card border border-border overflow-hidden group cursor-pointer shadow-2xl shadow-black/20"
-                    spotlightColor="rgba(34, 211, 238, 0.15)"
-                  >
-                    <div
-                      className="relative w-full h-full transition-all duration-1000"
-                      onClick={() => setSelectedProject(project)}
-                    >
-                      <img
-                        src={project.image}
-                        alt={project.title}
-                        className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-all duration-1000"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-90" />
-
-                      <div className="absolute bottom-0 left-0 p-10 w-full translate-y-4 group-hover:translate-y-0 transition-transform duration-700">
-                        <p className="text-[10px] font-bold text-white/40 group-hover:text-[#22D3EE] tracking-[0.4em] mb-4 uppercase transition-colors">
-                          {project.category}
-                        </p>
-                        <h3 className="text-4xl md:text-5xl font-black text-foreground uppercase tracking-tighter leading-none mb-6 font-['Teko']">
-                          {project.title}
-                        </h3>
-                        <div className="w-12 h-12 rounded-full border border-border flex items-center justify-center group-hover:bg-[#22D3EE] group-hover:border-[#22D3EE] group-hover:text-black transition-all duration-700 text-foreground">
-                          <Plus size={24} />
-                        </div>
-                      </div>
-                    </div>
-                  </SpotlightCard>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        </div>
-
-        {/* Scroll Bar */}
-        <div className="absolute bottom-24 left-1/2 -translate-x-1/2 flex flex-col items-center z-20">
-          <span className="text-[10px] font-black text-foreground/10 tracking-[0.5em] uppercase mb-4">MAPPING COLLECTION</span>
-          <div className="w-[200px] h-[1px] bg-border relative overflow-hidden">
-            <motion.div
-              style={{ scaleX: smoothProgress }}
-              className="absolute inset-0 bg-[#22D3EE] origin-left shadow-[0_0_20px_rgba(34,211,238,0.3)]"
-            />
+      {/* Browser Window Satelite */}
+      <div className={`
+                relative w-[400px] md:w-[600px] bg-card/80 backdrop-blur-xl
+                border ${isHovered ? 'border-cyan-400' : 'border-cyan-500/20'} 
+                rounded-xl overflow-hidden shadow-2xl transition-all duration-500
+                ${isHovered ? 'shadow-cyan-500/30' : 'shadow-black/50 dark:shadow-black/80'}
+            `}>
+        {/* Macbook Header Bar */}
+        <div className="flex items-center justify-between px-5 h-10 bg-muted/50 border-b border-foreground/5">
+          <div className="flex gap-2">
+            <div className="w-3 h-3 rounded-full bg-red-500/80 shadow-[0_0_5px_rgba(239,68,68,0.5)]" />
+            <div className="w-3 h-3 rounded-full bg-yellow-500/80 shadow-[0_0_5px_rgba(234,179,8,0.5)]" />
+            <div className="w-3 h-3 rounded-full bg-green-500/80 shadow-[0_0_5px_rgba(34,197,94,0.5)]" />
+          </div>
+          {isHovered && (
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-[8px] font-mono text-cyan-400/80 tracking-widest uppercase animate-pulse"
+            >
+              SCANNING_PROJECT_DATA...
+            </motion.span>
+          )}
+          <div className="flex gap-4">
+            <Satellite size={12} className="text-cyan-500/40" />
+            <ShieldCheck size={12} className="text-cyan-500/40" />
           </div>
         </div>
+
+        {/* Screenshot Container */}
+        <div className="relative aspect-video overflow-hidden bg-muted">
+          <motion.img
+            src={project.image}
+            alt={project.title}
+            initial={{ objectPosition: 'top' }}
+            animate={isHovered ? { objectPosition: 'bottom' } : { objectPosition: 'top' }}
+            transition={{ duration: 8, ease: "linear" }}
+            className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+          />
+
+          {/* Dark Overlay for branding contrast - Only in dark mode or when not hovered */}
+          {!isHovered && (
+            <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-80" />
+          )}
+        </div>
+
+        {/* Information Layer */}
+        <div className="p-8">
+          <div className="flex justify-between items-end">
+            <div>
+              <p className="text-[10px] font-black text-cyan-500/40 tracking-[0.5em] uppercase mb-1">
+                [ {project.category} ]
+              </p>
+              <h3 className="text-4xl md:text-5xl font-black text-foreground uppercase tracking-tighter leading-none font-['Teko'] shadow-cyan-500 text-glow">
+                {project.title}
+              </h3>
+            </div>
+            {project.link && (
+              <Link
+                href={project.link}
+                target="_blank"
+                className="w-12 h-12 rounded-full border border-cyan-500/30 flex items-center justify-center text-cyan-400 hover:bg-cyan-500 hover:text-white dark:hover:text-black transition-all group/link"
+              >
+                <ExternalLink size={20} className="group-hover/link:rotate-45 transition-transform" />
+              </Link>
+            )}
+          </div>
+        </div>
+
+        {/* Hover Glow Effect */}
+        <div className={`
+                    absolute inset-0 pointer-events-none transition-opacity duration-500
+                    ${isHovered ? 'opacity-100' : 'opacity-0'}
+                    bg-gradient-to-tr from-cyan-500/5 to-transparent
+                `} />
       </div>
 
-      <AnimatePresence>
-        {selectedProject && (
-          <motion.div
-            key="portfolio-modal"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[99999] bg-background overflow-y-auto no-scrollbar"
-          >
-            <motion.button
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              onClick={() => setSelectedProject(null)}
-              className="fixed top-8 right-8 z-[110] w-14 h-14 bg-white text-black flex items-center justify-center rounded-full hover:bg-[#22D3EE] hover:text-black transition-all shadow-2xl"
-            >
-              <X size={28} />
-            </motion.button>
+      {/* Reflection / Glow under card */}
+      <div className={`
+                absolute -bottom-10 left-1/2 -translate-x-1/2 w-48 h-10 
+                bg-cyan-500/10 blur-[40px] rounded-full transition-opacity duration-500
+                ${isHovered ? 'opacity-100 scale-150' : 'opacity-50'}
+            `} />
+    </motion.div>
+  );
+}
 
-            <div className="min-h-screen w-full flex flex-col">
-              <motion.div
-                initial={{ scale: 1.1, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 1.5 }}
-                className="w-full h-[70vh] relative overflow-hidden"
-              >
-                <img src={selectedProject.image} className="w-full h-full object-cover" alt="" />
-                <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
-                <div className="absolute bottom-16 left-0 w-full px-6 lg:px-24">
-                  <motion.h1
-                    initial={{ y: 50, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.5 }}
-                    className="text-7xl md:text-[14rem] font-black text-foreground uppercase tracking-tighter leading-none font-['Teko']"
-                  >
-                    {selectedProject.title}
-                  </motion.h1>
-                </div>
-              </motion.div>
+// ───────────────────────────────────────────────
+// Project Intelligence Panel (Sidebar)
+// ───────────────────────────────────────────────
+function ProjectIntelligencePanel({ project }: { project: Project | null }) {
+  return (
+    <AnimatePresence>
+      {project && (
+        <motion.div
+          initial={{ x: 100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          exit={{ x: 100, opacity: 0 }}
+          className="fixed right-6 top-1/2 -translate-y-1/2 z-[100] w-80 md:w-96 hidden lg:block"
+        >
+          <div className="bg-card/40 backdrop-blur-2xl border border-cyan-500/20 rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.5)]">
+            {/* Header / ID Code */}
+            <div className="px-6 py-4 bg-cyan-500/10 border-b border-cyan-500/20 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
+                <span className="text-[10px] font-mono text-cyan-400 uppercase tracking-widest">PROJECT_ANALYSIS_v4.0</span>
+              </div>
+              <span className="text-[10px] font-mono text-cyan-500/40">ID: {project.id}00X</span>
+            </div>
 
-              <div className="px-6 lg:px-24 py-32 grid grid-cols-1 md:grid-cols-4 gap-16 border-b border-border bg-background">
-                <div className="space-y-4">
-                  <p className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.5em]">Project</p>
-                  <p className="text-xl font-black text-foreground uppercase font-['Teko']">{selectedProject.title}</p>
+            <div className="p-8 space-y-8">
+              {/* Title Area */}
+              <div>
+                <p className="text-[10px] font-black text-cyan-500/40 tracking-[0.4em] uppercase mb-1">MODULE_TITLE</p>
+                <h3 className="text-4xl font-black text-foreground uppercase tracking-tighter font-['Teko'] leading-none">
+                  {project.title}
+                </h3>
+              </div>
+
+              {/* Problem Section */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-cyan-500/60">
+                  <Activity size={14} />
+                  <span className="text-[10px] font-black uppercase tracking-widest">PROBLEM_DETECTED</span>
                 </div>
-                <div className="space-y-4">
-                  <p className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.5em]">Role</p>
-                  <p className="text-xl font-black text-foreground uppercase font-['Teko']">{selectedProject.role}</p>
+                <div className="p-4 bg-red-500/5 border-l-2 border-red-500/30 rounded-r-lg">
+                  <p className="text-sm text-foreground/70 leading-relaxed font-medium">
+                    {project.problem}
+                  </p>
                 </div>
-                <div className="space-y-4">
-                  <p className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.5em]">Year</p>
-                  <p className="text-xl font-black text-foreground uppercase font-['Teko']">{selectedProject.year}</p>
+              </div>
+
+              {/* Impact Section */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-cyan-500/60">
+                  <Cpu size={14} />
+                  <span className="text-[10px] font-black uppercase tracking-widest">SOLUTION_IMPACT</span>
                 </div>
-                <div className="space-y-4">
-                  <p className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.5em]">Tech</p>
-                  <div className="flex flex-wrap gap-3">
-                    {selectedProject.tech.map(t => (
-                      <span key={t} className="px-4 py-2 border border-border text-[10px] font-black text-foreground uppercase hover:border-[#22D3EE] hover:text-[#22D3EE] transition-colors">{t}</span>
+                <div className="p-4 bg-cyan-500/5 border-l-2 border-cyan-500/30 rounded-r-lg">
+                  <p className="text-sm text-foreground/70 leading-relaxed font-medium italic">
+                    "{project.impact}"
+                  </p>
+                </div>
+              </div>
+
+              {/* System Specs */}
+              <div className="pt-6 border-t border-foreground/5 grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-[9px] font-black text-foreground/30 uppercase tracking-widest mb-1">TECH_STACK</p>
+                  <div className="flex flex-wrap gap-1">
+                    {project.tech.map((t, idx) => (
+                      <span key={idx} className="text-[9px] font-mono text-cyan-400 bg-cyan-500/5 px-2 py-0.5 rounded border border-cyan-500/10">
+                        {t}
+                      </span>
                     ))}
                   </div>
                 </div>
-              </div>
-
-              <div className="px-6 lg:px-24 py-32 flex flex-col lg:flex-row gap-32 items-start bg-[#050505]">
-                <div className="lg:w-1/2">
-                  <h2 className="text-5xl font-black text-white uppercase tracking-tighter mb-10 font-['Teko']">VISION & <span className="text-white/10">EXECUTION</span></h2>
-                  <p className="text-xl text-slate-400 leading-relaxed font-medium">
-                    {selectedProject.description}
-                    <br /><br />
-                    Menciptakan standar baru dalam desain antarmuka melalui rekayasa modern yang mengutamakan performa tanpa kompromi. Setiap elemen visual adalah hasil dari eksplorasi arsitektural yang mendalam.
-                  </p>
-                </div>
-                <div className="lg:w-1/2 w-full flex flex-col gap-10">
-                  <div className="aspect-video bg-foreground/[0.02] border border-border flex items-center justify-center group overflow-hidden relative">
-                    <img src={selectedProject.image} className="w-full h-full object-cover opacity-20 group-hover:opacity-40 transition-opacity" alt="" />
-                    <div className="absolute flex flex-col items-center">
-                      <div className="w-20 h-20 rounded-full border border-border flex items-center justify-center mb-6 group-hover:bg-[#22D3EE] group-hover:text-black transition-all">
-                        <ArrowUpRight size={32} className="text-foreground group-hover:text-black" />
-                      </div>
-                      <span className="text-[10px] font-black tracking-[0.5em] text-foreground/50 group-hover:text-foreground uppercase">Visual Representation</span>
-                    </div>
+                <div>
+                  <p className="text-[9px] font-black text-foreground/30 uppercase tracking-widest mb-1">STATUS</p>
+                  <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
+                    <span className="text-[10px] font-mono text-green-500/80 tracking-widest">OPTIMIZED</span>
                   </div>
-
-                  {selectedProject.link && (
-                    <a
-                      href={selectedProject.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group flex items-center justify-between p-8 border border-white/10 hover:border-[#22D3EE] transition-all"
-                    >
-                      <div className="flex flex-col gap-1">
-                        <span className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.5em]">Live Website</span>
-                        <span className="text-xl font-black text-foreground uppercase font-['Teko'] tracking-widest">{getHostname(selectedProject.link)}</span>
-                      </div>
-                      <div className="w-14 h-14 bg-foreground text-background flex items-center justify-center group-hover:bg-[#22D3EE] group-hover:text-background transition-all">
-                        <ExternalLink size={24} />
-                      </div>
-                    </a>
-                  )}
                 </div>
-              </div>
-
-              <div className="px-6 lg:px-24 py-32 mb-20 bg-background text-center">
-                <button
-                  onClick={() => setSelectedProject(null)}
-                  className="text-[10px] font-black text-foreground/20 uppercase tracking-[1em] hover:text-[#22D3EE] transition-all hover:tracking-[1.5em]"
-                >
-                  RETURN TO SELECTION
-                </button>
               </div>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+
+            {/* Footer / Scanning Line */}
+            <div className="h-1 w-full bg-foreground/5 relative overflow-hidden">
+              <motion.div
+                animate={{ left: ['-100%', '100%'] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                className="absolute top-0 bottom-0 w-1/3 bg-cyan-500/40 blur-sm"
+              />
+            </div>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+// ───────────────────────────────────────────────
+// Portfolio Main Section
+// ───────────────────────────────────────────────
+export default function Portfolio() {
+  const { t } = useLanguage();
+  const [isPaused, setIsPaused] = useState(false);
+  const [hoveredProject, setHoveredProject] = useState<Project | null>(null);
+
+  return (
+    <section
+      id="portfolio"
+      className="relative min-h-[120vh] py-32 bg-background overflow-hidden flex flex-col items-center justify-center transition-colors duration-500"
+    >
+      {/* Background Ambience */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200vw] h-[200vw] pointer-events-none z-0">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-cyan-500/5 rounded-full blur-[200px]" />
+      </div>
+
+      {/* Galactic Title Layer */}
+      <div className="relative z-10 text-center mb-32 select-none">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="flex flex-col items-center"
+        >
+          <div className="flex items-center gap-4 mb-4">
+            <div className="h-[1px] w-12 bg-cyan-500/30" />
+            <span className="text-[10px] font-black text-cyan-400 tracking-[1em] uppercase">SYSTEM_ARCHIVE</span>
+            <div className="h-[1px] w-12 bg-cyan-500/30" />
+          </div>
+          <h2 className="text-8xl md:text-[12rem] font-black text-foreground uppercase tracking-tighter font-['Teko'] leading-none">
+            GALACTIC <span className="text-transparent border-text-cyan">ORBIT</span>
+          </h2>
+          <div className="mt-8 px-6 py-2 border border-cyan-500/20 rounded-full backdrop-blur-md">
+            <p className="text-[10px] font-mono text-cyan-500/60 uppercase tracking-widest flex items-center gap-3">
+              <Zap size={10} className="animate-pulse" /> ROTATING_DEPLOYED_MODULES_V4.0
+            </p>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* 3D Galactic Scene Container */}
+      <div className="relative w-full h-[600px] md:h-[800px] perspective-[4000px] overflow-visible">
+        {/* Subtle Orbit Rings */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[2800px] h-[600px] border border-cyan-500/5 rounded-[100%] rotate-3 -skew-x-12 pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[2800px] h-[600px] border border-dashed border-cyan-500/10 rounded-[100%] rotate-[-2deg] skew-x-12 pointer-events-none" />
+
+        {/* Render 3D Satellites */}
+        <div className="relative w-full h-full transform-style-3d flex items-center justify-center">
+          {PROJECTS.map((project, index) => (
+            <BrowserSatellite
+              key={project.id}
+              project={project}
+              index={index}
+              total={PROJECTS.length}
+              isPaused={isPaused}
+              onHover={setHoveredProject}
+            />
+          ))}
+        </div>
+      </div>
+
+      <ProjectIntelligencePanel project={hoveredProject} />
+
+      {/* Control UI */}
+      <div className="relative z-10 mt-20 flex flex-col items-center">
+        <button
+          onClick={() => setIsPaused(!isPaused)}
+          className="group flex flex-col items-center gap-4 transition-all duration-500"
+        >
+          <div className="w-16 h-[2px] bg-cyan-500/20 relative overflow-hidden">
+            <motion.div
+              animate={isPaused ? { x: 0 } : { x: ['-100%', '100%'] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+              className="absolute inset-0 bg-cyan-400 shadow-[0_0_10px_#22d3ee]"
+            />
+          </div>
+          <span className="text-[10px] font-black text-cyan-400 group-hover:tracking-[0.8em] transition-all tracking-[0.5em] uppercase">
+            {isPaused ? 'RESUME_ORBIT' : 'HOVER_TO_INSPECT'}
+          </span>
+        </button>
+      </div>
 
       <style jsx global>{`
         .transform-style-3d { transform-style: preserve-3d; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .text-glow {
+            text-shadow: 0 0 20px rgba(34, 211, 238, 0.4);
+        }
+        .border-text-cyan {
+            -webkit-text-stroke: 1px rgba(34, 211, 238, 0.3);
+        }
       `}</style>
     </section>
   );

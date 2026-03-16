@@ -37,7 +37,7 @@ export default function Hero() {
       <div className="absolute inset-0 z-0 opacity-10 dark:opacity-70 transition-opacity duration-1000">
         <Galaxy
           mouseAttraction={true}
-          mouseRepulsion={false}
+          mouseRepulsion={true}
           mouseInteraction={true}
           density={1}
           speed={0.5}
@@ -62,7 +62,7 @@ export default function Hero() {
       </div>
 
       {/* Layer 20: Content */}
-      <div className="max-w-7xl mx-auto px-6 relative z-20 w-full">
+      <div className="max-w-7xl mx-auto px-6 relative z-20 w-full pointer-events-none">
         <motion.div
           variants={containerVariants}
           initial="initial"
@@ -110,7 +110,7 @@ export default function Hero() {
               href="#portfolio"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="group cursor-pointer flex items-center gap-5 py-4 px-9 border border-black/20 hover:border-[#22D3EE] transition-all duration-500 bg-white/80 backdrop-blur-md shadow-sm hover:shadow-xl hover:shadow-cyan-500/10 rounded-sm overflow-hidden relative"
+              className="group cursor-pointer flex items-center gap-5 py-4 px-9 border border-black/20 hover:border-[#22D3EE] transition-all duration-500 bg-white/80 backdrop-blur-md shadow-sm hover:shadow-xl hover:shadow-cyan-500/10 rounded-sm overflow-hidden relative pointer-events-auto"
             >
               <div className="absolute inset-0 bg-black translate-y-[101%] group-hover:translate-y-0 transition-transform duration-500 ease-out" />
 
@@ -127,7 +127,7 @@ export default function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.5, duration: 1 }}
-          className="absolute bottom-10 left-6 hidden md:flex flex-col items-center gap-6 z-20"
+          className="absolute bottom-10 left-6 hidden md:flex flex-col items-center gap-6 z-20 pointer-events-auto"
         >
           <span className="text-[9px] font-bold uppercase tracking-[0.5em] text-foreground/40 [writing-mode:vertical-lr]">EXPLORE</span>
           <motion.div

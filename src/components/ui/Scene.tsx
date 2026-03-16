@@ -11,7 +11,12 @@ export default function Scene({ activeProject, isFocused, progress }: { activePr
         <Canvas
             shadows
             camera={{ position: [0, 0, 5], fov: 32 }}
-            gl={{ antialias: true, alpha: true }}
+            gl={{
+                antialias: false,
+                alpha: true,
+                powerPreference: "high-performance"
+            }}
+            dpr={[1, 2]}
             style={{ width: '100%', height: '100%' }}
         >
             <Suspense fallback={null}>

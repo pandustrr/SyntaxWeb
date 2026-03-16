@@ -25,12 +25,12 @@ export default function Navbar() {
 
   return (
     <>
-      <div className="fixed bottom-8 inset-x-0 z-50 flex justify-center px-4">
+      <div className="fixed bottom-8 inset-x-0 z-50 flex justify-center px-4 pointer-events-none">
         <motion.nav
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8, ease: "circOut" }}
-          className="bg-card backdrop-blur-2xl border border-border px-6 md:px-10 py-3 md:py-4 flex items-center gap-6 md:gap-12 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.1)]"
+          className="bg-card backdrop-blur-2xl border border-border px-6 md:px-10 py-3 md:py-4 flex items-center gap-6 md:gap-12 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] pointer-events-auto"
         >
           {/* Main Links */}
           <div className="flex items-center gap-6 md:gap-10">
