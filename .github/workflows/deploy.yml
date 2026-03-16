@@ -3,7 +3,7 @@ name: Deploy Production
 on:
   push:
     branches:
-      - branch-pandu
+      - main
 
 jobs:
   deploy:
@@ -26,7 +26,7 @@ jobs:
       - name: Build Application
         run: npm run build
         env:
-          NEXT_PUBLIC_DATABASE_URL: ${{ secrets.DATABASE_URL }} # Tambahkan env lain jika perlu saat build
+          NEXT_PUBLIC_DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
       - name: Commit and Push Build Results
         run: |
@@ -34,7 +34,7 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add .next -f
           git commit -m "chore: build production [skip ci]" || echo "No changes to commit"
-          git push origin branch-pandu
+          git push origin main
 
       - name: Execute Deployment Script via SSH
         uses: appleboy/ssh-action@v1.0.3

@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useRef, useMemo, useEffect } from 'react';
-import { motion, useScroll, useTransform, useSpring, AnimatePresence } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring, AnimatePresence, useMotionValue } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
-import { ArrowUpRight, Plus, X, ExternalLink } from 'lucide-react';
+import { ArrowUpRight, Plus, X, ExternalLink, Github, Terminal, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import SpotlightCard from '@/components/animations/SpotlightCard';
 import Image from 'next/image';
@@ -20,6 +20,7 @@ interface Project {
   role: string;
   link?: string;
 }
+
 
 export default function Portfolio() {
   const { t } = useLanguage();
@@ -149,21 +150,24 @@ export default function Portfolio() {
     }
   };
 
+  // No filtered projects used in 3D carousel usually, but we can set it to projects
+  const filteredProjects = projects;
+
   return (
-    <section 
-      ref={containerRef} 
-      id="portfolio" 
-      className="relative h-[400vh] bg-white overflow-visible"
+    <section
+      ref={containerRef}
+      id="portfolio"
+      className="relative h-[400vh] bg-background overflow-visible transition-colors duration-500"
     >
       <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center">
         {/* Title Layer */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-          <motion.h2 
-            style={{ 
-              opacity: useTransform(smoothProgress, [0, 0.1, 0.9, 1], [0, 0.05, 0.05, 0]),
+          <motion.h2
+            style={{
+              opacity: useTransform(smoothProgress, [0, 0.1, 0.9, 1], [0, 0.08, 0.08, 0]),
               scale: useTransform(smoothProgress, [0, 1], [0.8, 1.2])
             }}
-            className="text-[15vw] lg:text-[20vw] font-black text-black uppercase tracking-tighter font-['Teko'] whitespace-nowrap"
+            className="text-[15vw] lg:text-[20vw] font-black text-foreground uppercase tracking-tighter font-['Teko'] whitespace-nowrap"
           >
             P O R T F O L I O
           </motion.h2>
@@ -171,8 +175,8 @@ export default function Portfolio() {
 
         {/* 3D Carousel */}
         <div className="relative w-full h-full flex items-center justify-center perspective-[3000px]">
-          <motion.div 
-            style={{ 
+          <motion.div
+            style={{
               rotateY: useTransform(smoothProgress, [0, 1], [0, -360]),
             }}
             className="relative w-full h-full flex items-center justify-center transform-style-3d"
@@ -187,29 +191,29 @@ export default function Portfolio() {
                   }}
                   className="absolute w-[300px] md:w-[480px] aspect-[4/5] transform-style-3d"
                 >
-                  <SpotlightCard 
-                    className="w-full h-full bg-white border border-black/5 overflow-hidden group cursor-pointer shadow-2xl shadow-black/5"
-                    spotlightColor="rgba(34, 211, 238, 0.1)"
+                  <SpotlightCard
+                    className="w-full h-full bg-card border border-border overflow-hidden group cursor-pointer shadow-2xl shadow-black/20"
+                    spotlightColor="rgba(34, 211, 238, 0.15)"
                   >
-                    <div 
+                    <div
                       className="relative w-full h-full transition-all duration-1000"
                       onClick={() => setSelectedProject(project)}
                     >
-                      <img 
-                        src={project.image} 
-                        alt={project.title} 
-                        className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-1000"
+                      <img
+                        src={project.image}
+                        alt={project.title}
+                        className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-all duration-1000"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent opacity-90" />
-                      
+                      <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-90" />
+
                       <div className="absolute bottom-0 left-0 p-10 w-full translate-y-4 group-hover:translate-y-0 transition-transform duration-700">
-                        <p className="text-[10px] font-bold text-black/40 group-hover:text-[#22D3EE] tracking-[0.4em] mb-4 uppercase transition-colors">
+                        <p className="text-[10px] font-bold text-white/40 group-hover:text-[#22D3EE] tracking-[0.4em] mb-4 uppercase transition-colors">
                           {project.category}
                         </p>
-                        <h3 className="text-4xl md:text-5xl font-black text-black uppercase tracking-tighter leading-none mb-6 font-['Teko']">
+                        <h3 className="text-4xl md:text-5xl font-black text-foreground uppercase tracking-tighter leading-none mb-6 font-['Teko']">
                           {project.title}
                         </h3>
-                        <div className="w-12 h-12 rounded-full border border-black/10 flex items-center justify-center group-hover:bg-[#22D3EE] group-hover:border-[#22D3EE] group-hover:text-black transition-all duration-700 text-black">
+                        <div className="w-12 h-12 rounded-full border border-border flex items-center justify-center group-hover:bg-[#22D3EE] group-hover:border-[#22D3EE] group-hover:text-black transition-all duration-700 text-foreground">
                           <Plus size={24} />
                         </div>
                       </div>
@@ -223,110 +227,110 @@ export default function Portfolio() {
 
         {/* Scroll Bar */}
         <div className="absolute bottom-24 left-1/2 -translate-x-1/2 flex flex-col items-center z-20">
-           <span className="text-[10px] font-black text-black/10 tracking-[0.5em] uppercase mb-4">MAPPING COLLECTION</span>
-           <div className="w-[200px] h-[1px] bg-black/5 relative overflow-hidden">
-             <motion.div 
-               style={{ scaleX: smoothProgress }}
-               className="absolute inset-0 bg-[#22D3EE] origin-left shadow-[0_0_20px_rgba(34,211,238,0.3)]"
-             />
-           </div>
+          <span className="text-[10px] font-black text-foreground/10 tracking-[0.5em] uppercase mb-4">MAPPING COLLECTION</span>
+          <div className="w-[200px] h-[1px] bg-border relative overflow-hidden">
+            <motion.div
+              style={{ scaleX: smoothProgress }}
+              className="absolute inset-0 bg-[#22D3EE] origin-left shadow-[0_0_20px_rgba(34,211,238,0.3)]"
+            />
+          </div>
         </div>
       </div>
 
       <AnimatePresence>
         {selectedProject && (
-          <motion.div 
+          <motion.div
             key="portfolio-modal"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[99999] bg-white overflow-y-auto no-scrollbar"
+            className="fixed inset-0 z-[99999] bg-background overflow-y-auto no-scrollbar"
           >
-            <motion.button 
+            <motion.button
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               onClick={() => setSelectedProject(null)}
-              className="fixed top-8 right-8 z-[110] w-14 h-14 bg-black text-white flex items-center justify-center rounded-full hover:bg-[#22D3EE] hover:text-black transition-all shadow-2xl"
+              className="fixed top-8 right-8 z-[110] w-14 h-14 bg-white text-black flex items-center justify-center rounded-full hover:bg-[#22D3EE] hover:text-black transition-all shadow-2xl"
             >
               <X size={28} />
             </motion.button>
 
             <div className="min-h-screen w-full flex flex-col">
-              <motion.div 
+              <motion.div
                 initial={{ scale: 1.1, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 1.5 }}
                 className="w-full h-[70vh] relative overflow-hidden"
               >
                 <img src={selectedProject.image} className="w-full h-full object-cover" alt="" />
-                <div className="absolute inset-0 bg-gradient-to-t from-white to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
                 <div className="absolute bottom-16 left-0 w-full px-6 lg:px-24">
-                  <motion.h1 
+                  <motion.h1
                     initial={{ y: 50, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.5 }}
-                    className="text-7xl md:text-[14rem] font-black text-black uppercase tracking-tighter leading-none font-['Teko']"
+                    className="text-7xl md:text-[14rem] font-black text-foreground uppercase tracking-tighter leading-none font-['Teko']"
                   >
                     {selectedProject.title}
                   </motion.h1>
                 </div>
               </motion.div>
 
-              <div className="px-6 lg:px-24 py-32 grid grid-cols-1 md:grid-cols-4 gap-16 border-b border-black/5 bg-white">
+              <div className="px-6 lg:px-24 py-32 grid grid-cols-1 md:grid-cols-4 gap-16 border-b border-border bg-background">
                 <div className="space-y-4">
-                  <p className="text-[10px] font-black text-black/20 uppercase tracking-[0.5em]">Project</p>
-                  <p className="text-xl font-black text-black uppercase font-['Teko']">{selectedProject.title}</p>
+                  <p className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.5em]">Project</p>
+                  <p className="text-xl font-black text-foreground uppercase font-['Teko']">{selectedProject.title}</p>
                 </div>
                 <div className="space-y-4">
-                  <p className="text-[10px] font-black text-black/20 uppercase tracking-[0.5em]">Role</p>
-                  <p className="text-xl font-black text-black uppercase font-['Teko']">{selectedProject.role}</p>
+                  <p className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.5em]">Role</p>
+                  <p className="text-xl font-black text-foreground uppercase font-['Teko']">{selectedProject.role}</p>
                 </div>
                 <div className="space-y-4">
-                  <p className="text-[10px] font-black text-black/20 uppercase tracking-[0.5em]">Year</p>
-                  <p className="text-xl font-black text-black uppercase font-['Teko']">{selectedProject.year}</p>
+                  <p className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.5em]">Year</p>
+                  <p className="text-xl font-black text-foreground uppercase font-['Teko']">{selectedProject.year}</p>
                 </div>
                 <div className="space-y-4">
-                  <p className="text-[10px] font-black text-black/20 uppercase tracking-[0.5em]">Tech</p>
+                  <p className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.5em]">Tech</p>
                   <div className="flex flex-wrap gap-3">
                     {selectedProject.tech.map(t => (
-                      <span key={t} className="px-4 py-2 border border-black/10 text-[10px] font-black text-black uppercase hover:border-[#22D3EE] hover:text-[#22D3EE] transition-colors">{t}</span>
+                      <span key={t} className="px-4 py-2 border border-border text-[10px] font-black text-foreground uppercase hover:border-[#22D3EE] hover:text-[#22D3EE] transition-colors">{t}</span>
                     ))}
                   </div>
                 </div>
               </div>
 
-               <div className="px-6 lg:px-24 py-32 flex flex-col lg:flex-row gap-32 items-start bg-white">
+              <div className="px-6 lg:px-24 py-32 flex flex-col lg:flex-row gap-32 items-start bg-[#050505]">
                 <div className="lg:w-1/2">
-                   <h2 className="text-5xl font-black text-black uppercase tracking-tighter mb-10 font-['Teko']">VISION & <span className="text-[#EEEEEE]">EXECUTION</span></h2>
-                   <p className="text-xl text-slate-500 leading-relaxed font-medium">
-                     {selectedProject.description}
-                     <br /><br />
-                     Menciptakan standar baru dalam desain antarmuka melalui rekayasa modern yang mengutamakan performa tanpa kompromi. Setiap elemen visual adalah hasil dari eksplorasi arsitektural yang mendalam.
-                   </p>
+                  <h2 className="text-5xl font-black text-white uppercase tracking-tighter mb-10 font-['Teko']">VISION & <span className="text-white/10">EXECUTION</span></h2>
+                  <p className="text-xl text-slate-400 leading-relaxed font-medium">
+                    {selectedProject.description}
+                    <br /><br />
+                    Menciptakan standar baru dalam desain antarmuka melalui rekayasa modern yang mengutamakan performa tanpa kompromi. Setiap elemen visual adalah hasil dari eksplorasi arsitektural yang mendalam.
+                  </p>
                 </div>
                 <div className="lg:w-1/2 w-full flex flex-col gap-10">
-                  <div className="aspect-video bg-black/[0.02] border border-black/5 flex items-center justify-center group overflow-hidden relative">
+                  <div className="aspect-video bg-foreground/[0.02] border border-border flex items-center justify-center group overflow-hidden relative">
                     <img src={selectedProject.image} className="w-full h-full object-cover opacity-20 group-hover:opacity-40 transition-opacity" alt="" />
                     <div className="absolute flex flex-col items-center">
-                      <div className="w-20 h-20 rounded-full border border-black/10 flex items-center justify-center mb-6 group-hover:bg-[#22D3EE] group-hover:text-black transition-all">
-                        <ArrowUpRight size={32} className="text-black" />
+                      <div className="w-20 h-20 rounded-full border border-border flex items-center justify-center mb-6 group-hover:bg-[#22D3EE] group-hover:text-black transition-all">
+                        <ArrowUpRight size={32} className="text-foreground group-hover:text-black" />
                       </div>
-                      <span className="text-[10px] font-black tracking-[0.5em] text-black/50 group-hover:text-black uppercase">Visual Representation</span>
+                      <span className="text-[10px] font-black tracking-[0.5em] text-foreground/50 group-hover:text-foreground uppercase">Visual Representation</span>
                     </div>
                   </div>
 
                   {selectedProject.link && (
-                    <a 
+                    <a
                       href={selectedProject.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group flex items-center justify-between p-8 border border-black/10 hover:border-[#22D3EE] transition-all"
+                      className="group flex items-center justify-between p-8 border border-white/10 hover:border-[#22D3EE] transition-all"
                     >
                       <div className="flex flex-col gap-1">
-                        <span className="text-[10px] font-black text-black/30 uppercase tracking-[0.5em]">Live Website</span>
-                        <span className="text-xl font-black text-black uppercase font-['Teko'] tracking-widest">{getHostname(selectedProject.link)}</span>
+                        <span className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.5em]">Live Website</span>
+                        <span className="text-xl font-black text-foreground uppercase font-['Teko'] tracking-widest">{getHostname(selectedProject.link)}</span>
                       </div>
-                      <div className="w-14 h-14 bg-black text-white flex items-center justify-center group-hover:bg-[#22D3EE] group-hover:text-black transition-all">
+                      <div className="w-14 h-14 bg-foreground text-background flex items-center justify-center group-hover:bg-[#22D3EE] group-hover:text-background transition-all">
                         <ExternalLink size={24} />
                       </div>
                     </a>
@@ -334,10 +338,10 @@ export default function Portfolio() {
                 </div>
               </div>
 
-              <div className="px-6 lg:px-24 py-32 mb-20 bg-white text-center">
-                <button 
+              <div className="px-6 lg:px-24 py-32 mb-20 bg-background text-center">
+                <button
                   onClick={() => setSelectedProject(null)}
-                  className="text-[10px] font-black text-black/20 uppercase tracking-[1em] hover:text-[#22D3EE] transition-all hover:tracking-[1.5em]"
+                  className="text-[10px] font-black text-foreground/20 uppercase tracking-[1em] hover:text-[#22D3EE] transition-all hover:tracking-[1.5em]"
                 >
                   RETURN TO SELECTION
                 </button>

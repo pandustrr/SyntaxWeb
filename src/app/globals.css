@@ -3,12 +3,34 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    @apply scroll-auto;
+  }
+
   :root {
     --background: #FFFFFF;
     --foreground: #000000;
     --brand-primary: #000000;
     --brand-secondary: #666666;
     --brand-accent: #22D3EE;
+    --card-bg: rgba(255, 255, 255, 0.8);
+    --border-color: rgba(0, 0, 0, 0.05);
+    --grid-line: rgba(0, 0, 0, 0.1);
+    --grid-opacity: 0.03;
+    --noise-invert: 1;
+  }
+
+  .dark {
+    --background: #050505;
+    --foreground: #FFFFFF;
+    --brand-primary: #FFFFFF;
+    --brand-secondary: #A1A1AA;
+    --brand-accent: #22D3EE;
+    --card-bg: rgba(10, 10, 10, 0.8);
+    --border-color: rgba(255, 255, 255, 0.05);
+    --grid-line: rgba(255, 255, 255, 0.1);
+    --grid-opacity: 0.03;
+    --noise-invert: 0;
   }
 
   ::-webkit-scrollbar {
@@ -16,12 +38,13 @@
   }
 
   ::-webkit-scrollbar-track {
-    background: #FFFFFF;
+    background: var(--background);
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #EEEEEE;
+    background: var(--brand-secondary);
     border-radius: 10px;
+    border: 1px solid var(--border-color);
   }
 
   ::-webkit-scrollbar-thumb:hover {
@@ -34,9 +57,10 @@
   }
 
   body {
-    @apply bg-[#FFFFFF] text-[#000000] overflow-x-hidden min-h-full;
+    @apply bg-[var(--background)] text-[var(--foreground)] overflow-x-hidden min-h-full;
     font-feature-settings: "cv11", "ss01";
     position: relative;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   h1,
@@ -59,12 +83,11 @@
     width: 100%;
     height: 100%;
     content: "";
-    opacity: 0.03;
+    opacity: 0.015;
     z-index: 9999;
     pointer-events: none;
     background-image: url("https://grainy-gradients.vercel.app/noise.svg");
-    filter: invert(1);
-    /* Invert noise for white background */
+    filter: invert(var(--noise-invert));
   }
 
   /* Animations */

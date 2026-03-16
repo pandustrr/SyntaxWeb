@@ -6,6 +6,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { Globe, Menu, X, MessageSquare, Home, Tag } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ThemeToggle from '../ui/ThemeToggle';
 
 export default function Navbar() {
   const { language, setLanguage, t } = useLanguage();
@@ -25,11 +26,11 @@ export default function Navbar() {
   return (
     <>
       <div className="fixed bottom-8 inset-x-0 z-50 flex justify-center px-4">
-        <motion.nav 
+        <motion.nav
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8, ease: "circOut" }}
-          className="bg-white/80 backdrop-blur-2xl border border-black/5 px-6 md:px-10 py-3 md:py-4 flex items-center gap-6 md:gap-12 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.05)]"
+          className="bg-card backdrop-blur-2xl border border-border px-6 md:px-10 py-3 md:py-4 flex items-center gap-6 md:gap-12 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.1)]"
         >
           {/* Main Links */}
           <div className="flex items-center gap-6 md:gap-10">
@@ -42,15 +43,15 @@ export default function Navbar() {
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="group flex flex-col items-center gap-1 transition-all duration-500 relative"
                 >
-                  <link.icon 
-                    size={16} 
-                    className={`${isActive ? 'text-[#22D3EE]' : 'text-black/30'} group-hover:text-[#22D3EE] transition-colors`} 
+                  <link.icon
+                    size={16}
+                    className={`${isActive ? 'text-[#22D3EE]' : 'text-foreground/30'} group-hover:text-[#22D3EE] transition-colors`}
                   />
-                  <span className={`text-[7px] md:text-[8px] font-black uppercase tracking-[0.3em] ${isActive ? 'text-[#22D3EE]' : 'text-black/30'} group-hover:text-[#111111]`}>
+                  <span className={`text-[7px] md:text-[8px] font-black uppercase tracking-[0.3em] ${isActive ? 'text-[#22D3EE]' : 'text-foreground/30'} group-hover:text-foreground`}>
                     {link.name}
                   </span>
                   {isActive && (
-                    <motion.div 
+                    <motion.div
                       layoutId="nav-active"
                       className="absolute -bottom-1 w-full h-[1px] bg-[#22D3EE]"
                     />
@@ -60,7 +61,7 @@ export default function Navbar() {
             })}
           </div>
 
-          <div className="w-[1px] h-6 bg-black/5 hidden md:block" />
+          <div className="w-[1px] h-6 bg-border hidden md:block" />
 
           <div className="flex items-center gap-5">
             {/* Language Switcher */}
@@ -72,17 +73,20 @@ export default function Navbar() {
               <span>{language === 'id' ? 'ID' : 'EN'}</span>
             </button>
 
-             <Link
+            <Link
               href="/partners"
-              className="hidden md:block text-[8px] md:text-[9px] font-black uppercase tracking-[0.3em] text-black/20 hover:text-black transition-colors"
-             >
+              className="hidden md:block text-[8px] md:text-[9px] font-black uppercase tracking-[0.3em] text-foreground/20 hover:text-foreground transition-colors"
+            >
               {t.nav.partners}
-             </Link>
+            </Link>
+
+            {/* Theme Toggle */}
+            <ThemeToggle />
           </div>
 
           {/* Mobile Menu Toggle */}
-          <button 
-            className="md:hidden text-black"
+          <button
+            className="md:hidden text-foreground"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -97,7 +101,7 @@ export default function Navbar() {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 50 }}
-            className="fixed inset-x-4 bottom-28 z-40 bg-white/95 backdrop-blur-3xl border border-black/5 flex flex-col items-center justify-center gap-8 p-12 md:hidden rounded-[32px] shadow-2xl shadow-black/5"
+            className="fixed inset-x-4 bottom-28 z-40 bg-card backdrop-blur-3xl border border-border flex flex-col items-center justify-center gap-8 p-12 md:hidden rounded-[32px] shadow-2xl shadow-black/20"
           >
             {navLinks.map((link) => (
               <Link

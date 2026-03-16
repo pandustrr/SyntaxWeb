@@ -3,12 +3,12 @@
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
 import SplitText from '@/components/animations/SplitText';
-import { 
-  Code2, 
-  Smartphone, 
-  Layout, 
-  Zap, 
-  ShieldCheck, 
+import {
+  Code2,
+  Smartphone,
+  Layout,
+  Zap,
+  ShieldCheck,
   Cpu
 } from 'lucide-react';
 
@@ -29,9 +29,9 @@ export default function Services() {
       <div className="max-w-7xl mx-auto px-6 relative z-10 w-full">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12 mb-20 md:mb-32">
           <div className="overflow-hidden">
-            <h2 className="text-5xl md:text-9xl font-black text-black tracking-tighter uppercase font-['Teko'] leading-none">
-              <SplitText text={t.services.title} className="text-black" />
-              <SplitText text={t.services.subtitle} className="text-[#EEEEEE]" />
+            <h2 className="text-5xl md:text-9xl font-black text-foreground tracking-tighter uppercase font-['Teko'] leading-none">
+              <SplitText text={t.services.title} className="text-foreground" />
+              <SplitText text={t.services.subtitle} className="text-foreground/10" />
             </h2>
           </div>
 
@@ -40,7 +40,7 @@ export default function Services() {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 1, delay: 0.2 }}
             viewport={{ once: true }}
-            className="text-slate-500 text-base md:text-lg max-w-sm font-medium tracking-tight leading-relaxed"
+            className="text-foreground/60 text-base md:text-lg max-w-sm font-medium tracking-tight leading-relaxed"
           >
             {t.services.description}
           </motion.p>
@@ -56,14 +56,14 @@ export default function Services() {
               viewport={{ once: true }}
               className="group relative flex flex-col items-start gap-4 md:gap-8"
             >
-              <div className="w-10 h-10 md:w-14 md:h-14 border border-black/5 flex items-center justify-center text-black bg-black/[0.03] group-hover:bg-[#22D3EE] group-hover:text-black group-hover:border-[#22D3EE] transition-all duration-500 rounded-lg">
+              <div className="w-10 h-10 md:w-14 md:h-14 border border-border flex items-center justify-center text-foreground bg-foreground/[0.03] group-hover:bg-[#22D3EE] group-hover:text-black group-hover:border-[#22D3EE] transition-all duration-500 rounded-lg">
                 <service.icon size={20} strokeWidth={1.5} className="md:w-7 md:h-7" />
               </div>
               <div className="space-y-2 md:space-y-4">
-                <h3 className="text-lg md:text-2xl font-black text-black uppercase tracking-tighter font-['Teko'] group-hover:text-[#22D3EE] transition-colors leading-tight">
+                <h3 className="text-lg md:text-2xl font-black text-foreground uppercase tracking-tighter font-['Teko'] group-hover:text-[#22D3EE] transition-colors leading-tight">
                   {service.title}
                 </h3>
-                <p className="text-slate-500 text-[10px] md:text-sm font-medium leading-relaxed max-w-full">
+                <p className="text-foreground/60 text-[10px] md:text-sm font-medium leading-relaxed max-w-full">
                   {service.desc}
                 </p>
 
@@ -72,7 +72,7 @@ export default function Services() {
                 </div>
               </div>
               {/* Decorative Index */}
-              <div className="absolute -top-6 -right-2 text-6xl font-black text-black/[0.03] group-hover:text-[#22D3EE]/10 transition-colors uppercase font-['Teko']">
+              <div className="absolute -top-6 -right-2 text-6xl font-black text-foreground/[0.03] group-hover:text-[#22D3EE]/10 transition-colors uppercase font-['Teko']">
                 0{index + 1}
               </div>
             </motion.div>

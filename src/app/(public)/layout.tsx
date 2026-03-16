@@ -39,15 +39,15 @@ export default function PublicLayout({
   }, [loading]);
 
   return (
-    <div className="relative min-h-screen bg-[#FFFFFF] selection:bg-[#22D3EE] selection:text-black">
+    <div className="relative min-h-screen bg-background selection:bg-brand-cyan selection:text-black">
       {/* Suppress known R3F/Three.js internal deprecation warnings */}
       <SuppressWarnings />
       {/* Noise Overlay Effect */}
       <div className="noise" />
-      
+
       {/* Visual Effects: Scanline */}
       <div className="fixed inset-0 pointer-events-none z-[80] overflow-hidden opacity-[0.05]">
-        <div className="w-full h-[1px] bg-black animate-scanline" />
+        <div className="w-full h-[1px] bg-white animate-scanline" />
       </div>
 
       <AnimatePresence mode="wait">
@@ -63,7 +63,7 @@ export default function PublicLayout({
 
       <motion.div
         initial={{ opacity: 0, scale: 0.98, filter: "blur(10px)" }}
-        animate={{ 
+        animate={{
           opacity: loading ? 0 : 1,
           scale: loading ? 0.98 : 1,
           filter: loading ? "blur(10px)" : "blur(0px)"
