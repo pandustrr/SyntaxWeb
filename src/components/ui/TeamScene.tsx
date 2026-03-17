@@ -2,7 +2,7 @@
 'use client';
 
 import { Canvas, useFrame } from '@react-three/fiber';
-import { useRef, useState, Suspense, useMemo } from 'react';
+import { useRef, useState, Suspense, useMemo, useEffect } from 'react';
 import { Text, PerspectiveCamera, Shadow, MeshDistortMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 import { useTheme } from 'next-themes';
@@ -347,6 +347,13 @@ function DualScene({ isLight }: { isLight: boolean }) {
 export default function TeamScene() {
     const { resolvedTheme } = useTheme();
     const isLight = resolvedTheme === 'light';
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    if (!mounted) return <div className="w-full h-full min-h-[580px]" />;
 
     return (
         <div className="w-full h-full min-h-[580px] cursor-pointer select-none">

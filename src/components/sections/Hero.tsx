@@ -37,7 +37,8 @@ export default function Hero() {
       <div className="absolute inset-0 z-0 opacity-10 dark:opacity-70 transition-opacity duration-1000">
         <Galaxy
           mouseAttraction={true}
-          mouseRepulsion={true}
+          mouseRepulsion={false}
+          attractionStrength={20}
           mouseInteraction={true}
           density={1}
           speed={0.5}

@@ -335,6 +335,11 @@ export default function Portfolio() {
   const { t } = useLanguage();
   const [isPaused, setIsPaused] = useState(false);
   const [hoveredProject, setHoveredProject] = useState<Project | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <section
@@ -371,27 +376,31 @@ export default function Portfolio() {
       </div>
 
       {/* 3D Galactic Scene Container */}
-      <div className="relative w-full h-[600px] md:h-[800px] perspective-[4000px] overflow-visible">
-        {/* Subtle Orbit Rings */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[2800px] h-[600px] border border-cyan-500/5 rounded-[100%] rotate-3 -skew-x-12 pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[2800px] h-[600px] border border-dashed border-cyan-500/10 rounded-[100%] rotate-[-2deg] skew-x-12 pointer-events-none" />
+      {mounted && (
+        <>
+          <div className="relative w-full h-[600px] md:h-[800px] perspective-[4000px] overflow-visible">
+            {/* Subtle Orbit Rings */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[2800px] h-[600px] border border-cyan-500/5 rounded-[100%] rotate-3 -skew-x-12 pointer-events-none" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[2800px] h-[600px] border border-dashed border-cyan-500/10 rounded-[100%] rotate-[-2deg] skew-x-12 pointer-events-none" />
 
-        {/* Render 3D Satellites */}
-        <div className="relative w-full h-full transform-style-3d flex items-center justify-center">
-          {PROJECTS.map((project, index) => (
-            <BrowserSatellite
-              key={project.id}
-              project={project}
-              index={index}
-              total={PROJECTS.length}
-              isPaused={isPaused}
-              onHover={setHoveredProject}
-            />
-          ))}
-        </div>
-      </div>
+            {/* Render 3D Satellites */}
+            <div className="relative w-full h-full transform-style-3d flex items-center justify-center">
+              {PROJECTS.map((project, index) => (
+                <BrowserSatellite
+                  key={project.id}
+                  project={project}
+                  index={index}
+                  total={PROJECTS.length}
+                  isPaused={isPaused}
+                  onHover={setHoveredProject}
+                />
+              ))}
+            </div>
+          </div>
 
-      <ProjectIntelligencePanel project={hoveredProject} />
+          <ProjectIntelligencePanel project={hoveredProject} />
+        </>
+      )}
 
       {/* Control UI */}
       <div className="relative z-10 mt-20 flex flex-col items-center">

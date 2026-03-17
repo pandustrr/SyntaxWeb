@@ -130,25 +130,33 @@ void main() {
   vec2 uv = (vUv * uResolution.xy - focalPx) / uResolution.y;
 
   vec2 mouseNorm = uMouse - vec2(0.5);
-  
+  vec2 mouseOffset = mouseNorm * 0.1 * uMouseActiveFactor;
+  uv += mouseOffset; // Global Parallax for all stars
+
   if (uAutoCenterRepulsion > 0.0) {
     vec2 centerUV = vec2(0.0, 0.0);
     float centerDist = length(uv - centerUV);
     vec2 repulsion = normalize(uv - centerUV) * (uAutoCenterRepulsion / (centerDist + 0.1));
     uv += repulsion * 0.05;
-  } else if (uMouseAttraction) {
-    vec2 mousePosUV = (uMouse * uResolution.xy - focalPx) / uResolution.y;
-    float mouseDist = length(uv - mousePosUV);
-    vec2 attraction = normalize(mousePosUV - uv) * (uAttractionStrength / (mouseDist + 0.5));
-    uv -= attraction * 0.1 * uMouseActiveFactor;
+  } 
+  
+  // Interaction (Attraction / Repulsion)
+  vec2 mousePosUV = (uMouse * uResolution.xy - focalPx) / uResolution.y;
+  float mouseDist = length(uv - mousePosUV);
+
+  if (uMouseAttraction) {
+    // Black Hole Suction: Pulls stars towards the mouse
+    vec2 dirAway = uv - mousePosUV;
+    float d = length(dirAway);
+    // Exponential suction force
+    float force = (uAttractionStrength * 0.05) / (d + 0.2);
+    force = min(force, 1.2); // Cap the distortion
+    uv += dirAway * force * uMouseActiveFactor;
   } else if (uMouseRepulsion) {
-    vec2 mousePosUV = (uMouse * uResolution.xy - focalPx) / uResolution.y;
-    float mouseDist = length(uv - mousePosUV);
-    vec2 repulsion = normalize(uv - mousePosUV) * (uRepulsionStrength / (mouseDist + 0.1));
-    uv += repulsion * 0.05 * uMouseActiveFactor;
-  } else {
-    vec2 mouseOffset = mouseNorm * 0.1 * uMouseActiveFactor;
-    uv += mouseOffset;
+    float invDist = 1.0 / (mouseDist + 0.15);
+    float force = (uRepulsionStrength * 0.1) * invDist;
+    vec2 repulsion = normalize(uv - mousePosUV) * force;
+    uv += repulsion * uMouseActiveFactor;
   }
 
   float autoRotAngle = uTime * uRotationSpeed;
@@ -315,10 +323,11 @@ export default function Galaxy({
       }
 
       const lerpFactor = 0.05;
+      const activeLerpFactor = 0.15; // Snappier attraction boot-up
       smoothMousePos.current.x += (targetMousePos.current.x - smoothMousePos.current.x) * lerpFactor;
       smoothMousePos.current.y += (targetMousePos.current.y - smoothMousePos.current.y) * lerpFactor;
 
-      smoothMouseActive.current += (targetMouseActive.current - smoothMouseActive.current) * lerpFactor;
+      smoothMouseActive.current += (targetMouseActive.current - smoothMouseActive.current) * activeLerpFactor;
 
       program.uniforms.uMouse.value[0] = smoothMousePos.current.x;
       program.uniforms.uMouse.value[1] = smoothMousePos.current.y;
@@ -330,20 +339,17 @@ export default function Galaxy({
     ctn.appendChild(gl.canvas);
 
     function handleMouseMove(e: MouseEvent) {
+      if (!ctn) return;
       const rect = ctn.getBoundingClientRect();
+      // Use window coordinates but map to container space
       const x = (e.clientX - rect.left) / rect.width;
       const y = 1.0 - (e.clientY - rect.top) / rect.height;
       targetMousePos.current = { x, y };
       targetMouseActive.current = 1.0;
     }
 
-    function handleMouseLeave() {
-      targetMouseActive.current = 0.0;
-    }
-
     if (mouseInteraction) {
-      ctn.addEventListener('mousemove', handleMouseMove);
-      ctn.addEventListener('mouseleave', handleMouseLeave);
+      window.addEventListener('mousemove', handleMouseMove);
     }
 
     return () => {
@@ -351,8 +357,7 @@ export default function Galaxy({
       observer.disconnect();
       window.removeEventListener('resize', resize);
       if (mouseInteraction) {
-        ctn.removeEventListener('mousemove', handleMouseMove);
-        ctn.removeEventListener('mouseleave', handleMouseLeave);
+        window.removeEventListener('mousemove', handleMouseMove);
       }
       if (ctn.contains(gl.canvas)) {
         ctn.removeChild(gl.canvas);
