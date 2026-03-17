@@ -74,11 +74,8 @@ export default function About() {
                             <TeamScene />
                         </div>
 
-                        {/* Visual Decorative Accent */}
-                        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#050505] to-transparent z-10 pointer-events-none" />
-
                         <div className="absolute top-0 right-0 p-8 z-10 pointer-events-none opacity-20 hidden md:block">
-                            <span className="text-[10px] font-black text-white uppercase tracking-[0.5em] font-['Teko'] group-hover:text-[#22D3EE] transition-colors">TEAM_CORE_V4</span>
+                            <span className="text-[10px] font-black text-foreground uppercase tracking-[0.5em] font-['Teko'] group-hover:text-[#22D3EE] transition-colors">TEAM_CORE_V4</span>
                         </div>
                     </motion.div>
                 </div>
