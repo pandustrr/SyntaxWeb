@@ -22,7 +22,10 @@ git fetch origin $BRANCH
 git reset --hard origin/$BRANCH
 
 # Coba memuat environment Node.js jika ada di path standar cPanel
-if [ -f "$HOME/nodevenv/$PROJECT_DIR/20/bin/activate" ]; then
+if [ -f "$HOME/nodevenv/$PROJECT_DIR/22/bin/activate" ]; then
+    source "$HOME/nodevenv/$PROJECT_DIR/22/bin/activate"
+    echo "✅ Node.js Environment (v22) diaktifkan."
+elif [ -f "$HOME/nodevenv/$PROJECT_DIR/20/bin/activate" ]; then
     source "$HOME/nodevenv/$PROJECT_DIR/20/bin/activate"
     echo "✅ Node.js Environment (v20) diaktifkan."
 elif [ -f "$HOME/nodevenv/$PROJECT_DIR/18/bin/activate" ]; then
