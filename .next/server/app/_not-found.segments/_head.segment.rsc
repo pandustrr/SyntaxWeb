@@ -1,0 +1,6 @@
+1:"$Sreact.fragment"
+2:I[31176,["/_next/static/chunks/d1bf348d8fe05872.js","/_next/static/chunks/68aae7066968f748.js"],"ViewportBoundary"]
+3:I[31176,["/_next/static/chunks/d1bf348d8fe05872.js","/_next/static/chunks/68aae7066968f748.js"],"MetadataBoundary"]
+4:"$Sreact.suspense"
+5:I[4604,["/_next/static/chunks/d1bf348d8fe05872.js","/_next/static/chunks/68aae7066968f748.js"],"IconMark"]
+0:{"buildId":"39p3D-ciAjruEiwhaEFQ4","rsc":["$","$1","h",{"children":[["$","meta",null,{"name":"robots","content":"noindex"}],["$","$L2",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","div",null,{"hidden":true,"children":["$","$L3",null,{"children":["$","$4",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Syntax Web | From Concept to Intelligent Innovation"}],["$","meta","1",{"name":"description","content":"Transforming ideas into intelligent digital innovations. Expert web development powered by modern AI and architectural excellence."}],["$","link","2",{"rel":"icon","href":"/favicon.ico?favicon.0b3bf435.ico","sizes":"256x256","type":"image/x-icon"}],["$","$L5","3",{}]]}]}]}],null]}],"loading":null,"isPartial":false}

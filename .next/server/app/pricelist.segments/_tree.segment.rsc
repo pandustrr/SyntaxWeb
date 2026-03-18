@@ -1,0 +1,3 @@
+:HL["/_next/static/chunks/19c9f1fa8dc1dcdb.css","style"]
+:HL["https://fonts.googleapis.com/css2?family=Teko:wght@300..700&family=IBM+Plex+Sans:wght@100..700&display=swap","style"]
+0:{"buildId":"39p3D-ciAjruEiwhaEFQ4","tree":{"name":"","paramType":null,"paramKey":"","hasRuntimePrefetch":false,"slots":{"children":{"name":"(public)","paramType":null,"paramKey":"(public)","hasRuntimePrefetch":false,"slots":{"children":{"name":"pricelist","paramType":null,"paramKey":"pricelist","hasRuntimePrefetch":false,"slots":{"children":{"name":"__PAGE__","paramType":null,"paramKey":"__PAGE__","hasRuntimePrefetch":false,"slots":null,"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":true},"staleTime":300}
