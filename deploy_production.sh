@@ -33,23 +33,22 @@ elif [ -f "$HOME/nodevenv/$PROJECT_DIR/18/bin/activate" ]; then
     echo "✅ Node.js Environment (v18) diaktifkan."
 fi
 
-# Tentukan path NPM (Khusus CloudLinux/cPanel)
-NPM_PATH="/opt/alt/alt-nodejs22/root/usr/bin/npm"
-NPX_PATH="/opt/alt/alt-nodejs22/root/usr/bin/npx"
+# Daftarkan Path Node.js 22 (Khusus CloudLinux/cPanel) agar sub-proses bisa menemukan 'node'
+export PATH="/opt/alt/alt-nodejs22/root/usr/bin:$PATH"
 
 # 3. Instalasi Dependencies
 echo "📦 Menginstal dependencies..."
-if [ -f "$NPM_PATH" ]; then
-    $NPM_PATH install --legacy-peer-deps
+if command -v npm &> /dev/null; then
+    npm install --legacy-peer-deps
 else
-    echo "❌ Error: npm tidak ditemukan di $NPM_PATH."
+    echo "❌ Error: npm tetap tidak ditemukan. Mohon hubungi support untuk lokasi Node.js 22."
     exit 1
 fi
 
 # 4. Prisma Setup
 echo "💎 Sinkronisasi Database (Prisma)..."
-if [ -f "$NPX_PATH" ]; then
-    $NPX_PATH prisma generate
+if command -v npx &> /dev/null; then
+    npx prisma generate
 fi
 
 # 5. Build Project
