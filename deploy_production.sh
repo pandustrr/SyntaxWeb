@@ -21,13 +21,29 @@ echo "📥 Menarik kode terbaru dari GitHub..."
 git fetch origin $BRANCH
 git reset --hard origin/$BRANCH
 
+# Coba memuat environment Node.js jika ada di path standar cPanel
+if [ -f "$HOME/nodevenv/$PROJECT_DIR/20/bin/activate" ]; then
+    source "$HOME/nodevenv/$PROJECT_DIR/20/bin/activate"
+    echo "✅ Node.js Environment (v20) diaktifkan."
+elif [ -f "$HOME/nodevenv/$PROJECT_DIR/18/bin/activate" ]; then
+    source "$HOME/nodevenv/$PROJECT_DIR/18/bin/activate"
+    echo "✅ Node.js Environment (v18) diaktifkan."
+fi
+
 # 3. Instalasi Dependencies
 echo "📦 Menginstal dependencies..."
-npm install
+if command -v npm &> /dev/null; then
+    npm install
+else
+    echo "❌ Error: npm tetap tidak ditemukan. Silakan jalankan perintah 'source' dari menu Setup Node.js App terlebih dahulu."
+    exit 1
+fi
 
 # 4. Prisma Setup
 echo "💎 Sinkronisasi Database (Prisma)..."
-npx prisma generate
+if command -v npx &> /dev/null; then
+    npx prisma generate
+fi
 
 # 5. Build Project
 # Langkah ini dimatikan karena build sudah dilakukan di GitHub Actions
