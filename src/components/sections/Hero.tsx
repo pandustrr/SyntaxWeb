@@ -33,22 +33,23 @@ export default function Hero() {
 
   return (
     <section id="home" className="relative w-full h-screen flex items-center justify-center overflow-hidden bg-background transition-colors duration-500">
-      {/* Layer 0: Galaxy Background */}
-      <div className="absolute inset-0 z-0 opacity-10 dark:opacity-70 transition-opacity duration-1000">
+      {/* Layer 0: Galaxy Background - Optimized for Hero */}
+      <div className="absolute inset-0 z-0 opacity-10 dark:opacity-40 transition-opacity duration-1000">
         <Galaxy
           mouseAttraction={true}
           mouseRepulsion={false}
-          attractionStrength={20}
+          attractionStrength={5}
           mouseInteraction={true}
-          density={1}
-          speed={0.5}
+          density={1.0}
+          speed={0.3}
           transparent={true}
           hueShift={180}
+          numLayers={2}
         />
       </div>
 
       {/* Background Glows (Very Subtle) */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[60%] bg-[#22D3EE]/[0.05] blur-[150px] rounded-full pointer-events-none z-[1]" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50%] h-[50%] bg-[#22D3EE]/[0.03] blur-[100px] rounded-full pointer-events-none z-[1]" />
 
       {/* Layer 10: The 3D Scene (Crystals) */}
       <div className="absolute inset-x-0 inset-y-0 z-10 flex items-center justify-center overflow-hidden pointer-events-none">
@@ -79,9 +80,9 @@ export default function Hero() {
                 text="SYNTAX"
                 animateOn="view"
                 revealDirection="center"
-                speed={70}
+                speed={40}
                 className="text-foreground"
-                encryptedClassName="text-brand-cyan/30"
+                encryptedClassName="text-brand-cyan/20"
                 sequential={true}
               />
             </h1>

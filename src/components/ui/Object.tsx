@@ -175,8 +175,8 @@ export default function Object3D({ activeProject, isFocused, progress }: { activ
                 <mesh ref={coreRef} geometry={icosahedronGeom}>
                     <MeshTransmissionMaterial
                         backside
-                        samples={16}
-                        resolution={512}
+                        samples={8}
+                        resolution={256}
                         transmission={1}
                         roughness={0.1}
                         thickness={1.2}
@@ -194,6 +194,6 @@ export default function Object3D({ activeProject, isFocused, progress }: { activ
                     <meshStandardMaterial color="#ffffff" wireframe transparent opacity={0.1} metalness={1} roughness={0} />
                 </mesh>
             </group>
-        </group>
+        </group >
     );
 }

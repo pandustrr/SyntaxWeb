@@ -16,7 +16,7 @@ export default function Scene({ activeProject, isFocused, progress }: { activePr
                 alpha: true,
                 powerPreference: "high-performance"
             }}
-            dpr={[1, 2]}
+            dpr={1}
             style={{ width: '100%', height: '100%' }}
         >
             <Suspense fallback={null}>

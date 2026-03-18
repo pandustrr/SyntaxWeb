@@ -67,11 +67,11 @@ function HumanFigure({ color, skinColor, clothColor }: {
         <group position={[0, 0.3, 0.15]} scale={[0.78, 0.78, 0.78]}>
             {/* ── HEAD GROUP ── */}
             <mesh ref={headRef} position={[0, 2.15, 0]}>
-                <sphereGeometry args={[0.52, 32, 32]} />
+                <sphereGeometry args={[0.52, 16, 16]} />
                 <meshStandardMaterial color={skinColor} roughness={0.6} />
             </mesh>
             <mesh position={[0, 2.5, -0.05]}>
-                <sphereGeometry args={[0.54, 32, 16, 0, Math.PI * 2, 0, Math.PI * 0.55]} />
+                <sphereGeometry args={[0.54, 16, 12, 0, Math.PI * 2, 0, Math.PI * 0.55]} />
                 <meshStandardMaterial color="#1a1a1a" roughness={0.8} />
             </mesh>
             <mesh position={[-0.18, 2.2, 0.46]}>
@@ -91,7 +91,7 @@ function HumanFigure({ color, skinColor, clothColor }: {
                 <meshBasicMaterial color="#ffffff" />
             </mesh>
             <mesh position={[0, 1.68, 0]}>
-                <cylinderGeometry args={[0.15, 0.18, 0.38, 12]} />
+                <cylinderGeometry args={[0.15, 0.18, 0.38, 8]} />
                 <meshStandardMaterial color={skinColor} roughness={0.6} />
             </mesh>
 
@@ -111,29 +111,29 @@ function HumanFigure({ color, skinColor, clothColor }: {
 
                 <group ref={lArmRef} position={[-0.62, 0.35, 0]}>
                     <mesh position={[-0.18, -0.28, 0]}>
-                        <capsuleGeometry args={[0.15, 0.5, 6, 12]} />
+                        <capsuleGeometry args={[0.15, 0.5, 4, 8]} />
                         <meshStandardMaterial color={clothColor} roughness={0.4} />
                     </mesh>
                     <mesh position={[-0.22, -0.8, 0]}>
-                        <capsuleGeometry args={[0.12, 0.42, 6, 12]} />
+                        <capsuleGeometry args={[0.12, 0.42, 4, 8]} />
                         <meshStandardMaterial color={skinColor} roughness={0.6} />
                     </mesh>
                     <mesh position={[-0.24, -1.12, 0]}>
-                        <sphereGeometry args={[0.13, 12, 12]} />
+                        <sphereGeometry args={[0.13, 8, 8]} />
                         <meshStandardMaterial color={skinColor} roughness={0.6} />
                     </mesh>
                 </group>
                 <group ref={rArmRef} position={[0.62, 0.35, 0]}>
                     <mesh position={[0.18, -0.28, 0]}>
-                        <capsuleGeometry args={[0.15, 0.5, 6, 12]} />
+                        <capsuleGeometry args={[0.15, 0.5, 4, 8]} />
                         <meshStandardMaterial color={clothColor} roughness={0.4} />
                     </mesh>
                     <mesh position={[0.22, -0.8, 0]}>
-                        <capsuleGeometry args={[0.12, 0.42, 6, 12]} />
+                        <capsuleGeometry args={[0.12, 0.42, 4, 8]} />
                         <meshStandardMaterial color={skinColor} roughness={0.6} />
                     </mesh>
                     <mesh position={[0.24, -1.12, 0]}>
-                        <sphereGeometry args={[0.13, 12, 12]} />
+                        <sphereGeometry args={[0.13, 8, 8]} />
                         <meshStandardMaterial color={skinColor} roughness={0.6} />
                     </mesh>
                 </group>
@@ -145,11 +145,11 @@ function HumanFigure({ color, skinColor, clothColor }: {
             </mesh>
             <group ref={lLegRef} position={[-0.25, 0.1, 0]}>
                 <mesh position={[0, -0.42, 0]}>
-                    <capsuleGeometry args={[0.18, 0.6, 6, 12]} />
+                    <capsuleGeometry args={[0.18, 0.6, 4, 8]} />
                     <meshStandardMaterial color="#2a2a3a" roughness={0.6} />
                 </mesh>
                 <mesh position={[0, -1.05, 0]}>
-                    <capsuleGeometry args={[0.14, 0.55, 6, 12]} />
+                    <capsuleGeometry args={[0.14, 0.55, 4, 8]} />
                     <meshStandardMaterial color="#2a2a3a" roughness={0.6} />
                 </mesh>
                 <mesh position={[0.04, -1.47, 0.1]}>
@@ -159,11 +159,11 @@ function HumanFigure({ color, skinColor, clothColor }: {
             </group>
             <group ref={rLegRef} position={[0.25, 0.1, 0]}>
                 <mesh position={[0, -0.42, 0]}>
-                    <capsuleGeometry args={[0.18, 0.6, 6, 12]} />
+                    <capsuleGeometry args={[0.18, 0.6, 4, 8]} />
                     <meshStandardMaterial color="#2a2a3a" roughness={0.6} />
                 </mesh>
                 <mesh position={[0, -1.05, 0]}>
-                    <capsuleGeometry args={[0.14, 0.55, 6, 12]} />
+                    <capsuleGeometry args={[0.14, 0.55, 4, 8]} />
                     <meshStandardMaterial color="#2a2a3a" roughness={0.6} />
                 </mesh>
                 <mesh position={[0.04, -1.47, 0.1]}>
@@ -173,7 +173,7 @@ function HumanFigure({ color, skinColor, clothColor }: {
             </group>
 
             <mesh position={[0, -1.38, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-                <circleGeometry args={[0.5, 24]} />
+                <circleGeometry args={[0.5, 12]} />
                 <meshBasicMaterial color={color} transparent opacity={0.12} />
             </mesh>
         </group>
@@ -319,7 +319,7 @@ function ParticleRing({ color }: { color: string }) {
                 const big = i % 3 === 0;
                 return (
                     <mesh key={i} position={[Math.cos(angle) * r, Math.sin(angle) * r, 0]}>
-                        <sphereGeometry args={[big ? 0.05 : 0.025, 8, 8]} />
+                        <sphereGeometry args={[big ? 0.05 : 0.025, 4, 4]} />
                         <meshBasicMaterial color={color} transparent opacity={big ? 0.85 : 0.4} />
                     </mesh>
                 );
