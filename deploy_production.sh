@@ -36,7 +36,7 @@ fi
 # 3. Instalasi Dependencies
 echo "📦 Menginstal dependencies..."
 if command -v npm &> /dev/null; then
-    npm install
+    npm install --legacy-peer-deps
 else
     echo "❌ Error: npm tetap tidak ditemukan. Silakan jalankan perintah 'source' dari menu Setup Node.js App terlebih dahulu."
     exit 1
