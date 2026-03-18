@@ -55,12 +55,14 @@ export default function BackgroundKinetic() {
                 ))}
             </div>
 
-            {/* BLUEPRINT_V01 Master Structure */}
+            {/* BLUEPRINT_V01 Master Structure - Fixed subtle rotation instead of scroll-driven */}
             <motion.div
-                style={{ rotate, opacity }}
+                animate={{ rotate: 360 }}
+                transition={{ duration: 200, repeat: Infinity, ease: "linear" }}
+                style={{ opacity }}
                 className="absolute inset-0 flex items-center justify-center p-[5%]"
             >
-                <svg viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg" className="w-full h-full stroke-foreground opacity-[0.05] stroke-[0.3] fill-transparent">
+                <svg viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg" className="w-full h-full stroke-foreground opacity-[0.03] stroke-[0.2] fill-transparent">
                     <circle cx="500" cy="500" r="450" />
                     <circle cx="500" cy="500" r="300" />
                     <rect x="200" y="200" width="600" height="600" />

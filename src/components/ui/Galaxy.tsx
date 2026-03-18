@@ -40,7 +40,7 @@ uniform bool uInverted;
 
 varying vec2 vUv;
 
-#define NUM_LAYER 4.0
+uniform float uNumLayers;
 #define STAR_COLOR_CUTOFF 0.2
 #define MAT45 mat2(0.7071, -0.7071, 0.7071, 0.7071)
 #define PERIOD 3.0
@@ -125,6 +125,7 @@ vec3 StarLayer(vec2 uv) {
   return col;
 }
 
+
 void main() {
   vec2 focalPx = uFocal * uResolution.xy;
   vec2 uv = (vUv * uResolution.xy - focalPx) / uResolution.y;
@@ -167,17 +168,16 @@ void main() {
 
   vec3 col = vec3(0.0);
 
-  for (float i = 0.0; i < 1.0; i += 1.0 / NUM_LAYER) {
+  for (float i = 0.0; i < 1.0; i += 0.2) {
+    if (i >= uNumLayers * 0.2) break;
     float depth = fract(i + uStarSpeed * uSpeed);
     float scale = mix(20.0 * uDensity, 0.5 * uDensity, depth);
-    float fade = depth * smoothstep(1.0, 0.9, depth);
+    float fade = depth * smoothstep(1.0, 0.8, depth);
     col += StarLayer(uv * scale + i * 453.32) * fade;
   }
 
   if (uTransparent) {
-    float alpha = length(col);
-    alpha = smoothstep(0.0, 0.3, alpha);
-    alpha = min(alpha, 1.0);
+    float alpha = clamp(length(col) * 2.0, 0.0, 1.0);
     gl_FragColor = vec4(col, alpha);
   } else {
     gl_FragColor = vec4(col, 1.0);
@@ -205,6 +205,7 @@ interface GalaxyProps {
   autoCenterRepulsion?: number;
   transparent?: boolean;
   inverted?: boolean;
+  numLayers?: number;
 }
 
 export default function Galaxy({
@@ -227,6 +228,7 @@ export default function Galaxy({
   autoCenterRepulsion = 0,
   transparent = true,
   inverted = false,
+  numLayers = 3,
   ...rest
 }: GalaxyProps) {
   const ctnDom = useRef<HTMLDivElement>(null);
@@ -297,7 +299,8 @@ export default function Galaxy({
         uMouseActiveFactor: { value: 0.0 },
         uAutoCenterRepulsion: { value: autoCenterRepulsion },
         uTransparent: { value: transparent },
-        uInverted: { value: inverted }
+        uInverted: { value: inverted },
+        uNumLayers: { value: numLayers }
       }
     });
 
@@ -383,7 +386,8 @@ export default function Galaxy({
     attractionStrength,
     autoCenterRepulsion,
     transparent,
-    inverted
+    inverted,
+    numLayers
   ]);
 
   return <div ref={ctnDom} className="w-full h-full relative" {...rest} />;

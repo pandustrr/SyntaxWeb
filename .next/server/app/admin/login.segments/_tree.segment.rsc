@@ -1,3 +1,0 @@
-:HL["/_next/static/chunks/c5d209cc2d56c460.css","style"]
-:HL["https://fonts.googleapis.com/css2?family=Teko:wght@300..700&family=IBM+Plex+Sans:wght@100..700&display=swap","style"]
-0:{"buildId":"DXPib4FzDQ0Af4USAF6uX","tree":{"name":"","paramType":null,"paramKey":"","hasRuntimePrefetch":false,"slots":{"children":{"name":"admin","paramType":null,"paramKey":"admin","hasRuntimePrefetch":false,"slots":{"children":{"name":"login","paramType":null,"paramKey":"login","hasRuntimePrefetch":false,"slots":{"children":{"name":"__PAGE__","paramType":null,"paramKey":"__PAGE__","hasRuntimePrefetch":false,"slots":null,"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":true},"staleTime":300}
