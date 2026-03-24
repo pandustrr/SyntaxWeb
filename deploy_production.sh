@@ -53,8 +53,8 @@ fi
 
 # 5. Build Project Check
 echo "🔍 Menyeimbangkan folder build (.next)..."
-if [ ! -d ".next" ]; then
-    echo "⚠️ Folder .next tidak ditemukan! Mencoba melakukan build lokal..."
+if [ ! -f ".next/BUILD_ID" ]; then
+    echo "⚠️ Folder build (.next) tidak ditemukan atau tidak valid! Memulai proses build..."
     npm run build
 fi
 
