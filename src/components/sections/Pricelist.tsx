@@ -135,7 +135,9 @@ export default function Pricelist() {
               </div>
 
               <Link
-                href="/contact"
+                href="https://wa.me/6285733478061"
+                target="_blank"
+                rel="noopener noreferrer"
                 className={`w-full py-3 rounded-xl font-black text-center text-xs transition-all ${plan.highlight
                   ? 'bg-background text-foreground hover:bg-brand-orange hover:text-white'
                   : 'bg-foreground/5 text-foreground hover:bg-brand-red hover:text-white'
