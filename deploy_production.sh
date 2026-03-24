@@ -51,18 +51,23 @@ if command -v npx &> /dev/null; then
     npx prisma generate
 fi
 
-# 5. Build Project
-# Langkah ini dimatikan karena build sudah dilakukan di GitHub Actions
-# echo "🏗️ Memulai Build Next.js..."
-# npm run build
+# 5. Build Project Check
+echo "🔍 Menyeimbangkan folder build (.next)..."
+if [ ! -d ".next" ]; then
+    echo "⚠️ Folder .next tidak ditemukan! Mencoba melakukan build lokal..."
+    npm run build
+fi
 
-# 6. Restart Aplikasi (PM2)
+# 6. Restart Aplikasi
 if command -v pm2 &> /dev/null
 then
     echo "♻️ Restarting application with PM2..."
     pm2 restart syntaxweb-app || pm2 start npm --name "syntaxweb-app" -- start
 else
-    echo "⚠️ PM2 tidak terdeteksi. Silakan gunakan Node.js Selector cPanel untuk restart."
+    echo "♻️ Restarting via Phusion Passenger (cPanel)..."
+    mkdir -p tmp
+    touch tmp/restart.txt
+    echo "✅ tmp/restart.txt diperbarui."
 fi
 
 echo "✅ Deployment Berhasil Selesai!"
