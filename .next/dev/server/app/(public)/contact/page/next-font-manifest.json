@@ -1,0 +1,11 @@
+{
+  "pages": {},
+  "app": {
+    "[project]/SyntaxWeb/src/app/(public)/contact/page": [
+      "static/media/b897c54bb211cfcd-s.p.972ad4ab.woff2",
+      "static/media/03fc1b4a8d284b5e-s.p.af4fcd24.woff2"
+    ]
+  },
+  "appUsingSizeAdjust": true,
+  "pagesUsingSizeAdjust": false
+}

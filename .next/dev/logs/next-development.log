@@ -1,0 +1,37 @@
+[00:00:01.310] Server  WARN    ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+[00:00:01.463] Server  LOG     ✓ Ready in 1120ms
+[00:00:15.978] Server  LOG     ○ Compiling / ...
+[00:00:19.221] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:01:07.903] Browser LOG     THREE.WebGLRenderer: Context Lost.
+[00:01:07.904] Browser LOG     THREE.WebGLRenderer: Context Lost.
+[00:08:13.052] Server  LOG     ✓ Compiled in 2.2s
+[00:08:16.060] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:08:22.744] Server  LOG     ✓ Compiled in 1042ms
+[00:08:24.514] Server  LOG     ✓ Compiled in 1026ms
+[00:08:25.595] Browser ERROR   uncaughtError: TypeError: Failed to construct 'Image': Please use the 'new' operator, this DOM object constructor cannot be called as a function.
+[00:08:26.594] Browser LOG     THREE.WebGLRenderer: Context Lost.
+[00:08:26.595] Browser LOG     THREE.WebGLRenderer: Context Lost.
+[00:08:37.519] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[00:08:37.546] Server  LOG     ✓ Compiled in 238ms
+[00:08:37.549] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[00:08:39.226] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:08:49.775] Server  LOG     ✓ Compiled in 155ms
+[00:08:51.466] Server  LOG     ✓ Compiled in 136ms
+[00:09:01.289] Server  LOG     ✓ Compiled in 115ms
+[00:10:40.048] Browser WARN    Image with src "/portfolio/hmrpmunej.id_.jpg" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
+[00:10:40.645] Browser WARN    Image with src "/portfolio/afstudio.my.id_.jpg" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
+[00:10:40.645] Browser WARN    Image with src "/portfolio/sugoi8management.com_.jpg" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
+[00:10:40.645] Browser WARN    Image with src "/portfolio/balikkucingstudio.com_.jpg" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
+[00:10:40.645] Browser WARN    Image with src "/portfolio/strategix.grapadikonsultan.co.id_.jpg" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
+[00:10:47.306] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:10:47.628] Browser WARN    Image with src "/portfolio/hmrpmunej.id_.jpg" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
+[00:10:47.628] Browser WARN    Image with src "/portfolio/balikkucingstudio.com_.jpg" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
+[00:10:47.628] Browser WARN    Image with src "/portfolio/afstudio.my.id_.jpg" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
+[00:10:47.628] Browser WARN    Image with src "/portfolio/strategix.grapadikonsultan.co.id_.jpg" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
+[00:10:47.628] Browser WARN    Image with src "/portfolio/sugoi8management.com_.jpg" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
+[00:11:08.059] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:11:08.334] Browser WARN    Image with src "/portfolio/hmrpmunej.id_.jpg" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
+[00:11:22.225] Browser WARN    Image with src "/portfolio/balikkucingstudio.com_.jpg" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
+[00:11:22.225] Browser WARN    Image with src "/portfolio/afstudio.my.id_.jpg" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
+[00:11:22.645] Browser WARN    Image with src "/portfolio/strategix.grapadikonsultan.co.id_.jpg" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
+[00:11:22.645] Browser WARN    Image with src "/portfolio/sugoi8management.com_.jpg" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
