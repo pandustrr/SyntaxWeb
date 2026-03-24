@@ -1,5 +1,18 @@
 import type { Metadata } from 'next';
+import { Teko, IBM_Plex_Sans } from 'next/font/google';
 import './globals.css';
+
+const teko = Teko({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-teko',
+});
+
+const ibmPlexSans = IBM_Plex_Sans({
+  subsets: ['latin'],
+  weight: ['100', '200', '300', '400', '500', '600', '700'],
+  variable: '--font-ibm-plex',
+});
 
 export const metadata: Metadata = {
   title: 'Syntax Web | From Concept to Intelligent Innovation',
@@ -15,11 +28,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id" suppressHydrationWarning>
-      <head>
-        <link href="https://fonts.googleapis.com/css2?family=Teko:wght@300..700&family=IBM+Plex+Sans:wght@100..700&display=swap" rel="stylesheet" />
-      </head>
-      <body className="antialiased font-['IBM_Plex_Sans'] relative">
+    <html lang="id" suppressHydrationWarning className={`${teko.variable} ${ibmPlexSans.variable}`}>
+      <body className="antialiased font-sans relative">
         <LanguageProvider>
           <ThemeProvider
             attribute="class"

@@ -240,9 +240,16 @@ export default function Galaxy({
   useEffect(() => {
     if (!ctnDom.current) return;
     const ctn = ctnDom.current;
+
+    // Performance detection
+    const isMobile = window.innerWidth < 768;
+    const optimizedNumLayers = isMobile ? Math.min(numLayers, 2) : numLayers;
+    const optimizedDensity = isMobile ? density * 0.6 : density;
+
     const renderer = new Renderer({
       alpha: transparent,
-      premultipliedAlpha: false
+      premultipliedAlpha: false,
+      dpr: isMobile ? 1 : Math.min(window.devicePixelRatio, 2)
     });
     const gl = renderer.gl;
 
@@ -282,7 +289,7 @@ export default function Galaxy({
         uFocal: { value: new Float32Array(focal) },
         uRotation: { value: new Float32Array(rotation) },
         uStarSpeed: { value: starSpeed },
-        uDensity: { value: density },
+        uDensity: { value: optimizedDensity },
         uHueShift: { value: hueShift },
         uSpeed: { value: speed },
         uMouse: {
@@ -300,7 +307,7 @@ export default function Galaxy({
         uAutoCenterRepulsion: { value: autoCenterRepulsion },
         uTransparent: { value: transparent },
         uInverted: { value: inverted },
-        uNumLayers: { value: numLayers }
+        uNumLayers: { value: optimizedNumLayers }
       }
     });
 

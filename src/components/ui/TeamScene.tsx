@@ -348,9 +348,11 @@ export default function TeamScene() {
     const { resolvedTheme } = useTheme();
     const isLight = resolvedTheme === 'light';
     const [mounted, setMounted] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
         setMounted(true);
+        setIsMobile(window.innerWidth < 768);
     }, []);
 
     if (!mounted) return <div className="w-full h-full min-h-[580px]" />;
@@ -364,10 +366,10 @@ export default function TeamScene() {
                     powerPreference: "high-performance",
                     preserveDrawingBuffer: false
                 }}
-                dpr={typeof window !== 'undefined' ? Math.min(window.devicePixelRatio, 1.5) : 1}
+                dpr={isMobile ? 1 : Math.min(typeof window !== 'undefined' ? window.devicePixelRatio : 1, 1.5)}
                 onCreated={({ gl }) => {
-                    gl.shadowMap.enabled = true;
-                    gl.shadowMap.type = THREE.BasicShadowMap; // Faster than PCF
+                    gl.shadowMap.enabled = !isMobile;
+                    gl.shadowMap.type = THREE.BasicShadowMap;
                 }}
             >
                 <PerspectiveCamera makeDefault position={[0, 0.4, 8.5]} fov={44} />

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
 import { ExternalLink, Satellite, ShieldCheck, Zap, Activity, Cpu } from 'lucide-react';
@@ -129,13 +130,20 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 
         {/* Project Image */}
         <div className="absolute inset-0 overflow-hidden">
-          <motion.img
-            src={project.image}
-            alt={project.title}
+          <motion.div
             animate={isHovered ? { scale: 1.1, filter: 'brightness(0.6) blur(2px)' } : { scale: 1, filter: 'brightness(0.4) blur(0px)' }}
             transition={{ duration: 0.6 }}
-            className="w-full h-full object-cover"
-          />
+            className="w-full h-full"
+          >
+            <Image
+              src={project.image}
+              alt={project.title}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 50vw"
+              priority={index < 2}
+            />
+          </motion.div>
         </div>
 
         {/* Content Overlay */}

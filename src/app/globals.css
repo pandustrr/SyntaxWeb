@@ -71,7 +71,13 @@
   h4,
   h5,
   h6 {
-    @apply tracking-tighter uppercase font-['Teko'];
+    @apply tracking-tighter uppercase font-[family-name:var(--font-teko)];
+  }
+}
+
+@layer base {
+  .font-sans {
+    font-family: var(--font-ibm-plex), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   }
 }
 
