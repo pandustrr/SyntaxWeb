@@ -94,7 +94,7 @@
     opacity: 0.015;
     z-index: 9999;
     pointer-events: none;
-    background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+    background-image: url("/noise.svg");
     filter: invert(var(--noise-invert));
     will-change: opacity;
   }

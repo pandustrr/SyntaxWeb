@@ -1,69 +1,78 @@
 'use client';
 
-import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
-import { Sparkles, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import DecryptedText from '@/components/animations/DecryptedText';
-import Galaxy from '@/components/ui/Galaxy';
-
-const HeroScene = dynamic(() => import('@/components/ui/HeroScene'), { ssr: false });
 
 export default function Hero() {
   const { t } = useLanguage();
 
   const containerVariants = {
     initial: {},
-    animate: {
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.2
-      }
-    }
+    animate: { transition: { staggerChildren: 0.15, delayChildren: 0.2 } }
   };
 
   const itemVariants = {
     initial: { y: "110%", opacity: 0 },
-    animate: {
-      y: 0,
-      opacity: 1,
-      transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] } as any
-    }
+    animate: { y: 0, opacity: 1, transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] } as any }
   };
 
   return (
     <section id="home" className="relative w-full h-screen flex items-center justify-center overflow-hidden bg-background transition-colors duration-500">
-      {/* Layer 0: Galaxy Background - Optimized for Hero */}
-      <div className="absolute inset-0 z-0 opacity-10 dark:opacity-40 transition-opacity duration-1000">
-        <Galaxy
-          mouseAttraction={true}
-          mouseRepulsion={false}
-          attractionStrength={5}
-          mouseInteraction={true}
-          density={1.0}
-          speed={0.3}
-          transparent={true}
-          hueShift={180}
-          numLayers={2}
+
+      {/* ── BACKGROUND: Blueprint Grid ── */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="absolute inset-0 opacity-[0.04] dark:opacity-[0.07]"
+          style={{
+            backgroundImage: `linear-gradient(rgba(34,211,238,1) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,1) 1px, transparent 1px)`,
+            backgroundSize: '60px 60px',
+          }}
+        />
+        <div className="absolute inset-0 opacity-[0.015] dark:opacity-[0.03]"
+          style={{
+            backgroundImage: `linear-gradient(rgba(34,211,238,1) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,1) 1px, transparent 1px)`,
+            backgroundSize: '15px 15px',
+          }}
         />
       </div>
 
-      {/* Background Glows (Very Subtle) */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50%] h-[50%] bg-[#22D3EE]/[0.03] blur-[100px] rounded-full pointer-events-none z-[1]" />
+      {/* Radial vignette — fade grid ke background */}
+      <div className="absolute inset-0 z-[1] pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse 80% 70% at 50% 50%, transparent 0%, var(--background) 75%)' }}
+      />
 
-      {/* Layer 10: The 3D Scene (Crystals) */}
-      <div className="absolute inset-x-0 inset-y-0 z-10 flex items-center justify-center overflow-hidden pointer-events-none">
-        <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 1.5, ease: "circOut" }}
-          className="w-full h-full flex items-center justify-center"
-        >
-          <HeroScene />
-        </motion.div>
+      {/* Glow kiri */}
+      <div className="absolute z-[2] pointer-events-none top-[5%] left-[-8%] w-[550px] h-[550px] rounded-full bg-[#22D3EE]/[0.06] dark:bg-[#22D3EE]/[0.1] blur-[130px]" />
+      {/* Glow kanan bawah */}
+      <div className="absolute z-[2] pointer-events-none bottom-[0%] right-[-8%] w-[420px] h-[420px] rounded-full bg-[#22D3EE]/[0.04] dark:bg-[#22D3EE]/[0.07] blur-[110px]" />
+
+      {/* Animated scan line */}
+      <motion.div
+        className="absolute left-0 right-0 h-[1px] z-[3] pointer-events-none bg-gradient-to-r from-transparent via-[#22D3EE]/25 to-transparent"
+        animate={{ top: ['8%', '92%', '8%'] }}
+        transition={{ duration: 14, repeat: Infinity, ease: 'linear' }}
+        style={{ position: 'absolute' }}
+      />
+
+      {/* Corner brackets */}
+      <div className="absolute top-8 left-8 z-[3] pointer-events-none">
+        <div className="w-8 h-[1px] bg-[#22D3EE]/25" /><div className="w-[1px] h-8 bg-[#22D3EE]/25" />
+      </div>
+      <div className="absolute top-8 right-8 z-[3] pointer-events-none flex flex-col items-end">
+        <div className="w-8 h-[1px] bg-[#22D3EE]/25" /><div className="w-[1px] h-8 bg-[#22D3EE]/25 ml-auto" />
+      </div>
+      <div className="absolute bottom-8 left-8 z-[3] pointer-events-none flex flex-col justify-end">
+        <div className="w-[1px] h-8 bg-[#22D3EE]/25" /><div className="w-8 h-[1px] bg-[#22D3EE]/25" />
+      </div>
+      <div className="absolute bottom-8 right-8 z-[3] pointer-events-none flex flex-col items-end justify-end">
+        <div className="w-[1px] h-8 bg-[#22D3EE]/25 ml-auto" /><div className="w-8 h-[1px] bg-[#22D3EE]/25" />
       </div>
 
-      {/* Layer 20: Content */}
+
+
+
+      {/* ── CONTENT LAYER ── */}
       <div className="max-w-7xl mx-auto px-6 relative z-20 w-full pointer-events-none">
         <motion.div
           variants={containerVariants}
@@ -72,10 +81,11 @@ export default function Hero() {
           viewport={{ once: true }}
           className="relative flex flex-col items-center justify-center"
         >
-          {/* Huge Heading Container - Optimized Spacing */}
-          <div className="relative w-full flex items-center justify-center min-h-[30vh] md:min-h-[45vh]">
-            {/* Huge SYNTAX Text with Decrypted Animation */}
-            <h1 className="text-[22vw] md:text-[20vw] font-bold text-foreground tracking-tight uppercase font-['Teko'] leading-none relative z-10 select-none pointer-events-none drop-shadow-[0_2px_15px_rgba(34,211,238,0.15)] dark:drop-shadow-[0_2px_15px_rgba(255,255,255,0.05)]">
+          {/* Heading SYNTAX WEB */}
+          <div className="relative w-full flex flex-col items-center justify-center min-h-[28vh] md:min-h-[40vh] gap-0">
+
+            {/* SYNTAX */}
+            <h1 className="text-[22vw] md:text-[20vw] font-bold text-foreground tracking-tight uppercase font-['Teko'] leading-[0.85] select-none pointer-events-none drop-shadow-[0_2px_20px_rgba(34,211,238,0.1)]">
               <DecryptedText
                 text="SYNTAX"
                 animateOn="view"
@@ -88,10 +98,10 @@ export default function Hero() {
             </h1>
           </div>
 
-          {/* Subtext & CTA - Refined and Visible */}
+          {/* Subtext & CTA */}
           <motion.div
             variants={itemVariants}
-            className="flex flex-col items-center gap-8 mt-6 md:mt-10 z-20"
+            className="flex flex-col items-center gap-8 mt-4 md:mt-6 z-20"
           >
             <div className="flex flex-col items-center max-w-lg text-center gap-3">
               <motion.div
@@ -112,14 +122,13 @@ export default function Hero() {
               href="#portfolio"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="group cursor-pointer flex items-center gap-5 py-4 px-9 border border-black/20 hover:border-[#22D3EE] transition-all duration-500 bg-white/80 backdrop-blur-md shadow-sm hover:shadow-xl hover:shadow-cyan-500/10 rounded-sm overflow-hidden relative pointer-events-auto"
+              className="group cursor-pointer flex items-center gap-5 py-4 px-9 border border-black/20 dark:border-white/10 hover:border-[#22D3EE] transition-all duration-500 bg-white/80 dark:bg-white/5 backdrop-blur-md shadow-sm hover:shadow-xl hover:shadow-cyan-500/10 rounded-sm overflow-hidden relative pointer-events-auto"
             >
               <div className="absolute inset-0 bg-black translate-y-[101%] group-hover:translate-y-0 transition-transform duration-500 ease-out" />
-
-              <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.4em] text-black group-hover:text-white relative z-10 transition-colors duration-300">
+              <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.4em] text-black dark:text-white group-hover:text-white relative z-10 transition-colors duration-300">
                 Lihat Karya
               </span>
-              <ArrowRight size={14} className="text-black group-hover:text-[#22D3EE] group-hover:translate-x-1 relative z-10 transition-all duration-300" />
+              <ArrowRight size={14} className="text-black dark:text-white group-hover:text-[#22D3EE] group-hover:translate-x-1 relative z-10 transition-all duration-300" />
             </motion.a>
           </motion.div>
         </motion.div>
@@ -142,3 +151,4 @@ export default function Hero() {
     </section>
   );
 }
+
