@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2017",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false,
@@ -13,17 +9,23 @@
     "incremental": true,
     "module": "esnext",
     "esModuleInterop": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
+    "plugins": [{ "name": "next" }],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@/core": ["./src/core/index.ts"],
+      "@/core/*": ["./src/core/*"],
+      "@/config": ["./src/config/constants.ts"],
+      "@/config/*": ["./src/config/*"],
+      "@/modules/shared": ["./src/modules/shared/index.ts"],
+      "@/modules/home": ["./src/modules/home/index.ts"],
+      "@/modules/contact": ["./src/modules/contact/index.ts"],
+      "@/modules/portfolio": ["./src/modules/portfolio/index.ts"],
+      "@/modules/pricelist": ["./src/modules/pricelist/index.ts"],
+      "@/modules/admin": ["./src/modules/admin/index.ts"]
     }
   },
   "include": [
@@ -34,7 +36,6 @@
     "**/*.ts",
     "**/*.tsx"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }
+

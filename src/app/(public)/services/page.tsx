@@ -1,9 +1,10 @@
-import Services from '@/components/sections/Services';
+import { ServicesSection } from '@/modules/home';
 
 export default function ServicesPage() {
   return (
-    <div className="min-h-screen pt-32 pb-20 bg-white dark:bg-gray-950 transition-colors duration-300">
-      <Services />
+    <div className="min-h-screen pt-32 pb-20 bg-background transition-colors duration-300">
+      <ServicesSection />
     </div>
   );
 }
+

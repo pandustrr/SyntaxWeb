@@ -1,11 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+// ⚠️  DEPRECATED — Gunakan @/core/db/prisma sebagai gantinya
+// File ini dipertahankan untuk backward compatibility.
+export { prisma } from '@/core/db/prisma';
+export { prisma as default } from '@/core/db/prisma';
 
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
-};
-
-export const prisma = globalForPrisma.prisma ?? new PrismaClient();
-
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
-
-export default prisma;
