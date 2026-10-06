@@ -8,7 +8,7 @@
 
 # 1. Konfigurasi
 PROJECT_DIR="/home2/syntaxwe/syntaxweb-app" # Direktori di cPanel
-BRANCH="main"
+BRANCH="branch-pandu"
 
 echo "🚀 Memulai Proses Deploy ke Produksi..."
 cd $PROJECT_DIR || { echo "❌ Direktori tidak ditemukan!"; exit 1; }
@@ -51,12 +51,14 @@ if command -v npx &> /dev/null; then
     npx prisma generate
 fi
 
-# 5. Build Project Check
-echo "🔍 Menyeimbangkan folder build (.next)..."
-if [ ! -f ".next/BUILD_ID" ]; then
-    echo "⚠️ Folder build (.next) tidak ditemukan atau tidak valid! Memulai proses build..."
-    npm run build
+# 5. Build Project
+echo "🔨 Membangun ulang project (next build)..."
+npm run build
+if [ $? -ne 0 ]; then
+    echo "❌ Build gagal! Deployment dibatalkan."
+    exit 1
 fi
+echo "✅ Build selesai."
 
 # 6. Restart Aplikasi
 if command -v pm2 &> /dev/null
