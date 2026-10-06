@@ -1,9 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import Button from '@/components/ui/Button';
-import Modal from '@/components/ui/Modal';
-import UserForm from '@/components/admin/UserForm';
+import { Button, Modal } from '@/modules/shared';
+import { UserForm } from '@/modules/admin';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 
 interface User {
