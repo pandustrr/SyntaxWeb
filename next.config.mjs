@@ -6,11 +6,6 @@ const __dirname = path.dirname(__filename);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  devIndicators: {
-    appIsrStatus: true,
-    buildActivity: true,
-    buildActivityPosition: "bottom-right",
-  },
   // Batasi worker untuk cPanel shared hosting (mencegah EAGAIN / nproc limit)
   experimental: {
     workerThreads: false,
