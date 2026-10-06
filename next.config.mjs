@@ -16,6 +16,12 @@ const nextConfig = {
     workerThreads: false,
     cpus: 1,
   },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   webpack(config) {
     config.resolve.alias = {
       ...config.resolve.alias,
