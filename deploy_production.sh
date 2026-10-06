@@ -8,7 +8,7 @@
 
 # 1. Konfigurasi
 PROJECT_DIR="/home2/syntaxwe/syntaxweb-app" # Direktori di cPanel
-BRANCH="branch-pandu"
+BRANCH="main"
 
 echo "🚀 Memulai Proses Deploy ke Produksi..."
 cd $PROJECT_DIR || { echo "❌ Direktori tidak ditemukan!"; exit 1; }
@@ -53,7 +53,7 @@ fi
 
 # 5. Build Project
 echo "🔨 Membangun ulang project (next build)..."
-npm run build
+nice -n 10 npm run build
 if [ $? -ne 0 ]; then
     echo "❌ Build gagal! Deployment dibatalkan."
     exit 1
