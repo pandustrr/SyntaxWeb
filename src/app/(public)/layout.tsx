@@ -1,20 +1,11 @@
 'use client';
 
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
-import BackgroundKinetic from '@/components/layout/BackgroundKinetic';
-import IntroLoader from '@/components/layout/IntroLoader';
-import ScrollProgress from '@/components/ui/ScrollProgress';
-import SuppressWarnings from '@/components/ui/SuppressWarnings';
+import { Navbar, Footer, BackgroundKinetic, IntroLoader, ScrollProgress, SuppressWarnings } from '@/modules/shared';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import Lenis from 'lenis';
 
-export default function PublicLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function PublicLayout({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -23,7 +14,7 @@ export default function PublicLayout({
         duration: 1.5,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         smoothWheel: true,
-        wheelMultiplier: 1.1, // Slightly snappier
+        wheelMultiplier: 1.1,
         touchMultiplier: 1.5,
         infinite: false,
       });
@@ -43,12 +34,9 @@ export default function PublicLayout({
 
   return (
     <div className="relative min-h-screen bg-background selection:bg-brand-cyan selection:text-black">
-      {/* Suppress known R3F/Three.js internal deprecation warnings */}
       <SuppressWarnings />
-      {/* Noise Overlay Effect */}
       <div className="noise" />
 
-      {/* Visual Effects: Scanline */}
       <div className="fixed inset-0 pointer-events-none z-[80] overflow-hidden opacity-[0.05]">
         <div className="w-full h-[1px] bg-white animate-scanline" />
       </div>
@@ -65,18 +53,16 @@ export default function PublicLayout({
       )}
 
       <motion.div
-        initial={{ opacity: 0, scale: 0.98, filter: "blur(10px)" }}
+        initial={{ opacity: 0, scale: 0.98, filter: 'blur(10px)' }}
         animate={{
           opacity: loading ? 0 : 1,
           scale: loading ? 0.98 : 1,
-          filter: loading ? "blur(10px)" : "blur(0px)"
+          filter: loading ? 'blur(10px)' : 'blur(0px)',
         }}
         transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
         className="relative z-10 w-full"
       >
-        <main className="relative">
-          {children}
-        </main>
+        <main className="relative">{children}</main>
         <Footer />
       </motion.div>
 

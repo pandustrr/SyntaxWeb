@@ -1,6 +1,6 @@
 'use client';
 
-import AdminSidebar from '@/components/layout/AdminSidebar';
+import { AdminSidebar } from '@/modules/admin';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 

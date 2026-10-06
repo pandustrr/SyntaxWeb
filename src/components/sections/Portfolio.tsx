@@ -133,7 +133,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
           <motion.div
             animate={isHovered ? { scale: 1.1, filter: 'brightness(0.6) blur(2px)' } : { scale: 1, filter: 'brightness(0.4) blur(0px)' }}
             transition={{ duration: 0.6 }}
-            className="w-full h-full"
+            className="relative w-full h-full"
           >
             <Image
               src={project.image}

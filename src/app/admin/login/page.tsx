@@ -1,5 +1,6 @@
-import LoginForm from '@/components/admin/LoginForm';
+import { LoginForm } from '@/modules/admin';
 
 export default function AdminLoginPage() {
   return <LoginForm />;
 }
+

@@ -1,17 +1,18 @@
-import Hero from '@/components/sections/Hero';
-import Services from '@/components/sections/Services';
-import Portfolio from '@/components/sections/Portfolio';
-import About from '@/components/sections/About';
+import { HeroSection } from '@/modules/home';
+import { AboutSection } from '@/modules/home';
+import { ServicesSection } from '@/modules/home';
+import { PortfolioSection } from '@/modules/portfolio';
 
 export default function Home() {
   return (
     <div className="relative">
       <div id="home">
-        <Hero />
-        <About />
-        <Services />
-        <Portfolio />
+        <HeroSection />
+        <AboutSection />
+        <ServicesSection />
+        <PortfolioSection />
       </div>
     </div>
   );
 }
+
