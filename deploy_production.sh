@@ -53,7 +53,7 @@ fi
 
 # 5. Build Project
 echo "🔨 Membangun ulang project (next build)..."
-nice -n 10 npm run build
+NEXT_PRIVATE_WORKER_THREADS=0 UV_THREADPOOL_SIZE=1 nice -n 19 npx next build --no-lint
 if [ $? -ne 0 ]; then
     echo "❌ Build gagal! Deployment dibatalkan."
     exit 1
