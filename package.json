@@ -37,6 +37,8 @@
     "typescript": "^5.7.2"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "cross-env": "^10.1.0",
     "eslint": "^9",
     "eslint-config-next": "15.3.5"
