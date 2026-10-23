@@ -16,3 +16,23 @@ export async function GET(request: NextRequest) {
     return apiError(error.message || 'Gagal memuat kategori', 400);
   }
 }
+
+export async function POST(request: NextRequest) {
+  try {
+    const session = getPosSessionFromRequest(request);
+    if (!session) {
+      return apiError('Unauthorized', 401);
+    }
+
+    const body = await request.json();
+    if (!body.name) {
+      return apiError('Nama kategori harus diisi', 400);
+    }
+
+    const category = await PosProductService.createCategory(session.businessId, body);
+    return apiSuccess(category, 'Kategori berhasil ditambahkan', 201);
+  } catch (error: any) {
+    return apiError(error.message || 'Gagal menambahkan kategori', 400);
+  }
+}
+

@@ -167,17 +167,84 @@ export class PosOrderService {
   }
 
   /**
-   * Mengambil riwayat transaksi terkini untuk kasir
+   * Mengambil riwayat transaksi terkini untuk kasir & KDS
    */
-  static async getOrderHistory(businessId: number, limit: number = 30) {
-    return await prisma.posOrder.findMany({
-      where: { businessId },
-      take: limit,
+  static async getOrderHistory(
+    businessId: number,
+    options?: {
+      limit?: number;
+      status?: string;
+      dateFrom?: string;
+      dateTo?: string;
+      tableId?: number;
+    }
+  ) {
+    const where: any = { businessId };
+
+    if (options?.status && options.status !== 'all') {
+      where.status = options.status;
+    }
+
+    if (options?.tableId) {
+      where.tableId = options.tableId;
+    }
+
+    if (options?.dateFrom || options?.dateTo) {
+      where.createdAt = {};
+      if (options.dateFrom) {
+        where.createdAt.gte = new Date(`${options.dateFrom}T00:00:00.000Z`);
+      }
+      if (options.dateTo) {
+        where.createdAt.lte = new Date(`${options.dateTo}T23:59:59.999Z`);
+      }
+    }
+
+    const orders = await prisma.posOrder.findMany({
+      where,
+      take: options?.limit || 50,
       orderBy: { createdAt: 'desc' },
       include: {
         items: true,
         table: { select: { id: true, name: true } },
         user: { select: { id: true, name: true } },
+      },
+    });
+
+    return orders.map((o) => ({
+      ...o,
+      order_number: o.orderNumber,
+      payment_method: o.paymentMethod,
+      channel: o.orderType,
+      created_at: o.createdAt.toISOString(),
+      cafe_table: o.table ? { id: o.table.id, code: o.table.name, name: o.table.name } : null,
+      customer: { name: 'Pelanggan Umum' },
+      items: o.items.map((it) => ({
+        ...it,
+        name_snapshot: it.productName,
+        unit_price: Number(it.price),
+      })),
+    }));
+  }
+
+  /**
+   * Update status pesanan (e.g. pending -> processing -> ready -> completed)
+   */
+  static async updateOrderStatus(businessId: number, orderId: number, status: string) {
+    return await prisma.posOrder.update({
+      where: { id: orderId },
+      data: { status },
+    });
+  }
+
+  /**
+   * Batalkan pesanan
+   */
+  static async cancelOrder(businessId: number, orderId: number, reason?: string) {
+    return await prisma.posOrder.update({
+      where: { id: orderId },
+      data: {
+        status: 'cancelled',
+        notes: reason ? `Dibatalkan: ${reason}` : 'Dibatalkan oleh kasir/dapur',
       },
     });
   }

@@ -5,8 +5,41 @@ export const translations = {
     nav: {
       contact: 'Kontak',
       home: 'Beranda',
+      pos: 'POS App',
       pricelist: 'Daftar Harga',
       partners: 'Partner',
+    },
+    posApp: {
+      badge: 'PRODUK UNGGULAN • MOBILE & CLOUD',
+      title: 'SYNTAX POS',
+      subtitle: 'Sistem Kasir Pintar & Cloud',
+      description: 'Solusi kasir modern berbasis cloud dan aplikasi mobile Android. Lengkap dengan manajemen stok resep bahan baku, shift kasir real-time, meja restoran, hingga laporan analitik omset bisnis Anda.',
+      downloadButton: 'Unduh APK Android (v1.0.0)',
+      versionInfo: 'Versi 1.0.0 • Android 8.0+ • Langsung Siap Pakai',
+      exploreFeatures: 'Pelajari Fitur POS',
+      features: [
+        {
+          title: 'Kasir Cepat & Multi-Metode',
+          desc: 'Transaksi instan, split bill, cetak struk via bluetooth/thermal printer, dan mode dine-in/takeaway.',
+        },
+        {
+          title: 'Manajemen Resep & Bahan Baku',
+          desc: 'Pengurangan stok bahan mentah otomatis per menu yang dipesan, notifikasi stok menipis.',
+        },
+        {
+          title: 'Audit Shift & Rekonsiliasi Kas',
+          desc: 'Buka dan tutup shift transparan dengan perhitungan selisih uang tunai & rekapitulasi kasir.',
+        },
+        {
+          title: 'Sinkronisasi Cloud Real-time',
+          desc: 'Semua transaksi kasir langsung terhubung ke dashboard admin pusat di SyntaxWeb.',
+        },
+      ],
+      stats: [
+        { value: '0.1s', label: 'Latensi Transaksi' },
+        { value: '100%', label: 'Cloud Sync Realtime' },
+        { value: 'Multi', label: 'Outlet & Kasir' },
+      ],
     },
     pricelist: {
       title: 'Investasi',
@@ -149,8 +182,41 @@ export const translations = {
     nav: {
       contact: 'Contact',
       home: 'Home',
+      pos: 'POS App',
       pricelist: 'Pricelist',
       partners: 'Partners',
+    },
+    posApp: {
+      badge: 'FEATURED PRODUCT • MOBILE & CLOUD',
+      title: 'SYNTAX POS',
+      subtitle: 'Smart Point of Sale Ecosystem',
+      description: 'Modern cloud-connected mobile POS application for F&B and retail. Complete with raw material recipe tracking, real-time cashier shift auditing, restaurant table mapping, and business intelligence analytics.',
+      downloadButton: 'Download Android APK (v1.0.0)',
+      versionInfo: 'Version 1.0.0 • Android 8.0+ • Ready to Deploy',
+      exploreFeatures: 'Explore POS Features',
+      features: [
+        {
+          title: 'Fast Checkout & Multi-Payment',
+          desc: 'Instant order processing, split billing, bluetooth thermal printing, and dine-in/takeaway modes.',
+        },
+        {
+          title: 'Recipe & Raw Material Tracking',
+          desc: 'Automatic ingredient deduction for every order placed, with low-stock alerts.',
+        },
+        {
+          title: 'Shift Audit & Cash Balancing',
+          desc: 'Transparent cashier shift open/close with cash difference calculation and daily recap.',
+        },
+        {
+          title: 'Real-time Cloud Synchronization',
+          desc: 'Every terminal transaction is instantly synchronized with the central SyntaxWeb admin dashboard.',
+        },
+      ],
+      stats: [
+        { value: '0.1s', label: 'Order Processing' },
+        { value: '100%', label: 'Cloud Synchronized' },
+        { value: 'Multi', label: 'Outlet & Staff' },
+      ],
     },
     pricelist: {
       title: 'Digital',

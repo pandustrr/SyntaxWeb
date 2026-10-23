@@ -1,6 +1,7 @@
 import { HeroSection } from '@/modules/home';
 import { AboutSection } from '@/modules/home';
 import { ServicesSection } from '@/modules/home';
+import { PosAppSection } from '@/modules/home';
 import { PortfolioSection } from '@/modules/portfolio';
 
 export default function Home() {
@@ -10,9 +11,11 @@ export default function Home() {
         <HeroSection />
         <AboutSection />
         <ServicesSection />
+        <PosAppSection />
         <PortfolioSection />
       </div>
     </div>
   );
 }
+
 

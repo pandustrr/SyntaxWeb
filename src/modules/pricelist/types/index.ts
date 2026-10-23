@@ -5,7 +5,7 @@ export interface PricePlan {
   pages: string[];
   features: string[];
   highlight: boolean;
-  icon?: React.ComponentType<{ size?: number; className?: string }>;
+  icon?: React.ComponentType<{ size?: number | string; className?: string }> | any;
 }
 
 export interface AddOn {

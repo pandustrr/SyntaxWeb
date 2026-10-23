@@ -216,19 +216,24 @@ cPanel Shared Hosting (CloudLinux LVE) membatasi jumlah thread proses (`nproc`).
 
 ```bash
 #!/bin/bash
-PROJECT_DIR="/home2/syntaxwe/syntaxweb-app"
-BRANCH="main"
+APP_NAME="syntaxweb-app"
+PROJECT_DIR="${HOME}/${APP_NAME}"
+BRANCH="${1:-main}"
 
 echo "🚀 Memulai Proses Deploy ke Produksi..."
-cd $PROJECT_DIR || { echo "❌ Direktori tidak ditemukan!"; exit 1; }
+cd "$PROJECT_DIR" || cd "$(dirname "$0")" || { echo "❌ Direktori tidak ditemukan!"; exit 1; }
+
+# Aktifkan Node.js Virtualenv cPanel (CloudLinux)
+if [ -f "$HOME/nodevenv/$APP_NAME/22/bin/activate" ]; then
+    source "$HOME/nodevenv/$APP_NAME/22/bin/activate"
+elif [ -f "$HOME/nodevenv/$APP_NAME/20/bin/activate" ]; then
+    source "$HOME/nodevenv/$APP_NAME/20/bin/activate"
+fi
+export PATH="/opt/alt/alt-nodejs22/root/usr/bin:/opt/alt/alt-nodejs20/root/usr/bin:$PATH"
 
 # Update repo git
-git fetch origin $BRANCH
-git reset --hard origin/$BRANCH
-
-# Aktifkan Node.js 22 Virtualenv cPanel
-source /home2/syntaxwe/nodevenv/syntaxweb-app/22/bin/activate
-export PATH="/opt/alt/alt-nodejs22/root/usr/bin:$PATH"
+git fetch origin "$BRANCH"
+git reset --hard "origin/$BRANCH"
 
 # Install Dependencies & Prisma
 npm install --legacy-peer-deps
@@ -250,4 +255,47 @@ cd ~/syntaxweb-app && bash deploy_production.sh
 ```
 
 Aplikasi otomatis ter-pull, ter-compile, dan direstart tanpa downtime 503.
+
+---
+
+## 9. Menghubungkan Domain cPanel (`syntaxweb.id`)
+
+Agar domain utama (`syntaxweb.id`) memuat aplikasi Next.js dari direktori `syntaxweb-app/`:
+
+1. Buka **cPanel** > Cari menu **"Setup Node.js App"**.
+2. Klik tombol **"Create Application"** (atau Edit jika aplikasi sudah pernah dibuat):
+   - **Node.js version**: Pilih `20.x` atau `22.x`.
+   - **Application mode**: `Production`.
+   - **Application root**: `syntaxweb-app` (nama folder project di `/home/syntaxwe/syntaxweb-app`).
+   - **Application URL**: `syntaxweb.id` (pilih domain utama tanpa subfolder).
+   - **Application startup file**: `server.js` (file entry point Phusion Passenger).
+3. Klik **Save** / **Create**.
+4. Phusion Passenger cPanel otomatis mengkonfigurasi file routing `.htaccess` di dalam `public_html` sehingga seluruh request pengunjung ke `https://syntaxweb.id` akan diteruskan ke aplikasi Next.js di `syntaxweb-app`.
+
+---
+
+## 10. Manajemen Storage & File Download
+
+Ada 3 opsi pengelolaan file yang dapat diunduh (misalnya APK Syntax POS, file installer, atau dokumen):
+
+### Opsi A: Local Next.js Storage (`public/downloads/`)
+- Simpan file langsung di direktori `syntaxweb-app/public/downloads/` (misal: `syntax-pos.apk`).
+- File dapat langsung diakses publik melalui URL: `https://syntaxweb.id/downloads/syntax-pos.apk`.
+- Di halaman Next.js, pasang tombol:
+  ```tsx
+  <a href="/downloads/syntax-pos.apk" download className="...">
+    Download APK
+  </a>
+  ```
+- **Penting**: File binary besar (.apk, .exe, .zip) sebaiknya diabaikan dari Git (`.gitignore`) dan diunggah langsung ke server cPanel menggunakan **cPanel File Manager** atau **SFTP/SCP**.
+
+### Opsi B: Direct Web Server Storage (`public_html/downloads/`)
+- Letakkan file di folder `public_html/downloads/`.
+- File dilayani langsung oleh web server Apache/LiteSpeed tanpa membebani proses Node.js, mendukung multi-thread dan resume download.
+
+### Opsi C: External Storage / GitHub Releases (Sangat Disarankan untuk APK/Installer)
+- Unggah file rilis (APK/Installer) ke **GitHub Releases**.
+- Tautan unduhan langsung diarahkan ke release asset GitHub (misal: `https://github.com/pandustrr/syntax_pos_flutter/releases/download/v1.0.0/syntax-pos.apk`).
+- Bebas batasan kuota storage cPanel dan tidak memakan bandwidth hosting.
+
 
