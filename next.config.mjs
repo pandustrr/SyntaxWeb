@@ -8,8 +8,10 @@ const __dirname = path.dirname(__filename);
 const nextConfig = {
   // Batasi worker untuk cPanel shared hosting (mencegah EAGAIN / nproc limit)
   experimental: {
-    workerThreads: false,
     cpus: 1,
+    webpackBuildWorker: false,
+    parallelServerCompiles: false,
+    parallelServerBuildTraces: false,
   },
   typescript: {
     ignoreBuildErrors: true,

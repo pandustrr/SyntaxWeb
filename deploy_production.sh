@@ -18,23 +18,25 @@ echo "📍 Direktori: $(pwd)"
 echo "🌿 Branch: $BRANCH"
 
 # Coba memuat environment Node.js jika ada di path standar cPanel (CloudLinux nodevenv)
-if [ -f "$HOME/nodevenv/$APP_NAME/22/bin/activate" ]; then
-    source "$HOME/nodevenv/$APP_NAME/22/bin/activate"
-    echo "✅ Node.js Environment (v22) diaktifkan."
-elif [ -f "$HOME/nodevenv/$APP_NAME/20/bin/activate" ]; then
+# Prioritaskan v20 (LTS paling stabil untuk cPanel LVE), lalu v22, lalu v18
+if [ -f "$HOME/nodevenv/$APP_NAME/20/bin/activate" ]; then
     source "$HOME/nodevenv/$APP_NAME/20/bin/activate"
     echo "✅ Node.js Environment (v20) diaktifkan."
+elif [ -f "$HOME/nodevenv/$APP_NAME/22/bin/activate" ]; then
+    source "$HOME/nodevenv/$APP_NAME/22/bin/activate"
+    echo "✅ Node.js Environment (v22) diaktifkan."
 elif [ -f "$HOME/nodevenv/$APP_NAME/18/bin/activate" ]; then
     source "$HOME/nodevenv/$APP_NAME/18/bin/activate"
     echo "✅ Node.js Environment (v18) diaktifkan."
 fi
 
 # Daftarkan Path Node.js (Khusus CloudLinux/cPanel) agar sub-proses bisa menemukan 'node' & 'npm'
-export PATH="/opt/alt/alt-nodejs22/root/usr/bin:/opt/alt/alt-nodejs20/root/usr/bin:$PATH"
+export PATH="/opt/alt/alt-nodejs20/root/usr/bin:/opt/alt/alt-nodejs22/root/usr/bin:$PATH"
 
 # Batasi thread untuk cPanel CloudLinux Shared Hosting (mencegah EAGAIN / Resource temporarily unavailable)
 export RAYON_NUM_THREADS=1
 export UV_THREADPOOL_SIZE=1
+export NEXT_PRIVATE_BUILD_WORKER=0
 export NEXT_PRIVATE_WORKER_THREADS=0
 export NODE_OPTIONS="--max-old-space-size=1536"
 
@@ -76,7 +78,7 @@ fi
 
 # 5. Build Project
 echo "🔨 Membangun ulang project (next build)..."
-RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 NEXT_PRIVATE_WORKER_THREADS=0 nice -n 19 npx next build --no-lint
+RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 NEXT_PRIVATE_BUILD_WORKER=0 NEXT_PRIVATE_WORKER_THREADS=0 nice -n 19 npx next build --no-lint
 if [ $? -ne 0 ]; then
     echo "❌ Build gagal! Deployment dibatalkan."
     exit 1
