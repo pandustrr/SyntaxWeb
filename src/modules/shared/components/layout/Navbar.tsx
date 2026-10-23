@@ -15,7 +15,7 @@ export default function Navbar() {
 
   const navLinks = [
     { name: t.nav.home, href: '/', icon: Home },
-    { name: (t.nav as any).pos || 'POS App', href: '/pos', icon: Smartphone },
+    { name: t.nav.pos, href: '/pos', icon: Smartphone },
     { name: t.nav.pricelist, href: '/pricelist', icon: Tag },
     { name: t.nav.contact, href: '/contact', icon: MessageSquare },
   ];

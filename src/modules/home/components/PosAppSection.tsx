@@ -20,7 +20,7 @@ import Link from 'next/link';
 
 export default function PosAppSection() {
   const { t } = useLanguage();
-  const posData = (t as any).posApp || {};
+  const posData = t.posApp;
 
   const highlights = [
     {
