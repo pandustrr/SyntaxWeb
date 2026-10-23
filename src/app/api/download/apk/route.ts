@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import { Readable } from 'stream';
 
 export const dynamic = 'force-dynamic';
 
@@ -32,8 +33,9 @@ export async function GET() {
 
     const stat = fs.statSync(targetPath);
     const fileStream = fs.createReadStream(targetPath);
+    const webStream = Readable.toWeb(fileStream) as ReadableStream;
 
-    return new NextResponse(fileStream as any, {
+    return new NextResponse(webStream, {
       headers: {
         'Content-Type': 'application/vnd.android.package-archive',
         'Content-Disposition': 'attachment; filename="syntax-pos-v1.0.0.apk"',
@@ -41,15 +43,17 @@ export async function GET() {
         'Cache-Control': 'public, max-age=3600',
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('Download APK error:', error);
     return NextResponse.json(
       {
         success: false,
         message: 'Gagal mengunduh file APK',
-        error: error.message,
+        error: errorMessage,
       },
       { status: 500 }
     );
   }
 }
+
