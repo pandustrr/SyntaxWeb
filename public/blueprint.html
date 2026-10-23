@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blueprint Arsitektur SYNTAX POS & SuperAdmin</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: #111111;
+      background-color: #ffffff;
+      padding: 16px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 1.45rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      border-bottom: 3px solid #111111;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+    }
+    h2 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      border-bottom: 1.5px solid #111111;
+      padding: 6px 8px;
+      margin-top: 26px;
+      margin-bottom: 12px;
+      background: #f4f4f4;
+    }
+    h3 {
+      font-size: 1.0rem;
+      font-weight: 700;
+      margin-top: 16px;
+      margin-bottom: 6px;
+      border-left: 3px solid #111111;
+      padding-left: 8px;
+    }
+    p, li { font-size: 0.92rem; color: #222222; margin-bottom: 8px; }
+    ul, ol { padding-left: 20px; margin-bottom: 12px; }
+    .badge {
+      display: inline-block;
+      border: 1px solid #111111;
+      padding: 2px 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-right: 4px;
+      margin-bottom: 4px;
+      background: #ffffff;
+    }
+    .badge-dark { background: #111111; color: #ffffff; }
+    .card {
+      border: 1px solid #111111;
+      padding: 12px;
+      margin-bottom: 14px;
+      background: #fafafa;
+    }
+    .card-title {
+      font-weight: bold;
+      font-size: 0.95rem;
+      margin-bottom: 6px;
+      border-bottom: 1px dashed #666666;
+      padding-bottom: 4px;
+    }
+    pre, code {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 0.82rem;
+      background: #f0f0f0;
+      color: #000000;
+    }
+    pre {
+      padding: 10px;
+      border: 1px solid #333333;
+      overflow-x: auto;
+      margin-bottom: 12px;
+      white-space: pre;
+      line-height: 1.35;
+    }
+    code { padding: 2px 4px; border: 1px solid #cccccc; }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.82rem; }
+    th, td { border: 1px solid #222222; padding: 6px 8px; text-align: left; vertical-align: top; }
+    th { background-color: #e5e5e5; font-weight: 800; }
+    .table-container { overflow-x: auto; margin-bottom: 14px; border: 1px solid #000000; }
+    .nav-box { border: 2px solid #111111; padding: 10px; margin-bottom: 20px; background: #fdfdfd; }
+    .nav-box a { color: #111111; font-size: 0.85rem; display: inline-block; margin: 3px 8px 3px 0; text-decoration: underline; }
+    .footer-note { text-align: center; margin-top: 36px; padding-top: 14px; border-top: 1px solid #666666; font-size: 0.78rem; color: #555555; }
+    .check { font-weight: bold; }
+    @media (max-width: 600px) {
+      body { padding: 10px; font-size: 0.9rem; }
+      h1 { font-size: 1.25rem; }
+      h2 { font-size: 1.05rem; }
+      pre { font-size: 0.75rem; padding: 6px; }
+      table { font-size: 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>BLUEPRINT ARSITEKTUR & PENGEMBANGAN SISTEM</h1>
+  <p><strong>Projek:</strong> SYNTAX POS (Flutter Multi-Platform) &amp; SuperAdmin (SyntaxWeb Multi-Tenant)<br>
+  <strong>Format:</strong> Hitam Putih (Monokrom) Ramah Layar Ponsel &amp; Cetak<br>
+  <strong>Prinsip:</strong> Zero-Loss Features (Semua 11 Modul Eksisting Tetap Utuh, Dikelompokkan Rapi Berdasarkan Role).</p>
+
+  <div class="nav-box">
+    <strong>DAFTAR ISI CEPAT:</strong><br>
+    <a href="#sec-1">1. Mac &amp; iOS</a> |
+    <a href="#sec-2">2. Solusi UI HP</a> |
+    <a href="#sec-3">3. SuperAdmin Web</a> |
+    <a href="#sec-4">4. Struk Dinamis</a> |
+    <a href="#sec-5">5. Menu &amp; Profil</a> |
+    <a href="#sec-6">6. Keamanan API</a> |
+    <a href="#sec-7">7. Rekomendasi Role</a> |
+    <a href="#sec-8">8. Matriks 11 Modul Lengkap</a> |
+    <a href="#sec-9">9. Sidebar Dinamis</a> |
+    <a href="#sec-10">10. Skema DB &amp; Roadmap</a>
+  </div>
+
+  <!-- BAGIAN 1 -->
+  <h2 id="sec-1">1. Kompatibilitas Multi-Platform (Mac &amp; iOS)</h2>
+  
+  <h3>1.1. Status Teknis Repositori Saat Ini</h3>
+  <p>Aplikasi Flutter <strong>syntax_pos_flutter</strong> sudah memiliki folder runner bawaan <code>/ios</code> dan <code>/macos</code> di dalam repositori. Kode aplikasi 100% menggunakan Flutter SDK standar yang bersifat cross-platform.</p>
+  <div class="card">
+    <div class="card-title">STATUS: BISA 100% DIJALANKAN DI MAC &amp; iOS</div>
+    <p>Seluruh dependensi pada <code>pubspec.yaml</code> sudah mendukung penuh macOS &amp; iOS:</p>
+    <ul>
+      <li><code>dio</code>: Berjalan native via NSURLSession Apple.</li>
+      <li><code>flutter_riverpod</code>: State management murni Dart (semua platform).</li>
+      <li><code>flutter_secure_storage</code>: Otomatis tersambung ke Apple Keychain (aman &amp; terenkripsi).</li>
+      <li><code>shared_preferences</code>: Menggunakan NSUserDefaults bawaan iOS/macOS.</li>
+      <li><code>google_fonts</code> &amp; <code>go_router</code>: Didukung 100%.</li>
+    </ul>
+  </div>
+
+  <h3>1.2. Kebutuhan Infrastruktur &amp; Syarat Apple</h3>
+  <ul>
+    <li><strong>Alat Kompilasi (Build Tool):</strong> Wajib menggunakan komputer bersistem operasi macOS (MacBook / Mac Mini / iMac) dengan aplikasi <strong>Xcode</strong> dan <strong>CocoaPods</strong> terinstal.</li>
+    <li><strong>Uji Coba Langsung ke iPhone/iPad Fisik (Gratis):</strong> Cukup hubungkan perangkat fisik via kabel ke Mac menggunakan Apple ID biasa (berlaku masa aktif 7 hari sebelum ditandatangani ulang).</li>
+    <li><strong>Distribusi Produksi (App Store / TestFlight):</strong> Membutuhkan akun <em>Apple Developer Program</em> ($99/tahun) untuk mengirim aplikasi ke TestFlight (pengujian nirkabel tanpa colok kabel) atau rilis publik App Store.</li>
+    <li><strong>Khusus Mac (macOS App):</strong> Bisa diekspor langsung sebagai file <code>.dmg</code> atau <code>.app</code> tanpa melalui Mac App Store (cukup proses <em>notarization</em> mandiri).</li>
+  </ul>
+
+  <h3>1.3. Catatan Khusus Printer Thermal di iPad / iPhone</h3>
+  <div class="card">
+    <p><strong>PENTING:</strong> Sistem operasi iOS Apple membatasi akses kabel USB data mentah (raw serial) kecuali produsen memiliki chip lisensi Apple MFi. Oleh karena itu, standar industri printer POS untuk iPad/iPhone adalah:</p>
+    <ul>
+      <li><strong>Printer Bluetooth (BLE - Bluetooth Low Energy)</strong>.</li>
+      <li><strong>Printer Jaringan / Wi-Fi LAN (TCP/IP port 9100)</strong> terhubung satu router/hub WiFi kafe.</li>
+    </ul>
+  </div>
+
+  <!-- BAGIAN 2 -->
+  <h2 id="sec-2">2. Solusi Tampilan Responsif (Adaptive Layout)</h2>
+
+  <h3>2.1. Penjelasan Istilah Permasalahan UI Saat Ini</h3>
+  <ol>
+    <li>
+      <strong>Kenapa Sidebar dan Keranjang Menghilang di Mode Potret HP?</strong><br>
+      <em>Istilah Teknis:</em> <strong>Hidden Drawer Fallback without Trigger &amp; Omitted Component</strong>.<br>
+      <em>Akar Masalah:</em> Pada file <code>pos_screen.dart</code>, breakpoint ditentukan <code>isMobile = screenWidth &lt; 768</code>. Jika layar HP potret (&lt;768px), sidebar disembunyikan ke dalam <code>Drawer</code>, namun pada bar atas <strong>tidak dibuatkan tombol Menu/Hamburger</strong> untuk membukanya. Sementara itu, panel keranjang kanan dimatikan dengan kode: <code>if (!isMobile) const CartPanel(...)</code> tanpa disediakan tombol alternatif di layar HP.
+    </li>
+    <li>
+      <strong>Kenapa di Mode Landscape Elemen Bertumpuk / Rusak?</strong><br>
+      <em>Istilah Teknis:</em> <strong>RenderFlex Overflow</strong> (layar garis hitam-kuning) akibat <strong>Unconstrained Viewport Height Thrashing</strong>.<br>
+      <em>Akar Masalah:</em> Pada posisi miring (landscape), lebar layar memang bertambah (~800px), tetapi <strong>tinggi layar sangat sempit (hanya 360px - 400px)</strong>. Widget vertikal bertumpuk (Shift Bar 38px + Kategori 50px + Search 38px + Grid Kartu Menu + Footer Total Keranjang 180px) membutuhkan ruang tinggi lebih dari 550px, sehingga menabrak batas layar dan memicu overflow.
+    </li>
+  </ol>
+
+  <h3>2.2. Cetak Biru Solusi Adaptive UI</h3>
+  <pre>
+┌────────────────────────────────────────────────────────┐
+│               ADAPTIVE SCREEN SYSTEM                   │
+├────────────────────┬──────────────────┬────────────────┤
+│ 1. COMPACT (HP)    │ 2. MEDIUM (LAND) │ 3. EXPANDED    │
+│    Width &lt; 600px   │    Height &lt; 450px│    Width &gt;= 960│
+├────────────────────┼──────────────────┼────────────────┤
+│ • AppBar + Icon    │ • Split 2 Kolom: │ • 3 Panel Fix: │
+│   Hamburger        │   - Kiri (60%):  │   1. Persistent│
+│ • Sidebar via      │     Grid Menu    │      Sidebar   │
+│   Drawer           │   - Kanan (40%): │   2. Katalog   │
+│ • 2 Kolom Grid     │     Mini Cart &amp;  │      Produk    │
+│ • Floating Cart    │     Sticky Bayar │   3. Right Cart│
+│   Bar di bawah     │ • Shift Bar      │      Panel     │
+│   (Modal Bottom    │   diciutkan/     │                │
+│    Sheet)          │   disembunyikan  │                │
+└────────────────────┴──────────────────┴────────────────┘
+  </pre>
+
+  <!-- BAGIAN 3 -->
+  <h2 id="sec-3">3. Sistem SuperAdmin (SyntaxWeb) &amp; Approval Kafe</h2>
+  <p>SuperAdmin mengontrol seluruh ekosistem melalui portal web: <code>https://syntaxweb.id/admin/login</code>.</p>
+
+  <div class="card">
+    <div class="card-title">ALUR REGISTRASI &amp; PERSETUJUAN (APPROVAL FLOW)</div>
+    <pre>
+[ Calon Pemilik Kafe ] ──► Form Registrasi di Web / POS
+                                  │
+                                  ▼
+[ Database MySQL ]     ──► Status Kafe: "PENDING_APPROVAL"
+                                  │
+                                  ▼
+[ Notifikasi SuperAdmin]──► Masuk ke Dashboard Web SuperAdmin
+                                  │
+                          [ Keputusan SuperAdmin ]
+                                  │
+            ┌─────────────────────┴─────────────────────┐
+            ▼                                           ▼
+      [ APPROVE ]                                 [ REJECT ]
+ Status Kafe: ACTIVE                         Status: REJECTED
+ Akun Owner bisa Login POS                   Pemberitahuan via WA/Email
+    </pre>
+  </div>
+
+  <h3>Fitur SuperAdmin di Website:</h3>
+  <ul>
+    <li><strong>Manajemen Kafe (Multi-Tenant Management):</strong> Daftar seluruh kafe terdaftar, status (Pending, Active, Suspended), nama owner, kontak WhatsApp, dan paket lisensi.</li>
+    <li><strong>Tambah Akun &amp; Kafe Manual:</strong> SuperAdmin dapat membuatkan profil kafe baru langsung dari portal beserta akun Owner perdana.</li>
+    <li><strong>Suspend / Nonaktifkan Kafe:</strong> Jika status kafe diubah menjadi <em>SUSPENDED</em>, seluruh kasir dan staf kafe tersebut otomatis terkunci dan tidak dapat melakukan transaksi.</li>
+    <li><strong>Monitoring Server &amp; API Global:</strong> Memantau kesehatan server, latensi query database, dan volume transaksi gabungan seluruh kafe.</li>
+    <li><strong>Impersonation (Masuk Sebagai Kafe):</strong> Mode inspeksi untuk membantu kendala teknis kafe tertentu secara <em>read-only</em>.</li>
+  </ul>
+
+  <!-- BAGIAN 4 -->
+  <h2 id="sec-4">4. Sistem Struk Dinamis (Dynamic Receipt)</h2>
+  <p>Setiap kafe dapat mengatur tampilan dan isi struk sesuai kebutuhan branding dan regulasi perpajakan daerah masing-masing.</p>
+
+  <pre>
+┌────────────────────────────────────────────────────────┐
+│               CONTOH TAMPILAN STRUK DINAMIS            │
+├────────────────────────────────────────────────────────┤
+│                       [LOGO KAFE]                      │
+│                    KOPI SENJA UTAMA                    │
+│             Jl. Malioboro No. 12, Yogyakarta           │
+│                   Telp: 0812-3456-7890                 │
+│ ------------------------------------------------------ │
+│ No: ORD-20261024-001               Tipe: DINE IN       │
+│ Tgl: 24/10/2026 14:30              Kasir: Rian         │
+│ Meja: Meja 04                      Pelanggan: Budi(VIP)│
+│ ====================================================== │
+│ 2x Kopi Susu Aren (@22.000)                  Rp 44.000 │
+│    [Varian: Less Sugar, Ice]                           │
+│ 1x Croissant Cokelat                         Rp 28.000 │
+│    [Notes: Hangatkan]                                  │
+│ ------------------------------------------------------ │
+│ Subtotal                                     Rp 72.000 │
+│ Diskon Member (CRM: -10%)                  - Rp  7.200 │
+│ Pajak Restoran / PB1 (10%)                   Rp  6.480 │
+│ Service Charge (5%)                          Rp  3.240 │
+│ ====================================================== │
+│ TOTAL AKHIR                                  Rp 74.520 │
+│ Bayar (QRIS - BCA)                           Rp 74.520 │
+│ Kembalian                                    Rp      0 │
+│ Poin CRM Diperoleh                           +74 Poin  │
+│ Total Poin Sekarang                          540 Poin  │
+│ ====================================================== │
+│              Password WiFi: senjabersama               │
+│          Follow Instagram: @kopisenja.utama            │
+│         Terima Kasih Atas Kunjungan Anda!              │
+│                       [QR CODE]                        │
+└────────────────────────────────────────────────────────┘
+  </pre>
+
+  <h3>Parameter Struk Dinamis:</h3>
+  <ul>
+    <li><strong>Header:</strong> Upload Logo (Bitmap monochrome ESC/POS), Nama Toko Kustom, Alamat, Nomor Kontak.</li>
+    <li><strong>Info Transaksi:</strong> Toggle tampilkan Nomor Meja, Nama Kasir, Tipe Pesanan (Dine-in / Take Away), dan Nama Member CRM.</li>
+    <li><strong>Pajak &amp; Biaya:</strong> Pengaturan Pajak PB1/PPN dinamis (misal 10%), Service Charge dinamis (misal 5%), dan opsi harga menu <em>Tax Inclusive</em> atau <em>Tax Exclusive</em>.</li>
+    <li><strong>Footer:</strong> Pesan penutup, info password WiFi, akun Instagram/TikTok kafe.</li>
+    <li><strong>Ukuran Kertas:</strong> Pilihan mode lebar <strong>58mm</strong> (32 karakter) atau <strong>80mm</strong> (42-48 karakter).</li>
+    <li><strong>Struk Digital (Paperless):</strong> Fitur kirim tautan nota elektronik langsung ke WhatsApp pelanggan via nomor HP yang tercatat di CRM.</li>
+  </ul>
+
+  <!-- BAGIAN 5 -->
+  <h2 id="sec-5">5. Pengelolaan Menu Berfoto &amp; Profil Kafe</h2>
+
+  <h3>5.1. Fitur Produk &amp; Menu Lengkap</h3>
+  <ul>
+    <li><strong>Foto Menu:</strong> Dukungan upload foto dari kamera langsung atau galeri, otomatis dikompresi ke format ringan (WebP/JPEG, maks 250 KB) disimpan di folder publik server.</li>
+    <li><strong>Data Menu:</strong> Nama Produk, Kategori, SKU/Barcode, Deskripsi, Harga Jual, Harga Modal (COGS).</li>
+    <li><strong>Varian / Modifiers:</strong> Ukuran (Regular, Large), Jenis Sajian (Hot, Ice), Level Gula/Pedas beserta penyesuaian harga tambahannya.</li>
+    <li><strong>Integrasi Resep Bahan Baku (BOM - Bill of Materials):</strong> 1 porsi menu dapat ditautkan dengan bahan baku (misal: 1 porsi Kopi Susu = 18 gr Biji Kopi + 120 ml Susu Segar + 25 ml Gula Aren). Stok bahan baku otomatis terpotong saat transaksi selesai.</li>
+  </ul>
+
+  <h3>5.2. Fitur Profil Kafe Lengkap</h3>
+  <ul>
+    <li>Upload Logo Kafe dan Gambar Header.</li>
+    <li>Informasi Bisnis: Nama Brand, Slogan, Alamat Lengkap, Kota, Nomor Telepon, Jam Operasional.</li>
+    <li>Pengaturan Meja: Jumlah dan penamaan denah meja cafe.</li>
+    <li>Metode Pembayaran: Rekening Bank, Akun QRIS Statis / Dinamis.</li>
+  </ul>
+
+  <!-- BAGIAN 6 -->
+  <h2 id="sec-6">6. Keamanan &amp; Penyembunyian Server API</h2>
+  <ul>
+    <li><strong>Penyembunyian Total pada Antarmuka Kafe:</strong> Seluruh label teknis seperti <code>API URL</code>, <code>Server Connection</code>, atau pemilih server <strong>dihapus 100%</strong> dari antarmuka login dan dashboard kasir. Aplikasi kasir otomatis terhubung ke endpoint resmi: <code>https://syntaxweb.id/api/pos</code>.</li>
+    <li><strong>Mode Teknisi Rahasia (Secret Maintenance Mode):</strong> Jika staf teknis membutuhkan inspeksi jaringan di lokasi kafe, teknisi cukup <strong>menekan logo SYNTAX POS sebanyak 7 kali berturut-turut</strong> pada layar login, lalu memasukkan <strong>PIN SuperAdmin</strong>. Barulah muncul panel status jaringan, tes ping, dan log sinkronisasi lokal.</li>
+    <li><strong>Monitoring Server Hanya di Portal SuperAdmin:</strong> Seluruh grafik kesehatan server, error log, dan pemantauan API hanya bisa diakses oleh SuperAdmin di web melalui <code>/admin/system</code>.</li>
+  </ul>
+
+  <!-- BAGIAN 7 -->
+  <h2 id="sec-7">7. Rekomendasi Role, Permission &amp; Pengelompokan Menu</h2>
+  <p><strong>Prinsip:</strong> Tidak ada fitur yang dihilangkan dari kode yang sudah ada saat ini. Seluruh 11 modul eksisting tetap dipertahankan dan dikelompokkan sesuai fungsi jabatan.</p>
+
+  <div class="card">
+    <div class="card-title">PEMBAGIAN 5 TINGKATAN ROLE</div>
+    <ol>
+      <li><span class="badge badge-dark">SUPER_ADMIN</span> <strong>Pemilik Platform Syntax:</strong> Berada di Web Admin. Mengelola lisensi kafe, persetujuan pendaftaran kafe baru, monitoring server, dan manajemen akun tingkat tinggi.</li>
+      <li><span class="badge">OWNER</span> <strong>Pemilik Kafe:</strong> Memiliki hak akses PENUH atas seluruh 11 modul kafe miliknya (Laporan Laba, Keuangan, Menu, Resep, CRM, Promo, Pegawai, Pengaturan Struk).</li>
+      <li><span class="badge">MANAGER</span> <strong>Manajer Operasional Kafe:</strong> Mengawasi operasional harian, mengelola bahan baku &amp; stok masuk, mengelola member CRM &amp; voucher, memantau kinerja kasir, dan memberikan otorisasi pembatalan nota (void/refund).</li>
+      <li><span class="badge">CASHIER</span> <strong>Kasir:</strong> Fokus pada kecepatan pelayanan kasir (POS), buka/tutup shift laci kasir, pemilihan meja pelanggan, input pesanan, dan pencarian member CRM saat transaksi.</li>
+      <li><span class="badge">KITCHEN_BAR</span> <strong>Kru Dapur / Barista:</strong> Menggunakan layar Kitchen Display System (KDS) untuk melihat daftar tiket pesanan, mengubah status memasak, dan menandai pesanan selesai disajikan.</li>
+    </ol>
+  </div>
+
+  <!-- BAGIAN 8 -->
+  <h2 id="sec-8">8. Matriks Hak Akses Lengkap (Seluruh 11 Modul Eksisting)</h2>
+  
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Nama Modul / Fitur</th>
+          <th>SUPER_ADMIN</th>
+          <th>OWNER</th>
+          <th>MANAGER</th>
+          <th>CASHIER</th>
+          <th>KITCHEN</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1. Dashboard &amp; Analitik</strong><br>(Ringkasan omzet, grafik, low-stock)</td>
+          <td>Global</td>
+          <td><span class="check">YA (Penuh)</span></td>
+          <td><span class="check">YA (Terbatas)</span></td>
+          <td>TIDAK</td>
+          <td>TIDAK</td>
+        </tr>
+        <tr>
+          <td><strong>2. Kasir POS &amp; Checkout</strong><br>(Katalog, Cart, QRIS/Cash, Struk)</td>
+          <td>TIDAK</td>
+          <td><span class="check">YA</span></td>
+          <td><span class="check">YA</span></td>
+          <td><span class="check">YA (Penuh)</span></td>
+          <td>TIDAK</td>
+        </tr>
+        <tr>
+          <td><strong>3. Meja Dine-in</strong><br>(Denah meja, kapasitas, status)</td>
+          <td>TIDAK</td>
+          <td><span class="check">YA (Kelola)</span></td>
+          <td><span class="check">YA (Kelola)</span></td>
+          <td><span class="check">YA (Pilih Meja)</span></td>
+          <td>Lihat Saja</td>
+        </tr>
+        <tr>
+          <td><strong>4. Dapur (KDS)</strong><br>(Antrean masak, status siap saji)</td>
+          <td>TIDAK</td>
+          <td>Lihat Saja</td>
+          <td><span class="check">YA</span></td>
+          <td>Lihat Saja</td>
+          <td><span class="check">YA (Penuh)</span></td>
+        </tr>
+        <tr>
+          <td><strong>5. Produk Menu &amp; Varian</strong><br>(Katalog, harga, foto, kategori)</td>
+          <td>TIDAK</td>
+          <td><span class="check">YA (CRUD)</span></td>
+          <td><span class="check">YA (CRUD)</span></td>
+          <td>Lihat Saja</td>
+          <td>TIDAK</td>
+        </tr>
+        <tr>
+          <td><strong>6. Bahan &amp; Resep (BOM)</strong><br>(Inventori bahan, stok opname, resep)</td>
+          <td>TIDAK</td>
+          <td><span class="check">YA (Penuh)</span></td>
+          <td><span class="check">YA (Penuh)</span></td>
+          <td>TIDAK</td>
+          <td>Lihat Bahan</td>
+        </tr>
+        <tr>
+          <td><strong>7. CRM &amp; Pelanggan</strong><br>(Database member, poin loyalitas, riwayat)</td>
+          <td>TIDAK</td>
+          <td><span class="check">YA (Penuh)</span></td>
+          <td><span class="check">YA (Penuh)</span></td>
+          <td><span class="check">Cari/Daftar Member</span></td>
+          <td>TIDAK</td>
+        </tr>
+        <tr>
+          <td><strong>8. Voucher &amp; Promo</strong><br>(Kode kupon, diskon %, batas)</td>
+          <td>TIDAK</td>
+          <td><span class="check">YA (Penuh)</span></td>
+          <td><span class="check">YA (Penuh)</span></td>
+          <td>Gunakan Promo</td>
+          <td>TIDAK</td>
+        </tr>
+        <tr>
+          <td><strong>9. Karyawan &amp; Shift</strong><br>(Staf, PIN, riwayat laci kasir)</td>
+          <td>TIDAK</td>
+          <td><span class="check">YA (Penuh)</span></td>
+          <td>Shift Kasir</td>
+          <td>Buka/Tutup Kas</td>
+          <td>TIDAK</td>
+        </tr>
+        <tr>
+          <td><strong>10. Laporan Bisnis</strong><br>(Penjualan, laba kotor, shift)</td>
+          <td>Global</td>
+          <td><span class="check">YA (Lengkap)</span></td>
+          <td>Laporan Harian</td>
+          <td>Shift Sendiri</td>
+          <td>TIDAK</td>
+        </tr>
+        <tr>
+          <td><strong>11. Pengaturan Kafe &amp; Struk</strong><br>(Profil, format struk, printer)</td>
+          <td>TIDAK</td>
+          <td><span class="check">YA (Penuh)</span></td>
+          <td>Uji Printer</td>
+          <td>Uji Printer</td>
+          <td>TIDAK</td>
+        </tr>
+        <tr>
+          <td><strong>12. Approval &amp; Lisensi Kafe</strong><br>(Approval kafe baru, paket)</td>
+          <td><span class="check">YA (Khusus)</span></td>
+          <td>TIDAK</td>
+          <td>TIDAK</td>
+          <td>TIDAK</td>
+          <td>TIDAK</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- BAGIAN 9 -->
+  <h2 id="sec-9">9. Struktur Dynamic Sidebar untuk Setiap Role</h2>
+  <p>Sidebar secara otomatis menyaring dan hanya menampilkan menu yang berhak diakses oleh pengguna yang sedang login:</p>
+
+  <h3>A. Tampilan Sidebar Role OWNER (Pemilik Kafe):</h3>
+  <pre>
+┌───────────────────────────────────────┐
+│ [LOGO] SYNTAX POS - OWNER             │
+├───────────────────────────────────────┤
+│ OPERASIONAL UTAMA:                    │
+│ [x] Dashboard                         │
+│ [x] Kasir POS                         │
+│ [x] Meja Dine-in                      │
+│ [x] Dapur (KDS)                       │
+│                                       │
+│ KATALOG &amp; LOGISTIK:                   │
+│ [x] Produk Menu (Foto &amp; Varian)       │
+│ [x] Bahan &amp; Resep (Inventori / BOM)   │
+│                                       │
+│ HUBUNGAN PELANGGAN:                   │
+│ [x] CRM &amp; Pelanggan (Poin &amp; Member)   │
+│ [x] Voucher &amp; Promo                   │
+│                                       │
+│ MANAJEMEN &amp; LAPORAN:                  │
+│ [x] Karyawan &amp; Shift                  │
+│ [x] Laporan Bisnis                    │
+│ [x] Pengaturan (Profil &amp; Struk)       │
+├───────────────────────────────────────┤
+│ User: Budi Santoso (Owner)            │
+│ [Keluar / Logout]                     │
+└───────────────────────────────────────┘
+  </pre>
+
+  <h3>B. Tampilan Sidebar Role MANAGER:</h3>
+  <pre>
+┌───────────────────────────────────────┐
+│ [LOGO] SYNTAX POS - MANAGER           │
+├───────────────────────────────────────┤
+│ [x] Kasir POS                         │
+│ [x] Meja Dine-in                      │
+│ [x] Dapur (KDS)                       │
+│ [x] Produk Menu                       │
+│ [x] Bahan &amp; Resep (Stok Opname)       │
+│ [x] CRM &amp; Pelanggan                   │
+│ [x] Voucher &amp; Promo                   │
+│ [x] Laporan Shift Kasir Hari Ini      │
+├───────────────────────────────────────┤
+│ User: Ahmad (Manager)                 │
+│ [Keluar / Logout]                     │
+└───────────────────────────────────────┘
+  </pre>
+
+  <h3>C. Tampilan Sidebar Role CASHIER (Kasir):</h3>
+  <p><em>(Sangat ringkas dan cepat untuk layar sentuh kasir)</em></p>
+  <pre>
+┌───────────────────────────────────────┐
+│ [LOGO] SYNTAX POS - KASIR             │
+├───────────────────────────────────────┤
+│ [x] Kasir POS (Katalog, Cart, Bayar)  │
+│ [x] Meja Dine-in                      │
+│ [x] Dapur (KDS - Status Siap Saji)    │
+│ [x] CRM &amp; Pelanggan (Cari/Daftar)     │
+│ [x] Kelola Kas Shift (Buka/Tutup Kas) │
+├───────────────────────────────────────┤
+│ Kasir: Siti (Shift Pagi)              │
+│ [Tutup Shift &amp; Keluar]                │
+└───────────────────────────────────────┘
+  </pre>
+
+  <h3>D. Tampilan Layar KITCHEN_BAR (Dapur) &amp; SuperAdmin Web:</h3>
+  <pre>
+[KITCHEN DISPLAY]
+• Pesanan Masuk (Pending) ──► Dimasak (Cooking) ──► Siap Saji (Ready)
+
+[SUPERADMIN WEB /admin]
+• Dashboard Platform • Approval Kafe • Tenants • Billing • Health API
+  </pre>
+
+  <!-- BAGIAN 10 -->
+  <h2 id="sec-10">10. Skema Basis Data &amp; Tahapan Eksekusi</h2>
+
+  <h3>10.1. Penyesuaian Skema Prisma (schema.prisma)</h3>
+  <pre>
+// Status Persetujuan Kafe
+enum BusinessStatus {
+  PENDING_APPROVAL
+  ACTIVE
+  SUSPENDED
+  REJECTED
+}
+
+// 5 Tingkatan Role Pengguna
+enum UserRole {
+  SUPER_ADMIN
+  OWNER
+  MANAGER
+  CASHIER
+  KITCHEN_BAR
+}
+
+// Model Tenant Bisnis Kafe
+model PosBusiness {
+  id                Int            @id @default(autoincrement())
+  name              String
+  slug              String         @unique
+  address           String?        @db.Text
+  phone             String?
+  logoUrl           String?
+  status            BusinessStatus @default(PENDING_APPROVAL)
+  
+  // Konfigurasi Struk Dinamis
+  receiptHeader     String?        @db.Text
+  receiptNotes      String?        @db.Text
+  receiptFooter     String?        @db.Text
+  receiptPaperSize  String         @default("58mm")
+  showLogoOnReceipt Boolean        @default(true)
+  showWifiOnReceipt Boolean        @default(false)
+  wifiPassword      String?
+  taxPercent        Decimal        @default(10.00) @db.Decimal(5, 2)
+  isTaxInclusive    Boolean        @default(false)
+  servicePercent    Decimal        @default(0.00) @db.Decimal(5, 2)
+
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  users             User[]
+  categories        PosCategory[]
+  products          PosProduct[]
+  materials         PosMaterial[]
+  tables            PosCafeTable[]
+  customers         PosCustomer[]  // CRM Tetap Ada &amp; Terhubung
+  promotions        PosPromotion[] // Promo &amp; Voucher
+  shifts            PosShift[]
+  orders            PosOrder[]
+
+  @@map("pos_businesses")
+}
+  </pre>
+
+  <h3>10.2. Rencana Tahapan Eksekusi Bertahap</h3>
+  <div class="card">
+    <p><strong>TAHAP 1: Fondasi Backend &amp; Database Prisma</strong><br>
+    - Update enum Role &amp; BusinessStatus di Prisma.<br>
+    - Menambahkan kolom konfigurasi struk dinamis pada <code>PosBusiness</code>.<br>
+    - Endpoint registrasi kafe baru (status PENDING_APPROVAL).<br>
+    - Endpoint upload gambar menu &amp; logo kafe (WebP/JPEG).</p>
+  </div>
+  <div class="card">
+    <p><strong>TAHAP 2: Portal SuperAdmin SyntaxWeb (Web)</strong><br>
+    - Modul approval pendaftaran kafe baru di <code>/admin/cafes</code>.<br>
+    - Fitur tambah kafe &amp; akun owner manual.<br>
+    - Dashboard monitoring kesehatan server API &amp; status database.</p>
+  </div>
+  <div class="card">
+    <p><strong>TAHAP 3: Perbaikan UI Responsif Flutter POS</strong><br>
+    - Mode Portrait: Menambahkan AppBar Hamburger + Bottom Sheet Floating Cart.<br>
+    - Mode Landscape: Membagi layout menjadi 2 kolom fleksibel bebas overflow.<br>
+    - Menghapus tampilan teks server API dari login kasir (rahasia 7-tap untuk teknisi).</p>
+  </div>
+  <div class="card">
+    <p><strong>TAHAP 4: Dynamic Sidebar &amp; Matriks Permission</strong><br>
+    - Implementasi filter menu sidebar dinamis berdasarkan role user saat login.<br>
+    - Penguncian izin di backend API untuk setiap aksi (Owner, Manager, Cashier, Kitchen).</p>
+  </div>
+  <div class="card">
+    <p><strong>TAHAP 5: Struk Dinamis &amp; Kompilasi Multi-Platform</strong><br>
+    - Generator ESC/POS thermal 58mm/80mm sesuai template struk dinamis kafe.<br>
+    - Pengujian build Android APK, penyiapan runner macOS &amp; iOS.</p>
+  </div>
+
+  <div class="footer-note">
+    &copy; 2026 SYNTAX POS &amp; SyntaxWeb. Dokumen Blueprint Resmi Pengembangan Sistem.
+  </div>
+
+</body>
+</html>
