@@ -24,3 +24,23 @@ export async function GET(request: NextRequest) {
     return apiError(error.message || 'Gagal memuat produk', 400);
   }
 }
+
+export async function POST(request: NextRequest) {
+  try {
+    const session = getPosSessionFromRequest(request);
+    if (!session) {
+      return apiError('Unauthorized', 401);
+    }
+
+    const body = await request.json();
+    if (!body.name || !body.price) {
+      return apiError('Nama produk dan harga harus diisi', 400);
+    }
+
+    const product = await PosProductService.createProduct(session.businessId, body);
+    return apiSuccess(product, 'Produk berhasil ditambahkan', 201);
+  } catch (error: any) {
+    return apiError(error.message || 'Gagal menambahkan produk', 400);
+  }
+}
+

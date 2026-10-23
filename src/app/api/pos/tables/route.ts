@@ -16,3 +16,23 @@ export async function GET(request: NextRequest) {
     return apiError(error.message || 'Gagal memuat meja', 400);
   }
 }
+
+export async function POST(request: NextRequest) {
+  try {
+    const session = getPosSessionFromRequest(request);
+    if (!session) {
+      return apiError('Unauthorized', 401);
+    }
+
+    const body = await request.json();
+    if (!body.name) {
+      return apiError('Nama meja harus diisi', 400);
+    }
+
+    const table = await PosProductService.createTable(session.businessId, body);
+    return apiSuccess(table, 'Meja berhasil ditambahkan', 201);
+  } catch (error: any) {
+    return apiError(error.message || 'Gagal menambahkan meja', 400);
+  }
+}
+

@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Smartphone, Download } from 'lucide-react';
 import { useLanguage } from '@/modules/shared';
 import DecryptedText from '@/modules/shared/animations/DecryptedText';
 
@@ -118,18 +118,33 @@ export default function Hero() {
               </p>
             </div>
 
-            <motion.a
-              href="#portfolio"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="group cursor-pointer flex items-center gap-5 py-4 px-9 border border-black/20 dark:border-white/10 hover:border-[#22D3EE] transition-all duration-500 bg-white/80 dark:bg-white/5 backdrop-blur-md shadow-sm hover:shadow-xl hover:shadow-cyan-500/10 rounded-sm overflow-hidden relative pointer-events-auto"
-            >
-              <div className="absolute inset-0 bg-black translate-y-[101%] group-hover:translate-y-0 transition-transform duration-500 ease-out" />
-              <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.4em] text-black dark:text-white group-hover:text-white relative z-10 transition-colors duration-300">
-                Lihat Karya
-              </span>
-              <ArrowRight size={14} className="text-black dark:text-white group-hover:text-[#22D3EE] group-hover:translate-x-1 relative z-10 transition-all duration-300" />
-            </motion.a>
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              <motion.a
+                href="#pos-app"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="group cursor-pointer flex items-center gap-3 py-4 px-8 border border-[#22D3EE]/50 hover:border-[#22D3EE] transition-all duration-300 bg-[#22D3EE] text-black shadow-lg shadow-cyan-500/20 rounded-sm overflow-hidden relative pointer-events-auto"
+              >
+                <Smartphone size={15} />
+                <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.3em]">
+                  Unduh POS App
+                </span>
+                <Download size={14} className="group-hover:translate-y-0.5 transition-transform" />
+              </motion.a>
+
+              <motion.a
+                href="#portfolio"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="group cursor-pointer flex items-center gap-5 py-4 px-8 border border-black/20 dark:border-white/10 hover:border-[#22D3EE] transition-all duration-500 bg-white/80 dark:bg-white/5 backdrop-blur-md shadow-sm hover:shadow-xl hover:shadow-cyan-500/10 rounded-sm overflow-hidden relative pointer-events-auto"
+              >
+                <div className="absolute inset-0 bg-black translate-y-[101%] group-hover:translate-y-0 transition-transform duration-500 ease-out" />
+                <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.4em] text-black dark:text-white group-hover:text-white relative z-10 transition-colors duration-300">
+                  Lihat Karya
+                </span>
+                <ArrowRight size={14} className="text-black dark:text-white group-hover:text-[#22D3EE] group-hover:translate-x-1 relative z-10 transition-all duration-300" />
+              </motion.a>
+            </div>
           </motion.div>
         </motion.div>
 

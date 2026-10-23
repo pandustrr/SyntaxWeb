@@ -120,4 +120,52 @@ export class PosShiftService {
       },
     });
   }
+
+  /**
+   * Mengambil riwayat seluruh shift kasir
+   */
+  static async getShiftHistory(businessId: number, limit: number = 30) {
+    const shifts = await prisma.posShift.findMany({
+      where: { businessId },
+      orderBy: { id: 'desc' },
+      take: limit,
+      include: {
+        user: { select: { id: true, name: true, username: true } },
+        orders: {
+          select: {
+            id: true,
+            total: true,
+            paymentMethod: true,
+          },
+        },
+      },
+    });
+
+    return shifts.map((s) => {
+      const cashSales = s.orders
+        .filter((o) => o.paymentMethod === 'cash')
+        .reduce((sum, o) => sum + Number(o.total), 0);
+      const totalSales = s.orders.reduce((sum, o) => sum + Number(o.total), 0);
+
+      return {
+        id: s.id,
+        user: { name: s.user?.name || 'Kasir' },
+        cashier_name: s.user?.name || 'Kasir',
+        start_time: s.startTime ? s.startTime.toISOString() : null,
+        opened_at: s.startTime ? s.startTime.toISOString() : null,
+        end_time: s.endTime ? s.endTime.toISOString() : null,
+        closed_at: s.endTime ? s.endTime.toISOString() : null,
+        status: s.status,
+        starting_cash: Number(s.startingCash),
+        opening_cash: Number(s.startingCash),
+        expected_cash: s.expectedCash ? Number(s.expectedCash) : null,
+        actual_cash: s.actualCash ? Number(s.actualCash) : null,
+        difference: s.difference ? Number(s.difference) : 0,
+        cash_sales: cashSales,
+        total_sales: totalSales,
+        transaction_count: s.orders.length,
+        notes: s.notes,
+      };
+    });
+  }
 }

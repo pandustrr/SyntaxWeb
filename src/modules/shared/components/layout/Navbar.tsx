@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useLanguage } from '../../providers/LanguageProvider';
-import { Globe, Menu, X, MessageSquare, Home, Tag } from 'lucide-react';
+import { Globe, Menu, X, MessageSquare, Home, Tag, Smartphone } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ThemeToggle from '../ui/ThemeToggle';
@@ -14,9 +14,10 @@ export default function Navbar() {
   const pathname = usePathname();
 
   const navLinks = [
-    { name: t.nav.contact, href: '/contact', icon: MessageSquare },
     { name: t.nav.home, href: '/', icon: Home },
+    { name: (t.nav as any).pos || 'POS App', href: '/pos', icon: Smartphone },
     { name: t.nav.pricelist, href: '/pricelist', icon: Tag },
+    { name: t.nav.contact, href: '/contact', icon: MessageSquare },
   ];
 
   const toggleLanguage = () => {
