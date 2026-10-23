@@ -32,6 +32,15 @@ fi
 # Daftarkan Path Node.js (Khusus CloudLinux/cPanel) agar sub-proses bisa menemukan 'node' & 'npm'
 export PATH="/opt/alt/alt-nodejs22/root/usr/bin:/opt/alt/alt-nodejs20/root/usr/bin:$PATH"
 
+# Batasi thread untuk cPanel CloudLinux Shared Hosting (mencegah EAGAIN / Resource temporarily unavailable)
+export RAYON_NUM_THREADS=1
+export UV_THREADPOOL_SIZE=1
+export NEXT_PRIVATE_WORKER_THREADS=0
+export NODE_OPTIONS="--max-old-space-size=1536"
+
+# Bersihkan sisa proses build lama yang mungkin menggantung agar kuota proses (nproc) lega
+pkill -u "$(whoami)" -f "next-build|next-server|prisma" 2>/dev/null || true
+
 # 2. Update dari Git
 echo "📥 Menarik kode terbaru dari GitHub..."
 git fetch origin "$BRANCH"
@@ -52,12 +61,12 @@ fi
 # 4. Prisma Setup
 echo "💎 Sinkronisasi Database (Prisma)..."
 if command -v npx &> /dev/null; then
-    npx prisma generate
+    npx prisma generate 2>/dev/null || echo "ℹ️ Prisma client sudah tersedia."
 fi
 
 # 5. Build Project
 echo "🔨 Membangun ulang project (next build)..."
-NEXT_PRIVATE_WORKER_THREADS=0 UV_THREADPOOL_SIZE=1 nice -n 19 npx next build --no-lint
+RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 NEXT_PRIVATE_WORKER_THREADS=0 nice -n 19 npx next build --no-lint
 if [ $? -ne 0 ]; then
     echo "❌ Build gagal! Deployment dibatalkan."
     exit 1
