@@ -38,12 +38,15 @@ git fetch origin "$BRANCH"
 git reset --hard "origin/$BRANCH"
 
 # 3. Instalasi Dependencies
-echo "📦 Menginstal dependencies..."
-if command -v npm &> /dev/null; then
-    npm install --legacy-peer-deps
+echo "📦 Memeriksa dependencies..."
+if [ ! -d "node_modules" ]; then
+    echo "📦 node_modules belum ada, menginstal dependencies..."
+    npm install --legacy-peer-deps --no-audit --no-fund
+elif git diff HEAD@{1} HEAD --name-only 2>/dev/null | grep -q -E 'package\.json|package-lock\.json'; then
+    echo "📦 package.json berubah, memperbarui dependencies..."
+    npm install --legacy-peer-deps --no-audit --no-fund --prefer-offline
 else
-    echo "❌ Error: npm tidak ditemukan. Pastikan Node.js sudah diaktifkan di cPanel 'Setup Node.js App'."
-    exit 1
+    echo "⚡ Dependencies sudah up-to-date, melewati npm install."
 fi
 
 # 4. Prisma Setup
