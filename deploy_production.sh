@@ -61,10 +61,17 @@ fi
 
 # 4. Prisma Setup
 echo "💎 Sinkronisasi Database (Prisma)..."
-if [ -d "node_modules/@prisma/client" ] && ! git diff HEAD@{1} HEAD --name-only 2>/dev/null | grep -q "prisma/schema.prisma"; then
-    echo "⚡ Prisma schema tidak berubah, melewati prisma generate."
-elif command -v npx &> /dev/null; then
-    RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 npx prisma generate 2>/dev/null || echo "ℹ️ Prisma client sudah tersedia."
+if command -v npx &> /dev/null; then
+    # Cek apakah Prisma Client belum sinkron dengan skema POS
+    if [ ! -d "node_modules/@prisma/client" ] || ! grep -q "PosBusiness" node_modules/@prisma/client/index.d.ts 2>/dev/null || git diff HEAD@{1} HEAD --name-only 2>/dev/null | grep -q "prisma/schema.prisma"; then
+        echo "🔄 Memperbarui Prisma Client..."
+        RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 npx prisma generate
+    else
+        echo "⚡ Prisma client sudah sesuai skema terbaru."
+    fi
+
+    echo "🗄️ Sinkronisasi skema database MySQL (prisma db push)..."
+    RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 npx prisma db push --skip-generate --accept-data-loss || echo "ℹ️ prisma db push dilewati atau sudah sinkron."
 fi
 
 # 5. Build Project
