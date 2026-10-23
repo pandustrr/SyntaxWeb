@@ -39,7 +39,8 @@ export NEXT_PRIVATE_WORKER_THREADS=0
 export NODE_OPTIONS="--max-old-space-size=1536"
 
 # Bersihkan sisa proses build lama yang mungkin menggantung agar kuota proses (nproc) lega
-pkill -u "$(whoami)" -f "next-build|next-server|prisma" 2>/dev/null || true
+pkill -9 -u "$(whoami)" -f "next|prisma|npx" 2>/dev/null || true
+sleep 1
 
 # 2. Update dari Git
 echo "📥 Menarik kode terbaru dari GitHub..."
@@ -60,8 +61,10 @@ fi
 
 # 4. Prisma Setup
 echo "💎 Sinkronisasi Database (Prisma)..."
-if command -v npx &> /dev/null; then
-    npx prisma generate 2>/dev/null || echo "ℹ️ Prisma client sudah tersedia."
+if [ -d "node_modules/@prisma/client" ] && ! git diff HEAD@{1} HEAD --name-only 2>/dev/null | grep -q "prisma/schema.prisma"; then
+    echo "⚡ Prisma schema tidak berubah, melewati prisma generate."
+elif command -v npx &> /dev/null; then
+    RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 npx prisma generate 2>/dev/null || echo "ℹ️ Prisma client sudah tersedia."
 fi
 
 # 5. Build Project
