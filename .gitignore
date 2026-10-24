@@ -46,4 +46,11 @@ next-env.d.ts
 !/public/downloads/.gitkeep
 !/public/downloads/syntax-pos.apk
 
+# server logs & passenger
+*.log
+stderr.log
+stdout.log
+/tmp/
+
+
 
