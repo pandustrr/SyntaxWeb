@@ -5,8 +5,22 @@ import { apiSuccess, apiError } from '@/modules/pos/core/pos-response';
 export async function POST(request: NextRequest) {
   try {
     const rawBody = (await request.json().catch(() => ({}))) as Record<string, unknown>;
-    const businessName = String(rawBody.businessName || rawBody.business_name || '').trim();
-    const name = String(rawBody.name || '').trim();
+    const businessName = String(
+      rawBody.businessName ||
+      rawBody.business_name ||
+      rawBody.cafeName ||
+      rawBody.cafe_name ||
+      rawBody.outletName ||
+      ''
+    ).trim();
+    const name = String(
+      rawBody.name ||
+      rawBody.ownerName ||
+      rawBody.owner_name ||
+      rawBody.fullName ||
+      rawBody.full_name ||
+      ''
+    ).trim();
     const email = String(rawBody.email || '').trim().toLowerCase();
     const password = rawBody.password ? String(rawBody.password).trim() : '';
     const phone = rawBody.phone ? String(rawBody.phone).trim() : undefined;
@@ -16,7 +30,7 @@ export async function POST(request: NextRequest) {
       return apiError('Nama kafe/bisnis wajib diisi.', 400);
     }
     if (!name) {
-      return apiError('Nama pemilik wajib diisi.', 400);
+      return apiError('Nama pemilik kafe wajib diisi.', 400);
     }
     if (!email) {
       return apiError('Email wajib diisi.', 400);
