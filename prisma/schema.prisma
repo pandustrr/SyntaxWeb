@@ -62,22 +62,33 @@ model Portfolio {
 // ==========================================
 
 model PosBusiness {
-  id           Int            @id @default(autoincrement())
-  name         String
-  slug         String         @unique
-  address      String?        @db.Text
-  phone        String?
-  receiptNotes String?        @db.Text
-  isActive     Boolean        @default(true)
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  id                Int            @id @default(autoincrement())
+  name              String
+  slug              String         @unique
+  address           String?        @db.Text
+  phone             String?
+  receiptNotes      String?        @db.Text
+  isActive          Boolean        @default(true)
+  status            String         @default("ACTIVE") // PENDING_APPROVAL, ACTIVE, SUSPENDED, REJECTED
+  logoUrl           String?
+  receiptHeader     String?        @db.Text
+  receiptFooter     String?        @db.Text
+  receiptPaperSize  String         @default("58mm") // 58mm, 80mm
+  showLogoOnReceipt Boolean        @default(true)
+  showWifiOnReceipt Boolean        @default(false)
+  wifiPassword      String?
+  taxPercent        Decimal        @default(10.00) @db.Decimal(5, 2)
+  isTaxInclusive    Boolean        @default(false)
+  servicePercent    Decimal        @default(0.00) @db.Decimal(5, 2)
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
 
-  users        User[]
-  categories   PosCategory[]
-  products     PosProduct[]
-  tables       PosCafeTable[]
-  shifts       PosShift[]
-  orders       PosOrder[]
+  users             User[]
+  categories        PosCategory[]
+  products          PosProduct[]
+  tables            PosCafeTable[]
+  shifts            PosShift[]
+  orders            PosOrder[]
 
   @@map("pos_businesses")
 }

@@ -10,7 +10,8 @@ import {
   Settings,
   LogOut,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Store,
 } from 'lucide-react';
 import ThemeToggle from '@/modules/shared/components/ui/ThemeToggle';
 
@@ -30,6 +31,7 @@ export default function AdminSidebar({ onToggle }: SidebarProps) {
 
   const menuItems = [
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+    { name: 'Kafe & POS', href: '/admin/cafes', icon: Store },
     { name: 'Projects', href: '/admin/projects', icon: FolderKanban },
     { name: 'Users', href: '/admin/users', icon: Users },
     { name: 'Settings', href: '/admin/settings', icon: Settings },
