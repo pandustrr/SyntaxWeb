@@ -30,18 +30,22 @@ elif [ -f "$HOME/nodevenv/$APP_NAME/18/bin/activate" ]; then
     echo "✅ Node.js Environment (v18) diaktifkan."
 fi
 
-# Daftarkan Path Node.js (Khusus CloudLinux/cPanel) agar sub-proses bisa menemukan 'node' & 'npm'
-export PATH="/opt/alt/alt-nodejs20/root/usr/bin:/opt/alt/alt-nodejs22/root/usr/bin:$PATH"
+# Jika Node 20 tersedia secara sistem di CloudLinux (/opt/alt/alt-nodejs20), prioritaskan agar bebas dari bug DelayedTaskScheduler
+if [ -x "/opt/alt/alt-nodejs20/root/usr/bin/node" ]; then
+    export PATH="/opt/alt/alt-nodejs20/root/usr/bin:$PATH"
+    echo "⚡ Menggunakan runtime Node.js v20 (/opt/alt/alt-nodejs20) untuk stabilitas CloudLinux LVE."
+else
+    export PATH="/opt/alt/alt-nodejs22/root/usr/bin:/opt/alt/alt-nodejs20/root/usr/bin:$PATH"
+fi
 
 # Batasi thread untuk cPanel CloudLinux Shared Hosting (mencegah EAGAIN / Resource temporarily unavailable)
 export RAYON_NUM_THREADS=1
 export UV_THREADPOOL_SIZE=1
-export NEXT_PRIVATE_BUILD_WORKER=0
 export NEXT_PRIVATE_WORKER_THREADS=0
 export NODE_OPTIONS="--max-old-space-size=1536"
 
 # Bersihkan sisa proses build lama yang mungkin menggantung agar kuota proses (nproc) lega
-pkill -9 -u "$(whoami)" -f "next|prisma|npx" 2>/dev/null || true
+pkill -9 -u "$(whoami)" -f "next|prisma|npx|jest-worker" 2>/dev/null || true
 sleep 1
 
 # 2. Update dari Git
@@ -78,11 +82,29 @@ fi
 
 # 5. Build Project
 echo "🔨 Membangun ulang project (next build)..."
-RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 NEXT_PRIVATE_BUILD_WORKER=0 NEXT_PRIVATE_WORKER_THREADS=0 nice -n 19 npx next build --no-lint
-if [ $? -ne 0 ]; then
-    echo "❌ Build gagal! Deployment dibatalkan."
+
+# Backup folder .next lama jika ada, agar jika build gagal website tetap online
+if [ -d ".next" ] && [ -f ".next/BUILD_ID" ]; then
+    rm -rf .next_backup
+    cp -r .next .next_backup 2>/dev/null || true
+fi
+
+RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 NEXT_PRIVATE_WORKER_THREADS=0 nice -n 19 npx next build --no-lint
+BUILD_STATUS=$?
+
+if [ $BUILD_STATUS -ne 0 ]; then
+    echo "❌ Build gagal! Mengembalikan versi .next sebelumnya agar website tetap online..."
+    if [ -d ".next_backup" ]; then
+        rm -rf .next
+        mv .next_backup .next
+        mkdir -p tmp
+        touch tmp/restart.txt
+        echo "⚠️ Website dipulihkan ke build sebelumnya."
+    fi
     exit 1
 fi
+
+rm -rf .next_backup 2>/dev/null || true
 echo "✅ Build selesai."
 
 # 6. Restart Aplikasi
