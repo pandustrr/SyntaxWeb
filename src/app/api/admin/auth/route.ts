@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession, setSession, clearSession } from '@/core/auth/session';
+import { setSession, clearSession } from '@/core/auth/session';
 import { prisma } from '@/core/db/prisma';
 
 export async function POST(request: NextRequest) {
@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: 'Email dan password harus diisi' }, { status: 400 });
     }
 
-    const user = await (prisma.user as any).findFirst({
+    const user = await prisma.user.findFirst({
       where: { OR: [{ email }, { username: email }] },
     });
 

@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server';
+import { Prisma } from '@prisma/client';
 import { prisma } from '@/core/db/prisma';
 import { getPosSessionFromRequest } from '@/modules/pos/core/pos-guard';
 import { apiSuccess, apiError } from '@/modules/pos/core/pos-response';
@@ -40,8 +41,9 @@ export async function GET(request: NextRequest) {
     };
 
     return apiSuccess(settingsData, 'Pengaturan toko berhasil dimuat');
-  } catch (error: any) {
-    return apiError(error.message || 'Gagal memuat pengaturan toko', 400);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Gagal memuat pengaturan toko';
+    return apiError(message, 400);
   }
 }
 
@@ -53,7 +55,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    const updateData: any = {};
+    const updateData: Prisma.PosBusinessUpdateInput = {};
 
     if (body.name !== undefined) updateData.name = body.name;
     if (body.phone !== undefined) updateData.phone = body.phone;
@@ -78,7 +80,8 @@ export async function PUT(request: NextRequest) {
     });
 
     return apiSuccess(updated, 'Pengaturan berhasil diperbarui');
-  } catch (error: any) {
-    return apiError(error.message || 'Gagal memperbarui pengaturan', 400);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Gagal memperbarui pengaturan';
+    return apiError(message, 400);
   }
 }

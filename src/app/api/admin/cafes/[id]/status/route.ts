@@ -49,7 +49,8 @@ export async function PATCH(
       },
       { status: 200 }
     );
-  } catch (error: any) {
-    return NextResponse.json({ message: error.message || 'Gagal mengubah status kafe' }, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Gagal mengubah status kafe';
+    return NextResponse.json({ message }, { status: 500 });
   }
 }

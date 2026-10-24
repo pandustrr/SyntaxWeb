@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { 
   Store, 
   CheckCircle2, 
@@ -184,7 +184,7 @@ export default function AdminCafesPage() {
   const [actionLoadingId, setActionLoadingId] = useState<number | null>(null);
   const [feedbackMsg, setFeedbackMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-  const fetchCafes = async () => {
+  const fetchCafes = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
@@ -197,16 +197,16 @@ export default function AdminCafesPage() {
         setCafes(data.cafes || []);
         if (data.counts) setCounts(data.counts);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to load cafes', err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedTab, searchQuery]);
 
   useEffect(() => {
     fetchCafes();
-  }, [selectedTab]);
+  }, [fetchCafes]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -230,8 +230,9 @@ export default function AdminCafesPage() {
       } else {
         setFeedbackMsg({ type: 'error', text: data.message || 'Gagal mengubah status' });
       }
-    } catch (err: any) {
-      setFeedbackMsg({ type: 'error', text: err.message || 'Terjadi kesalahan jaringan' });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Terjadi kesalahan jaringan';
+      setFeedbackMsg({ type: 'error', text: msg });
     } finally {
       setActionLoadingId(null);
     }

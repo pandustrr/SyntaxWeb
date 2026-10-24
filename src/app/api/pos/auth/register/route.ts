@@ -26,7 +26,8 @@ export async function POST(request: NextRequest) {
     });
 
     return apiSuccess(result, 'Pendaftaran kafe berhasil. Menunggu verifikasi SuperAdmin.', 201);
-  } catch (error: any) {
-    return apiError(error.message || 'Gagal mendaftarkan kafe', 400);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Gagal mendaftarkan kafe';
+    return apiError(message, 400);
   }
 }

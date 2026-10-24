@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { Prisma } from '@prisma/client';
 import { getSession } from '@/core/auth/session';
 import { getPosSessionFromRequest } from '@/modules/pos/core/pos-guard';
 import { prisma } from '@/core/db/prisma';
@@ -20,7 +21,7 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status');
     const query = searchParams.get('q') || '';
 
-    const whereClause: any = {};
+    const whereClause: Prisma.PosBusinessWhereInput = {};
     if (status && status !== 'ALL') {
       whereClause.status = status;
     }
@@ -82,8 +83,9 @@ export async function GET(request: NextRequest) {
         productCount: cafe._count.products,
       })),
     }, { status: 200 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error fetching cafes:', error);
-    return NextResponse.json({ message: error.message || 'Terjadi kesalahan server' }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Terjadi kesalahan server';
+    return NextResponse.json({ message }, { status: 500 });
   }
 }
