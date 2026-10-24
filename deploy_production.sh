@@ -50,8 +50,19 @@ sleep 1
 
 # 2. Update dari Git
 echo "📥 Menarik kode terbaru dari GitHub..."
+PREV_COMMIT=$(git rev-parse HEAD 2>/dev/null || echo "none")
 git fetch origin "$BRANCH"
 git reset --hard "origin/$BRANCH"
+git checkout HEAD -- .next 2>/dev/null || true
+git clean -fd .next/ 2>/dev/null || true
+CURR_COMMIT=$(git rev-parse HEAD 2>/dev/null || echo "none")
+
+# Jika skrip diperbarui dari Git, reload eksekusi agar bash membaca file terbaru tanpa offset issue
+if [ "$PREV_COMMIT" != "$CURR_COMMIT" ] && [ -z "$DEPLOY_RESTARTED" ]; then
+    echo "🔄 Skrip deployment diperbarui dari Git, memuat ulang eksekusi..."
+    export DEPLOY_RESTARTED=1
+    exec bash "$0" "$@"
+fi
 
 # 3. Instalasi Dependencies
 echo "📦 Memeriksa dependencies..."
@@ -103,6 +114,7 @@ if command -v pm2 &> /dev/null; then
     pm2 restart "$APP_NAME" || pm2 start npm --name "$APP_NAME" -- start
 else
     echo "♻️ Restarting via Phusion Passenger (cPanel)..."
+    pkill -u "$(whoami)" -f "Passenger NodeApp|next-server" 2>/dev/null || true
     mkdir -p tmp
     touch tmp/restart.txt
     echo "✅ tmp/restart.txt diperbarui (Passenger otomatis reload)."
