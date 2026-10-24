@@ -145,42 +145,51 @@ export class PosAuthService {
 
   static async registerCafe(input: PosRegisterInput) {
     const { businessName, name, email, password, phone, address } = input;
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanBiz = businessName.trim();
+    const cleanName = name.trim();
 
-    if (!businessName || !name || !email || !password) {
+    if (!cleanBiz || !cleanName || !cleanEmail || !password) {
       throw new Error('Nama bisnis, nama pemilik, email, dan password wajib diisi.');
     }
 
     const existingUser = await prisma.user.findFirst({
       where: {
         OR: [
-          { email },
-          { username: email },
+          { email: cleanEmail },
+          { username: cleanEmail },
         ],
       },
     });
 
     if (existingUser) {
-      throw new Error('Email atau username sudah terdaftar. Silakan gunakan email lain.');
+      throw new Error('Email atau username sudah terdaftar. Silakan gunakan email lain atau hubungi admin.');
     }
 
-    const baseSlug = businessName
+    const baseSlug = cleanBiz
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)+/g, '') || 'cafe';
     const randomSuffix = Math.floor(1000 + Math.random() * 9000);
-    const slug = `${baseSlug}-${randomSuffix}`;
+    let slug = `${baseSlug}-${randomSuffix}`;
+    const existingSlug = await prisma.posBusiness.findUnique({
+      where: { slug },
+    });
+    if (existingSlug) {
+      slug = `${baseSlug}-${Date.now().toString().slice(-4)}`;
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const business = await prisma.posBusiness.create({
       data: {
-        name: businessName,
+        name: cleanBiz,
         slug,
-        address: address || null,
-        phone: phone || null,
+        address: address?.trim() || null,
+        phone: phone?.trim() || null,
         status: 'PENDING_APPROVAL',
         isActive: true,
-        receiptHeader: address ? `Selamat Datang di ${businessName}\n${address}` : businessName,
+        receiptHeader: address ? `Selamat Datang di ${cleanBiz}\n${address}` : cleanBiz,
         receiptNotes: 'Terima kasih atas kunjungan Anda!',
         receiptFooter: 'WiFi: SyntaxGuest',
         receiptPaperSize: '58mm',
@@ -207,11 +216,20 @@ export class PosAuthService {
       },
     });
 
+    const cleanUsernameBase = cleanEmail.split('@')[0].replace(/[^a-z0-9_-]/gi, '') || 'user';
+    let username = `${cleanUsernameBase}-${randomSuffix}`;
+    const existingUsername = await prisma.user.findUnique({
+      where: { username },
+    });
+    if (existingUsername) {
+      username = `${cleanUsernameBase}-${Date.now().toString().slice(-4)}`;
+    }
+
     const user = await prisma.user.create({
       data: {
-        name,
-        email,
-        username: email.split('@')[0] + '-' + randomSuffix,
+        name: cleanName,
+        email: cleanEmail,
+        username,
         password: hashedPassword,
         role: 'owner',
         businessId: business.id,

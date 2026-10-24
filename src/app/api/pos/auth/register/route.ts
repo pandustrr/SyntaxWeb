@@ -4,16 +4,32 @@ import { apiSuccess, apiError } from '@/modules/pos/core/pos-response';
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const businessName = body.businessName || body.business_name;
-    const name = body.name;
-    const email = body.email;
-    const password = body.password;
-    const phone = body.phone;
-    const address = body.address;
+    const rawBody = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+    const businessName = String(rawBody.businessName || rawBody.business_name || '').trim();
+    const name = String(rawBody.name || '').trim();
+    const email = String(rawBody.email || '').trim().toLowerCase();
+    const password = rawBody.password ? String(rawBody.password).trim() : '';
+    const phone = rawBody.phone ? String(rawBody.phone).trim() : undefined;
+    const address = rawBody.address ? String(rawBody.address).trim() : undefined;
 
-    if (!businessName || !name || !email || !password) {
-      return apiError('Nama kafe, nama pemilik, email, dan password wajib diisi.', 400);
+    if (!businessName) {
+      return apiError('Nama kafe/bisnis wajib diisi.', 400);
+    }
+    if (!name) {
+      return apiError('Nama pemilik wajib diisi.', 400);
+    }
+    if (!email) {
+      return apiError('Email wajib diisi.', 400);
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return apiError('Format email tidak valid. Gunakan format contoh@domain.com.', 400);
+    }
+    if (!password) {
+      return apiError('Password wajib diisi.', 400);
+    }
+    if (password.length < 6) {
+      return apiError('Password minimal 6 karakter.', 400);
     }
 
     const result = await PosAuthService.registerCafe({
