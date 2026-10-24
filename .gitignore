@@ -13,8 +13,8 @@
 # testing
 /coverage
 
-# next.js
-/.next/
+# next.js (hanya cache yang di-ignore, build output disinkronkan untuk cPanel hosting)
+/.next/cache/
 /out/
 
 # production

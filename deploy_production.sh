@@ -80,32 +80,22 @@ if command -v npx &> /dev/null; then
     RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 npx prisma db push --skip-generate --accept-data-loss || echo "ℹ️ prisma db push dilewati atau sudah sinkron."
 fi
 
-# 5. Build Project
-echo "🔨 Membangun ulang project (next build)..."
-
-# Backup folder .next lama jika ada, agar jika build gagal website tetap online
-if [ -d ".next" ] && [ -f ".next/BUILD_ID" ]; then
-    rm -rf .next_backup
-    cp -r .next .next_backup 2>/dev/null || true
-fi
-
-RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 NEXT_PRIVATE_WORKER_THREADS=0 nice -n 19 npx next build --no-lint
-BUILD_STATUS=$?
-
-if [ $BUILD_STATUS -ne 0 ]; then
-    echo "❌ Build gagal! Mengembalikan versi .next sebelumnya agar website tetap online..."
-    if [ -d ".next_backup" ]; then
-        rm -rf .next
-        mv .next_backup .next
-        mkdir -p tmp
-        touch tmp/restart.txt
-        echo "⚠️ Website dipulihkan ke build sebelumnya."
+# 5. Build Project Check
+echo "🔍 Menyeimbangkan folder build (.next)..."
+if [ -f ".next/BUILD_ID" ]; then
+    echo "⚡ Folder build (.next) valid dari repository! Melewati build di server."
+else
+    echo "🔨 Folder .next tidak lengkap, mencoba build di server..."
+    # Matikan sisa proses node agar kuota nproc lega
+    pkill -9 -u "$(whoami)" -f "node" 2>/dev/null || true
+    sleep 1
+    RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 NEXT_PRIVATE_WORKER_THREADS=0 nice -n 19 ./node_modules/.bin/next build --no-lint
+    if [ $? -ne 0 ]; then
+        echo "❌ Build gagal! Deployment dibatalkan."
+        exit 1
     fi
-    exit 1
 fi
-
-rm -rf .next_backup 2>/dev/null || true
-echo "✅ Build selesai."
+echo "✅ Build siap."
 
 # 6. Restart Aplikasi
 if command -v pm2 &> /dev/null; then
