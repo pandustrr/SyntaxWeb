@@ -16,7 +16,7 @@ export async function PUT(
     const { id } = await params;
     const body = await request.json();
 
-    const updated = PosCustomerService.updateCustomer(Number(id), body);
+    const updated = await PosCustomerService.updateCustomer(session.businessId, Number(id), body);
     return apiSuccess(updated, 'Data pelanggan berhasil diperbarui');
   } catch (error: any) {
     return apiError(error.message || 'Gagal memperbarui pelanggan', 400);
@@ -35,7 +35,7 @@ export async function DELETE(
 
     const { id } = await params;
 
-    PosCustomerService.deleteCustomer(Number(id));
+    await PosCustomerService.deleteCustomer(session.businessId, Number(id));
     return apiSuccess(null, 'Pelanggan berhasil dihapus');
   } catch (error: any) {
     return apiError(error.message || 'Gagal menghapus pelanggan', 400);

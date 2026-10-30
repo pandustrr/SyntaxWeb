@@ -17,10 +17,12 @@ import {
   Plus,
   Sparkles,
   Trash2,
-  Package
+  Package,
+  SlidersHorizontal
 } from 'lucide-react';
 import { CreateTenantModal } from '@/modules/admin/components/CreateTenantModal';
 import { ManagePlansModal } from '@/modules/admin/components/ManagePlansModal';
+import { ManageFeaturesModal } from '@/modules/admin/components/ManageFeaturesModal';
 
 interface CafeOwner {
   id: number;
@@ -44,6 +46,15 @@ interface CafeItem {
   userCount: number;
   orderCount: number;
   productCount: number;
+  enableTables?: boolean;
+  enableKds?: boolean;
+  enableInventory?: boolean;
+  enableCustomers?: boolean;
+  enablePromotions?: boolean;
+  attendanceMode?: string;
+  slovvBaseUrl?: string;
+  slovvUsername?: string;
+  slovvSyncEnabled?: boolean;
 }
 
 interface StatusCounts {
@@ -59,10 +70,11 @@ interface CafeRowProps {
   actionLoadingId: number | null;
   onUpdateStatus: (id: number, status: string) => void;
   onDeleteCafe: (id: number, name: string) => void;
+  onManageFeatures: (cafe: CafeItem) => void;
   renderStatusBadge: (status: string, cafe?: CafeItem) => React.ReactNode;
 }
 
-function CafeRow({ cafe, actionLoadingId, onUpdateStatus, onDeleteCafe, renderStatusBadge }: CafeRowProps) {
+function CafeRow({ cafe, actionLoadingId, onUpdateStatus, onDeleteCafe, onManageFeatures, renderStatusBadge }: CafeRowProps) {
   const isLoading = actionLoadingId === cafe.id;
   const formattedDate = new Date(cafe.createdAt).toLocaleDateString('id-ID', {
     day: 'numeric',
@@ -174,6 +186,16 @@ function CafeRow({ cafe, actionLoadingId, onUpdateStatus, onDeleteCafe, renderSt
           )}
 
           <button
+            onClick={() => onManageFeatures(cafe)}
+            disabled={isLoading}
+            title="Kelola Izin Fitur"
+            className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-200 rounded-lg text-xs font-semibold active:scale-95 transition-all"
+          >
+            <SlidersHorizontal size={13} />
+            Fitur
+          </button>
+
+          <button
             onClick={() => onDeleteCafe(cafe.id, cafe.name)}
             disabled={isLoading}
             title="Hapus Kafe"
@@ -203,6 +225,7 @@ export default function AdminCafesPage() {
   const [feedbackMsg, setFeedbackMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showPlansModal, setShowPlansModal] = useState(false);
+  const [selectedFeaturesCafe, setSelectedFeaturesCafe] = useState<CafeItem | null>(null);
 
   const [defaultTrialDays, setDefaultTrialDays] = useState(14);
   const [editingTrial, setEditingTrial] = useState(false);
@@ -603,6 +626,7 @@ export default function AdminCafesPage() {
                     actionLoadingId={actionLoadingId}
                     onUpdateStatus={handleUpdateStatus}
                     onDeleteCafe={handleDeleteCafe}
+                    onManageFeatures={(c) => setSelectedFeaturesCafe(c)}
                     renderStatusBadge={getStatusBadge}
                   />
                 ))
@@ -626,6 +650,16 @@ export default function AdminCafesPage() {
         onClose={() => setShowPlansModal(false)}
         onSuccess={(msg) => {
           setFeedbackMsg({ type: 'success', text: msg });
+          fetchCafes();
+        }}
+      />
+
+      <ManageFeaturesModal
+        isOpen={selectedFeaturesCafe !== null}
+        onClose={() => setSelectedFeaturesCafe(null)}
+        cafe={selectedFeaturesCafe}
+        onSuccess={() => {
+          setFeedbackMsg({ type: 'success', text: 'Izin fitur kafe berhasil disimpan!' });
           fetchCafes();
         }}
       />

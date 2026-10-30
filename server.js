@@ -1,8 +1,10 @@
 const { createServer } = require('http')
 const { parse } = require('url')
+const fs = require('fs')
 const next = require('next')
 
-const dev = process.env.NODE_ENV !== 'production'
+const isBuilt = fs.existsSync('./.next/BUILD_ID')
+const dev = process.env.NODE_ENV === 'development' || (!process.env.NODE_ENV && !isBuilt)
 const hostname = 'localhost'
 const port = process.env.PORT || 3000
 // when using middleware `hostname` and `port` must be provided below

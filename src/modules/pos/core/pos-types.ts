@@ -5,6 +5,7 @@ export interface PosUserSession {
   email: string;
   role: string;
   businessName: string;
+  permissions?: string[];
 }
 
 export interface ApiResponse<T = any> {

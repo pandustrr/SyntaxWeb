@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import bcrypt from 'bcryptjs';
 import { setSession, clearSession } from '@/core/auth/session';
 import { prisma } from '@/core/db/prisma';
 
@@ -14,7 +15,22 @@ export async function POST(request: NextRequest) {
       where: { OR: [{ email }, { username: email }] },
     });
 
-    if (!user || user.password !== password) {
+    if (!user) {
+      return NextResponse.json({ message: 'Email atau password salah' }, { status: 401 });
+    }
+
+    const isHashed = Boolean(
+      user.password &&
+      (user.password.startsWith('$2a$') ||
+       user.password.startsWith('$2b$') ||
+       user.password.startsWith('$2y$'))
+    );
+
+    const isPasswordValid = isHashed
+      ? await bcrypt.compare(password, user.password)
+      : user.password === password;
+
+    if (!isPasswordValid) {
       return NextResponse.json({ message: 'Email atau password salah' }, { status: 401 });
     }
 
