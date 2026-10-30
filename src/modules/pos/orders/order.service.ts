@@ -230,6 +230,13 @@ export class PosOrderService {
    * Update status pesanan (e.g. pending -> processing -> ready -> completed)
    */
   static async updateOrderStatus(businessId: number, orderId: number, status: string) {
+    const existing = await prisma.posOrder.findFirst({
+      where: { id: orderId, businessId },
+    });
+    if (!existing) {
+      throw new Error('Pesanan tidak ditemukan atau Anda tidak memiliki akses.');
+    }
+
     return await prisma.posOrder.update({
       where: { id: orderId },
       data: { status },
@@ -237,15 +244,47 @@ export class PosOrderService {
   }
 
   /**
-   * Batalkan pesanan
+   * Batalkan pesanan dan kembalikan stok produk & varian
    */
   static async cancelOrder(businessId: number, orderId: number, reason?: string) {
-    return await prisma.posOrder.update({
-      where: { id: orderId },
-      data: {
-        status: 'cancelled',
-        notes: reason ? `Dibatalkan: ${reason}` : 'Dibatalkan oleh kasir/dapur',
-      },
+    const order = await prisma.posOrder.findFirst({
+      where: { id: orderId, businessId },
+      include: { items: true },
+    });
+    if (!order) {
+      throw new Error('Pesanan tidak ditemukan atau Anda tidak memiliki akses.');
+    }
+    if (order.status === 'cancelled') {
+      return order;
+    }
+
+    return await prisma.$transaction(async (tx) => {
+      // Kembalikan stok item produk yang sebelumnya telah dipotong
+      for (const item of order.items) {
+        const product = await tx.posProduct.findUnique({
+          where: { id: item.productId },
+        });
+        if (product && product.trackStock) {
+          await tx.posProduct.update({
+            where: { id: item.productId },
+            data: { stock: { increment: item.quantity } },
+          });
+          if (item.variantId) {
+            await tx.posProductVariant.update({
+              where: { id: item.variantId },
+              data: { stock: { increment: item.quantity } },
+            });
+          }
+        }
+      }
+
+      return await tx.posOrder.update({
+        where: { id: orderId },
+        data: {
+          status: 'cancelled',
+          notes: reason ? `Dibatalkan: ${reason}` : 'Dibatalkan oleh kasir/dapur',
+        },
+      });
     });
   }
 }

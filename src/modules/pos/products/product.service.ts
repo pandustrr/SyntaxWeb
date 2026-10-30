@@ -38,6 +38,13 @@ export class PosProductService {
    * Update kategori
    */
   static async updateCategory(businessId: number, id: number, data: { name?: string; icon?: string }) {
+    const existing = await prisma.posCategory.findFirst({
+      where: { id, businessId },
+    });
+    if (!existing) {
+      throw new Error('Kategori tidak ditemukan atau Anda tidak memiliki akses.');
+    }
+
     return await prisma.posCategory.update({
       where: { id },
       data,
@@ -48,6 +55,13 @@ export class PosProductService {
    * Hapus kategori
    */
   static async deleteCategory(businessId: number, id: number) {
+    const existing = await prisma.posCategory.findFirst({
+      where: { id, businessId },
+    });
+    if (!existing) {
+      throw new Error('Kategori tidak ditemukan atau Anda tidak memiliki akses.');
+    }
+
     return await prisma.posCategory.delete({
       where: { id },
     });
@@ -77,11 +91,19 @@ export class PosProductService {
    * Update produk
    */
   static async updateProduct(businessId: number, id: number, data: any) {
+    const existing = await prisma.posProduct.findFirst({
+      where: { id, businessId },
+    });
+    if (!existing) {
+      throw new Error('Produk tidak ditemukan atau Anda tidak memiliki akses.');
+    }
+
     const updateData: any = {};
     if (data.name) updateData.name = data.name;
     if (data.price !== undefined) updateData.price = Number(data.price);
     if (data.stock !== undefined) updateData.stock = Number(data.stock);
     if (data.categoryId || data.category_id) updateData.categoryId = Number(data.categoryId || data.category_id);
+    if (data.sku) updateData.sku = data.sku;
 
     return await prisma.posProduct.update({
       where: { id },
@@ -94,6 +116,13 @@ export class PosProductService {
    * Hapus produk
    */
   static async deleteProduct(businessId: number, id: number) {
+    const existing = await prisma.posProduct.findFirst({
+      where: { id, businessId },
+    });
+    if (!existing) {
+      throw new Error('Produk tidak ditemukan atau Anda tidak memiliki akses.');
+    }
+
     return await prisma.posProduct.delete({
       where: { id },
     });
@@ -161,6 +190,13 @@ export class PosProductService {
    * Update meja cafe
    */
   static async updateTable(businessId: number, tableId: number, data: { name?: string; capacity?: number; status?: string }) {
+    const existing = await prisma.posCafeTable.findFirst({
+      where: { id: tableId, businessId },
+    });
+    if (!existing) {
+      throw new Error('Meja tidak ditemukan atau Anda tidak memiliki akses.');
+    }
+
     return await prisma.posCafeTable.update({
       where: { id: tableId },
       data,
@@ -171,6 +207,13 @@ export class PosProductService {
    * Hapus meja cafe
    */
   static async deleteTable(businessId: number, tableId: number) {
+    const existing = await prisma.posCafeTable.findFirst({
+      where: { id: tableId, businessId },
+    });
+    if (!existing) {
+      throw new Error('Meja tidak ditemukan atau Anda tidak memiliki akses.');
+    }
+
     return await prisma.posCafeTable.delete({
       where: { id: tableId },
     });
