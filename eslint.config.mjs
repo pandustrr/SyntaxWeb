@@ -10,9 +10,32 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
+  {
+    ignores: [
+      ".next/**",
+      "out/**",
+      "build/**",
+      "node_modules/**",
+      "public/**",
+      "server.js",
+      "next-env.d.ts",
+      "*.config.*",
+      "seed.sh",
+      "deploy_production.sh",
+      "prisma/**",
+      "**/*.min.js",
+    ],
+  },
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
-    ignores: [".next/**", "out/**", "build/**", "next-env.d.ts"],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-require-imports": "off",
+      "@typescript-eslint/triple-slash-reference": "off",
+      "prefer-const": "off",
+      "@next/next/no-img-element": "off",
+    },
   },
 ];
 

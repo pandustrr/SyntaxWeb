@@ -16,7 +16,6 @@ import {
   Phone,
   Plus,
   Sparkles,
-  X,
   Trash2,
   Package
 } from 'lucide-react';
@@ -204,53 +203,6 @@ export default function AdminCafesPage() {
   const [feedbackMsg, setFeedbackMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showPlansModal, setShowPlansModal] = useState(false);
-  const [modalLoading, setModalLoading] = useState(false);
-  const [modalForm, setModalForm] = useState({
-    businessName: '',
-    name: '',
-    email: '',
-    password: 'password123',
-    phone: '',
-    address: '',
-    isTrial: true,
-    trialDays: 14,
-  });
-
-  const handleCreateTenant = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setModalLoading(true);
-    setFeedbackMsg(null);
-    try {
-      const res = await fetch('/api/admin/cafes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(modalForm),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setFeedbackMsg({ type: 'success', text: data.message || 'Akun demo/tenant berhasil dibuat' });
-        setShowAddModal(false);
-        setModalForm({
-          businessName: '',
-          name: '',
-          email: '',
-          password: 'password123',
-          phone: '',
-          address: '',
-          isTrial: true,
-          trialDays: 14,
-        });
-        await fetchCafes();
-      } else {
-        setFeedbackMsg({ type: 'error', text: data.message || 'Gagal membuat tenant' });
-      }
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Terjadi kesalahan jaringan';
-      setFeedbackMsg({ type: 'error', text: msg });
-    } finally {
-      setModalLoading(false);
-    }
-  };
 
   const [defaultTrialDays, setDefaultTrialDays] = useState(14);
   const [editingTrial, setEditingTrial] = useState(false);
@@ -266,7 +218,9 @@ export default function AdminCafesPage() {
           setTempTrialDays(Number(d.data.default_trial_days));
         }
       }
-    } catch (_) {}
+    } catch {
+      // ignore
+    }
   }, []);
 
   const handleSaveTrialDays = async () => {
@@ -281,7 +235,9 @@ export default function AdminCafesPage() {
         setEditingTrial(false);
         setFeedbackMsg({ type: 'success', text: `Durasi uji coba gratis berhasil disetel ke ${tempTrialDays} hari!` });
       }
-    } catch (_) {}
+    } catch {
+      // ignore
+    }
   };
 
   const fetchCafes = useCallback(async () => {

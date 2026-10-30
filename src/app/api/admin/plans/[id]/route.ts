@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { Prisma } from '@prisma/client';
 import { getSession } from '@/core/auth/session';
 import { getPosSessionFromRequest } from '@/modules/pos/core/pos-guard';
 import { prisma } from '@/core/db/prisma';
@@ -27,7 +28,7 @@ export async function PUT(
     const body = await request.json();
     const { name, price, period, description, benefits, badge, isPopular, isActive, sortOrder } = body;
 
-    const updateData: any = {};
+    const updateData: Prisma.PosSubscriptionPlanUpdateInput = {};
     if (name !== undefined) updateData.name = String(name);
     if (price !== undefined) updateData.price = Number(price);
     if (period !== undefined) updateData.period = String(period);

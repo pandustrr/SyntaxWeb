@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Package, X, RefreshCw, Check, Edit2, Save } from 'lucide-react';
+import { Package, X, RefreshCw, Check, Edit2 } from 'lucide-react';
 
 export interface PlanItem {
   id: number;
@@ -43,7 +43,9 @@ export function ManagePlansModal({ isOpen, onClose, onSuccess }: ManagePlansModa
         const json = await res.json();
         setPlans(json.data || []);
       }
-    } catch (_) {}
+    } catch {
+      // ignore
+    }
     setLoading(false);
   };
 
@@ -92,7 +94,9 @@ export function ManagePlansModal({ isOpen, onClose, onSuccess }: ManagePlansModa
         setEditingPlanId(null);
         await fetchPlans();
       }
-    } catch (_) {}
+    } catch {
+      // ignore
+    }
     setSaving(false);
   };
 
