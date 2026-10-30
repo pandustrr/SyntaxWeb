@@ -15,6 +15,10 @@ export interface PosRegisterInput {
   password: string;
   phone?: string;
   address?: string;
+  isTrial?: boolean;
+  trialDays?: number;
+  planId?: number;
+  planCode?: string;
 }
 
 export interface PosLoginResponse {
@@ -125,6 +129,17 @@ export class PosAuthService {
       throw new Error('Toko/bisnis saat ini sedang dinonaktifkan.');
     }
 
+    // Cek batas waktu masa uji coba gratis (Trial Expiry)
+    if (user.business.isTrial && user.business.trialEndsAt) {
+      const now = new Date();
+      const expiry = new Date(user.business.trialEndsAt);
+      if (now > expiry) {
+        throw new Error(
+          `Masa uji coba gratis (Trial) kafe Anda telah berakhir pada ${expiry.toLocaleDateString('id-ID')}. Silakan hubungi SuperAdmin Syntax untuk aktivasi lisensi tenant resmi.`
+        );
+      }
+    }
+
     const session: PosUserSession = {
       userId: user.id,
       businessId: user.business.id,
@@ -152,7 +167,7 @@ export class PosAuthService {
   }
 
   static async registerCafe(input: PosRegisterInput) {
-    const { businessName, name, email, password, phone, address } = input;
+    const { businessName, name, email, password, phone, address, isTrial, trialDays } = input;
     const cleanEmail = email.trim().toLowerCase();
     const cleanBiz = businessName.trim();
     const cleanName = name.trim();
@@ -188,6 +203,18 @@ export class PosAuthService {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const isFreeTrial = Boolean(isTrial);
+    const validTrialDays = Number(trialDays && trialDays > 0 ? trialDays : 14);
+    const trialEndsAt = isFreeTrial ? new Date(Date.now() + validTrialDays * 24 * 60 * 60 * 1000) : null;
+    const initialStatus = isFreeTrial ? 'ACTIVE' : 'PENDING_APPROVAL';
+
+    let resolvedPlanId: number | null = input.planId ? Number(input.planId) : null;
+    if (!resolvedPlanId && input.planCode) {
+      const foundPlan = await prisma.posSubscriptionPlan.findUnique({
+        where: { code: input.planCode.toLowerCase() },
+      });
+      if (foundPlan) resolvedPlanId = foundPlan.id;
+    }
 
     const business = await prisma.posBusiness.create({
       data: {
@@ -195,7 +222,11 @@ export class PosAuthService {
         slug,
         address: address?.trim() || null,
         phone: phone?.trim() || null,
-        status: 'PENDING_APPROVAL',
+        status: initialStatus,
+        isTrial: isFreeTrial,
+        trialEndsAt,
+        planId: resolvedPlanId,
+        subscribedAt: !isFreeTrial && resolvedPlanId ? new Date() : null,
         isActive: true,
         receiptHeader: address ? `Selamat Datang di ${cleanBiz}\n${address}` : cleanBiz,
         receiptNotes: 'Terima kasih atas kunjungan Anda!',
@@ -265,8 +296,12 @@ export class PosAuthService {
         status: business.status,
         address: business.address,
         phone: business.phone,
+        isTrial: business.isTrial,
+        trialEndsAt: business.trialEndsAt,
       },
-      message: 'Pendaftaran kafe berhasil! Status saat ini: Menunggu Persetujuan SuperAdmin.',
+      message: isFreeTrial
+        ? `Pendaftaran uji coba gratis berhasil! Masa aktif uji coba ${validTrialDays} hari.`
+        : 'Pendaftaran kafe berhasil! Status saat ini: Menunggu Persetujuan SuperAdmin.',
     };
   }
 

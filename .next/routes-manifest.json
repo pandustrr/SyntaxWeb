@@ -34,12 +34,28 @@
   ],
   "dynamicRoutes": [
     {
+      "page": "/api/admin/cafes/[id]",
+      "regex": "^/api/admin/cafes/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/admin/cafes/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
       "page": "/api/admin/cafes/[id]/status",
       "regex": "^/api/admin/cafes/([^/]+?)/status(?:/)?$",
       "routeKeys": {
         "nxtPid": "nxtPid"
       },
       "namedRegex": "^/api/admin/cafes/(?<nxtPid>[^/]+?)/status(?:/)?$"
+    },
+    {
+      "page": "/api/admin/plans/[id]",
+      "regex": "^/api/admin/plans/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/admin/plans/(?<nxtPid>[^/]+?)(?:/)?$"
     },
     {
       "page": "/api/pos/categories/[id]",

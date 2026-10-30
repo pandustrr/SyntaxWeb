@@ -75,6 +75,8 @@ export async function GET(request: NextRequest) {
         address: cafe.address,
         phone: cafe.phone,
         status: cafe.status,
+        isTrial: cafe.isTrial,
+        trialEndsAt: cafe.trialEndsAt,
         isActive: cafe.isActive,
         createdAt: cafe.createdAt,
         owner: cafe.users.find((u) => u.role === 'owner') || cafe.users[0] || null,
@@ -87,5 +89,59 @@ export async function GET(request: NextRequest) {
     console.error('Error fetching cafes:', error);
     const message = error instanceof Error ? error.message : 'Terjadi kesalahan server';
     return NextResponse.json({ message }, { status: 500 });
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const webSession = await getSession();
+    const posSession = getPosSessionFromRequest(request);
+
+    const isAuthorized =
+      (webSession && (webSession.role === 'admin' || webSession.role === 'super_admin')) ||
+      (posSession && (posSession.role === 'admin' || posSession.role === 'super_admin'));
+
+    if (!isAuthorized) {
+      return NextResponse.json({ message: 'Unauthorized. Akses khusus SuperAdmin.' }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const { businessName, name, email, password, phone, address, isTrial, trialDays, status } = body;
+
+    if (!businessName || !name || !email || !password) {
+      return NextResponse.json({ message: 'Nama bisnis, nama PIC/owner, email, dan password wajib diisi.' }, { status: 400 });
+    }
+
+    const { PosAuthService } = await import('@/modules/pos/auth/auth.service');
+    const result = await PosAuthService.registerCafe({
+      businessName,
+      name,
+      email,
+      password,
+      phone,
+      address,
+      isTrial: isTrial !== undefined ? Boolean(isTrial) : true,
+      trialDays: trialDays ? Number(trialDays) : 14,
+    });
+
+    if (status && ['ACTIVE', 'PENDING_APPROVAL', 'SUSPENDED'].includes(status)) {
+      await prisma.posBusiness.update({
+        where: { id: result.business.id },
+        data: {
+          status,
+          isActive: status === 'ACTIVE',
+        },
+      });
+      result.business.status = status;
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: result.message,
+      data: result,
+    }, { status: 201 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Gagal membuat akun kafe';
+    return NextResponse.json({ message }, { status: 400 });
   }
 }

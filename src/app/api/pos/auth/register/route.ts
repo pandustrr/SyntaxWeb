@@ -25,6 +25,12 @@ export async function POST(request: NextRequest) {
     const password = rawBody.password ? String(rawBody.password).trim() : '';
     const phone = rawBody.phone ? String(rawBody.phone).trim() : undefined;
     const address = rawBody.address ? String(rawBody.address).trim() : undefined;
+    const isTrial = rawBody.isTrial === true || rawBody.is_trial === true;
+    const trialDays = rawBody.trialDays != null
+        ? Number(rawBody.trialDays)
+        : (rawBody.trial_days != null ? Number(rawBody.trial_days) : 14);
+    const planId = rawBody.planId ? Number(rawBody.planId) : (rawBody.plan_id ? Number(rawBody.plan_id) : undefined);
+    const planCode = rawBody.planCode ? String(rawBody.planCode) : (rawBody.plan_code ? String(rawBody.plan_code) : undefined);
 
     if (!businessName) {
       return apiError('Nama kafe/bisnis wajib diisi.', 400);
@@ -53,6 +59,10 @@ export async function POST(request: NextRequest) {
       password,
       phone,
       address,
+      isTrial,
+      trialDays,
+      planId,
+      planCode,
     });
 
     return apiSuccess(result, 'Pendaftaran kafe berhasil. Menunggu verifikasi SuperAdmin.', 201);

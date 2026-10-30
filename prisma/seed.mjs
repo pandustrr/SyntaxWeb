@@ -53,36 +53,23 @@ async function main() {
     data: { businessId: business.id },
   });
 
-  // 3. Seed POS Staff
-  const cashier1 = await prisma.user.upsert({
-    where: { email: "kasir@syntax.id" },
-    update: { businessId: business.id },
-    create: {
-      email: "kasir@syntax.id",
-      username: "kasir",
-      password: defaultPasswordHash,
-      name: "Budi Santoso (Kasir Pagi)",
-      role: "cashier",
-      businessId: business.id,
-    },
-  });
-
+  // 3. Seed POS Staff (Tepat 1 Akun untuk Setiap Role)
   await prisma.user.upsert({
-    where: { email: "kasir2@syntax.id" },
-    update: { businessId: business.id },
+    where: { email: "owner@syntax.id" },
+    update: { businessId: business.id, role: "owner" },
     create: {
-      email: "kasir2@syntax.id",
-      username: "kasir2",
+      email: "owner@syntax.id",
+      username: "owner",
       password: defaultPasswordHash,
-      name: "Siti Rahma (Kasir Sore)",
-      role: "cashier",
+      name: "Pandu Satria (Owner)",
+      role: "owner",
       businessId: business.id,
     },
   });
 
   await prisma.user.upsert({
     where: { email: "manager@syntax.id" },
-    update: { businessId: business.id },
+    update: { businessId: business.id, role: "manager" },
     create: {
       email: "manager@syntax.id",
       username: "manager",
@@ -94,8 +81,21 @@ async function main() {
   });
 
   await prisma.user.upsert({
+    where: { email: "kasir@syntax.id" },
+    update: { businessId: business.id, role: "cashier" },
+    create: {
+      email: "kasir@syntax.id",
+      username: "kasir",
+      password: defaultPasswordHash,
+      name: "Budi Santoso (Kasir)",
+      role: "cashier",
+      businessId: business.id,
+    },
+  });
+
+  await prisma.user.upsert({
     where: { email: "barista@syntax.id" },
-    update: { businessId: business.id },
+    update: { businessId: business.id, role: "kitchen" },
     create: {
       email: "barista@syntax.id",
       username: "barista",
@@ -105,7 +105,7 @@ async function main() {
       businessId: business.id,
     },
   });
-  console.log("✅ Staff POS ready (Admin, Manager, Kasir 1 & 2, Kitchen/Barista)");
+  console.log("✅ Staff POS ready: 1 Admin, 1 Owner, 1 Manager, 1 Kasir, 1 Kitchen/Barista");
 
   // 4. Seed Categories
   const categoryMap = {};

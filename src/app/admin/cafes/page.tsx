@@ -13,8 +13,15 @@ import {
   ShoppingBag, 
   Receipt, 
   MapPin, 
-  Phone 
+  Phone,
+  Plus,
+  Sparkles,
+  X,
+  Trash2,
+  Package
 } from 'lucide-react';
+import { CreateTenantModal } from '@/modules/admin/components/CreateTenantModal';
+import { ManagePlansModal } from '@/modules/admin/components/ManagePlansModal';
 
 interface CafeOwner {
   id: number;
@@ -30,6 +37,8 @@ interface CafeItem {
   address: string | null;
   phone: string | null;
   status: string;
+  isTrial?: boolean;
+  trialEndsAt?: string | null;
   isActive: boolean;
   createdAt: string;
   owner: CafeOwner | null;
@@ -50,10 +59,11 @@ interface CafeRowProps {
   cafe: CafeItem;
   actionLoadingId: number | null;
   onUpdateStatus: (id: number, status: string) => void;
-  renderStatusBadge: (status: string) => React.ReactNode;
+  onDeleteCafe: (id: number, name: string) => void;
+  renderStatusBadge: (status: string, cafe?: CafeItem) => React.ReactNode;
 }
 
-function CafeRow({ cafe, actionLoadingId, onUpdateStatus, renderStatusBadge }: CafeRowProps) {
+function CafeRow({ cafe, actionLoadingId, onUpdateStatus, onDeleteCafe, renderStatusBadge }: CafeRowProps) {
   const isLoading = actionLoadingId === cafe.id;
   const formattedDate = new Date(cafe.createdAt).toLocaleDateString('id-ID', {
     day: 'numeric',
@@ -117,7 +127,7 @@ function CafeRow({ cafe, actionLoadingId, onUpdateStatus, renderStatusBadge }: C
         </div>
       </td>
 
-      <td className="px-5 py-4 whitespace-nowrap">{renderStatusBadge(cafe.status)}</td>
+      <td className="px-5 py-4 whitespace-nowrap">{renderStatusBadge(cafe.status, cafe)}</td>
 
       <td className="px-5 py-4 text-right whitespace-nowrap">
         <div className="flex items-center justify-end gap-1.5">
@@ -163,6 +173,15 @@ function CafeRow({ cafe, actionLoadingId, onUpdateStatus, renderStatusBadge }: C
               Aktifkan Kembali
             </button>
           )}
+
+          <button
+            onClick={() => onDeleteCafe(cafe.id, cafe.name)}
+            disabled={isLoading}
+            title="Hapus Kafe"
+            className="inline-flex items-center p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg text-xs font-semibold transition-all disabled:opacity-50"
+          >
+            <Trash2 size={14} />
+          </button>
         </div>
       </td>
     </tr>
@@ -183,6 +202,87 @@ export default function AdminCafesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [actionLoadingId, setActionLoadingId] = useState<number | null>(null);
   const [feedbackMsg, setFeedbackMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showPlansModal, setShowPlansModal] = useState(false);
+  const [modalLoading, setModalLoading] = useState(false);
+  const [modalForm, setModalForm] = useState({
+    businessName: '',
+    name: '',
+    email: '',
+    password: 'password123',
+    phone: '',
+    address: '',
+    isTrial: true,
+    trialDays: 14,
+  });
+
+  const handleCreateTenant = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setModalLoading(true);
+    setFeedbackMsg(null);
+    try {
+      const res = await fetch('/api/admin/cafes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(modalForm),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setFeedbackMsg({ type: 'success', text: data.message || 'Akun demo/tenant berhasil dibuat' });
+        setShowAddModal(false);
+        setModalForm({
+          businessName: '',
+          name: '',
+          email: '',
+          password: 'password123',
+          phone: '',
+          address: '',
+          isTrial: true,
+          trialDays: 14,
+        });
+        await fetchCafes();
+      } else {
+        setFeedbackMsg({ type: 'error', text: data.message || 'Gagal membuat tenant' });
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Terjadi kesalahan jaringan';
+      setFeedbackMsg({ type: 'error', text: msg });
+    } finally {
+      setModalLoading(false);
+    }
+  };
+
+  const [defaultTrialDays, setDefaultTrialDays] = useState(14);
+  const [editingTrial, setEditingTrial] = useState(false);
+  const [tempTrialDays, setTempTrialDays] = useState(14);
+
+  const fetchConfig = useCallback(async () => {
+    try {
+      const res = await fetch('/api/admin/platform-config');
+      if (res.ok) {
+        const d = await res.json();
+        if (d.data?.default_trial_days) {
+          setDefaultTrialDays(Number(d.data.default_trial_days));
+          setTempTrialDays(Number(d.data.default_trial_days));
+        }
+      }
+    } catch (_) {}
+  }, []);
+
+  const handleSaveTrialDays = async () => {
+    try {
+      const res = await fetch('/api/admin/platform-config', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key: 'default_trial_days', value: String(tempTrialDays) }),
+      });
+      if (res.ok) {
+        setDefaultTrialDays(tempTrialDays);
+        setEditingTrial(false);
+        setFeedbackMsg({ type: 'success', text: `Durasi uji coba gratis berhasil disetel ke ${tempTrialDays} hari!` });
+      }
+    } catch (_) {}
+  };
 
   const fetchCafes = useCallback(async () => {
     setLoading(true);
@@ -206,7 +306,8 @@ export default function AdminCafesPage() {
 
   useEffect(() => {
     fetchCafes();
-  }, [fetchCafes]);
+    fetchConfig();
+  }, [fetchCafes, fetchConfig]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -238,7 +339,56 @@ export default function AdminCafesPage() {
     }
   };
 
-  const getStatusBadge = (status: string) => {
+  const handleDeleteCafe = async (cafeId: number, cafeName: string) => {
+    const confirmed = window.confirm(
+      `Hapus kafe "${cafeName}" secara permanen?\n\nPerhatian: Seluruh data kasir, produk, meja, pesanan, dan shift kafe ini akan dihapus permanen dari sistem.`
+    );
+    if (!confirmed) return;
+
+    setActionLoadingId(cafeId);
+    setFeedbackMsg(null);
+    try {
+      const res = await fetch(`/api/admin/cafes/${cafeId}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setFeedbackMsg({ type: 'success', text: data.message || 'Kafe berhasil dihapus' });
+        await fetchCafes();
+      } else {
+        setFeedbackMsg({ type: 'error', text: data.message || 'Gagal menghapus kafe' });
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Terjadi kesalahan jaringan';
+      setFeedbackMsg({ type: 'error', text: msg });
+    } finally {
+      setActionLoadingId(null);
+    }
+  };
+
+  const getStatusBadge = (status: string, cafe?: CafeItem) => {
+    if (cafe?.isTrial && cafe.trialEndsAt) {
+      const now = new Date().getTime();
+      const end = new Date(cafe.trialEndsAt).getTime();
+      const diffDays = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
+
+      if (diffDays <= 0) {
+        return (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300 border border-red-200 dark:border-red-700/50">
+            <AlertTriangle size={13} />
+            Trial Berakhir ({new Date(cafe.trialEndsAt).toLocaleDateString('id-ID')})
+          </span>
+        );
+      }
+
+      return (
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300 border border-purple-200 dark:border-purple-700/50">
+          <Sparkles size={13} className="text-purple-600 dark:text-purple-400" />
+          Trial ({diffDays} hari)
+        </span>
+      );
+    }
+
     switch (status) {
       case 'PENDING_APPROVAL':
         return (
@@ -290,14 +440,70 @@ export default function AdminCafesPage() {
             Kelola pendaftaran multi-tenant Syntax POS, verifikasi legalitas kafe, dan operasional tenant.
           </p>
         </div>
-        <button
-          onClick={fetchCafes}
-          disabled={loading}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 active:scale-95 transition-all self-start md:self-auto"
-        >
-          <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
-          Segarkan Data
-        </button>
+        <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
+          {/* Trial Duration Setting Pill */}
+          <div className="flex items-center gap-2 px-3.5 py-1.5 bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800 rounded-xl text-xs text-purple-900 dark:text-purple-200 shadow-sm">
+            <Sparkles size={14} className="text-purple-600 dark:text-purple-400 shrink-0" />
+            <span>Masa Trial: <strong>{defaultTrialDays} Hari</strong></span>
+            {editingTrial ? (
+              <div className="flex items-center gap-1.5 ml-1">
+                <select
+                  value={tempTrialDays}
+                  onChange={(e) => setTempTrialDays(Number(e.target.value))}
+                  className="px-2 py-0.5 rounded bg-white dark:bg-gray-800 border border-purple-300 dark:border-purple-600 text-xs font-bold"
+                >
+                  <option value={7}>7 Hari</option>
+                  <option value={14}>14 Hari</option>
+                  <option value={30}>30 Hari</option>
+                  <option value={60}>60 Hari</option>
+                </select>
+                <button
+                  onClick={handleSaveTrialDays}
+                  className="px-2 py-0.5 bg-purple-600 hover:bg-purple-700 text-white rounded text-[11px] font-bold"
+                >
+                  Simpan
+                </button>
+                <button
+                  onClick={() => setEditingTrial(false)}
+                  className="text-gray-400 hover:text-gray-600 text-xs"
+                >
+                  ✕
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setEditingTrial(true)}
+                className="ml-1 text-[11px] text-purple-700 dark:text-purple-300 underline font-semibold hover:text-purple-900"
+              >
+                Ubah
+              </button>
+            )}
+          </div>
+
+          <button
+            onClick={() => setShowPlansModal(true)}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-semibold shadow-sm active:scale-95 transition-all"
+          >
+            <Package size={16} />
+            Kelola Paket Langganan
+          </button>
+
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold shadow-sm active:scale-95 transition-all"
+          >
+            <Plus size={16} />
+            + Tambah Akun Demo / Tenant
+          </button>
+          <button
+            onClick={fetchCafes}
+            disabled={loading}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 active:scale-95 transition-all"
+          >
+            <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
+            Segarkan
+          </button>
+        </div>
       </div>
 
       {/* Feedback Toast */}
@@ -440,6 +646,7 @@ export default function AdminCafesPage() {
                     cafe={cafe}
                     actionLoadingId={actionLoadingId}
                     onUpdateStatus={handleUpdateStatus}
+                    onDeleteCafe={handleDeleteCafe}
                     renderStatusBadge={getStatusBadge}
                   />
                 ))
@@ -448,6 +655,24 @@ export default function AdminCafesPage() {
           </table>
         </div>
       </div>
+
+      <CreateTenantModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onSuccess={(msg) => {
+          setFeedbackMsg({ type: 'success', text: msg });
+          fetchCafes();
+        }}
+      />
+
+      <ManagePlansModal
+        isOpen={showPlansModal}
+        onClose={() => setShowPlansModal(false)}
+        onSuccess={(msg) => {
+          setFeedbackMsg({ type: 'success', text: msg });
+          fetchCafes();
+        }}
+      />
     </div>
   );
 }
