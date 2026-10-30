@@ -16,7 +16,7 @@ export async function PUT(
     const { id } = await params;
     const body = await request.json();
 
-    const updated = PosPromotionService.updatePromotion(Number(id), body);
+    const updated = await PosPromotionService.updatePromotion(session.businessId, Number(id), body);
     return apiSuccess(updated, 'Promosi berhasil diperbarui');
   } catch (error: any) {
     return apiError(error.message || 'Gagal memperbarui promosi', 400);
@@ -35,7 +35,7 @@ export async function DELETE(
 
     const { id } = await params;
 
-    PosPromotionService.deletePromotion(Number(id));
+    await PosPromotionService.deletePromotion(session.businessId, Number(id));
     return apiSuccess(null, 'Promosi berhasil dihapus');
   } catch (error: any) {
     return apiError(error.message || 'Gagal menghapus promosi', 400);

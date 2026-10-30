@@ -14,7 +14,7 @@ export class PosDashboardService {
 
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-    const [todayOrders, weekOrders, monthOrders, totalProducts] = await Promise.all([
+    const [todayOrders, weekOrders, monthOrders, totalProducts, totalCustomers] = await Promise.all([
       prisma.posOrder.findMany({
         where: {
           businessId,
@@ -42,6 +42,9 @@ export class PosDashboardService {
       prisma.posProduct.count({
         where: { businessId, isActive: true },
       }),
+      prisma.posCustomer.count({
+        where: { businessId },
+      }),
     ]);
 
     const todayRev = todayOrders.reduce((sum, o) => sum + Number(o.total), 0);
@@ -63,7 +66,7 @@ export class PosDashboardService {
       },
       totals: {
         products: totalProducts,
-        customers: 14,
+        customers: totalCustomers,
       },
     };
   }
@@ -153,31 +156,165 @@ export class PosDashboardService {
   }
 
   /**
-   * Deteksi stok menipis / kritis
+   * Deteksi stok menipis / kritis (Menu Produk + Bahan Baku Gudang)
    */
   static async getLowStock(businessId: number) {
-    const products = await prisma.posProduct.findMany({
-      where: {
-        businessId,
-        isActive: true,
-        trackStock: true,
-        stock: { lte: 20 },
-      },
-      include: {
-        category: { select: { name: true } },
-      },
-      orderBy: { stock: 'asc' },
-      take: 10,
-    });
+    const [products, materials] = await Promise.all([
+      prisma.posProduct.findMany({
+        where: {
+          businessId,
+          isActive: true,
+          trackStock: true,
+          stock: { lte: 20 },
+        },
+        include: {
+          category: { select: { name: true } },
+        },
+        orderBy: { stock: 'asc' },
+        take: 10,
+      }),
+      prisma.posMaterial.findMany({
+        where: {
+          businessId,
+        },
+        orderBy: { currentStock: 'asc' },
+      }),
+    ]);
 
-    return products.map((p) => ({
+    const lowMaterials = materials.filter(
+      (m) => Number(m.currentStock) <= Number(m.minimumStock)
+    );
+
+    const mappedProducts = products.map((p) => ({
       id: p.id,
       name: p.name,
+      type: 'product',
       category: p.category?.name || 'Menu',
       unit: 'porsi',
       current_stock: p.stock ?? 0,
       minimum_stock: 10,
       status: (p.stock ?? 0) <= 0 ? 'out_of_stock' : 'low_stock',
     }));
+
+    const mappedMaterials = lowMaterials.map((m) => {
+      const cur = Number(m.currentStock);
+      const min = Number(m.minimumStock);
+      return {
+        id: m.id,
+        name: m.name,
+        type: 'material',
+        category: m.category || 'Bahan Baku',
+        unit: m.unit || 'pcs',
+        current_stock: cur,
+        minimum_stock: min,
+        status: cur <= 0 ? 'out_of_stock' : 'low_stock',
+      };
+    });
+
+    return [...mappedProducts, ...mappedMaterials];
+  }
+
+  /**
+   * Laporan Penjualan Lengkap (Omzet, HPP/COGS, Profit Bersih, Metode Bayar, Dine-in vs Takeaway)
+   */
+  static async getBusinessReport(
+    businessId: number,
+    options?: { dateFrom?: string; dateTo?: string }
+  ) {
+    const where: any = {
+      businessId,
+      status: { not: 'cancelled' },
+    };
+
+    if (options?.dateFrom || options?.dateTo) {
+      where.createdAt = {};
+      if (options.dateFrom) {
+        where.createdAt.gte = new Date(`${options.dateFrom}T00:00:00.000Z`);
+      }
+      if (options.dateTo) {
+        where.createdAt.lte = new Date(`${options.dateTo}T23:59:59.999Z`);
+      }
+    }
+
+    const orders = await prisma.posOrder.findMany({
+      where,
+      include: {
+        items: {
+          include: {
+            product: { select: { costPrice: true } },
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    let grossRevenue = 0;
+    let totalDiscount = 0;
+    let totalTax = 0;
+    let totalNet = 0;
+    let totalEstimatedCOGS = 0;
+
+    const paymentMethods: Record<string, { count: number; total: number }> = {
+      cash: { count: 0, total: 0 },
+      qris: { count: 0, total: 0 },
+      transfer: { count: 0, total: 0 },
+    };
+
+    const channels: Record<string, { count: number; total: number }> = {
+      dine_in: { count: 0, total: 0 },
+      take_away: { count: 0, total: 0 },
+    };
+
+    for (const order of orders) {
+      const sub = Number(order.subtotal);
+      const disc = Number(order.discount);
+      const tax = Number(order.tax);
+      const tot = Number(order.total);
+
+      grossRevenue += sub;
+      totalDiscount += disc;
+      totalTax += tax;
+      totalNet += tot;
+
+      // Hitung HPP / COGS estimasi dari costPrice produk
+      for (const item of order.items) {
+        const costPrice = Number(item.product?.costPrice || 0);
+        totalEstimatedCOGS += costPrice * item.quantity;
+      }
+
+      // Distribusi metode bayar
+      const pm = order.paymentMethod.toLowerCase();
+      if (!paymentMethods[pm]) {
+        paymentMethods[pm] = { count: 0, total: 0 };
+      }
+      paymentMethods[pm].count += 1;
+      paymentMethods[pm].total += tot;
+
+      // Distribusi channel
+      const ch = order.orderType.toLowerCase();
+      if (!channels[ch]) {
+        channels[ch] = { count: 0, total: 0 };
+      }
+      channels[ch].count += 1;
+      channels[ch].total += tot;
+    }
+
+    const grossProfit = Math.max(0, totalNet - totalEstimatedCOGS);
+    const profitMargin = totalNet > 0 ? Math.round((grossProfit / totalNet) * 100) : 0;
+    const aov = orders.length > 0 ? Math.round(totalNet / orders.length) : 0;
+
+    return {
+      total_orders: orders.length,
+      gross_revenue: grossRevenue,
+      total_discount: totalDiscount,
+      total_tax: totalTax,
+      net_revenue: totalNet,
+      total_cogs: totalEstimatedCOGS,
+      gross_profit: grossProfit,
+      profit_margin_percent: profitMargin,
+      average_order_value: aov,
+      payment_methods: paymentMethods,
+      channels,
+    };
   }
 }

@@ -95,6 +95,9 @@ model PosBusiness {
   tables            PosCafeTable[]
   shifts            PosShift[]
   orders            PosOrder[]
+  materials         PosMaterial[]
+  customers         PosCustomer[]
+  promotions        PosPromotion[]
 
   @@index([planId])
   @@map("pos_businesses")
@@ -136,6 +139,7 @@ model PosProduct {
 
   variants    PosProductVariant[]
   orderItems  PosOrderItem[]
+  recipes     PosRecipeItem[]
 
   @@index([businessId])
   @@index([categoryId])
@@ -204,11 +208,14 @@ model PosOrder {
   business      PosBusiness    @relation(fields: [businessId], references: [id], onDelete: Cascade)
   userId        Int?
   user          User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+  customerId    Int?
+  customer      PosCustomer?   @relation(fields: [customerId], references: [id], onDelete: SetNull)
   shiftId       Int?
   shift         PosShift?      @relation(fields: [shiftId], references: [id], onDelete: SetNull)
   tableId       Int?
   table         PosCafeTable?  @relation(fields: [tableId], references: [id], onDelete: SetNull)
   orderNumber   String         @unique
+  promoCode     String?
   orderType     String         @default("dine_in") // dine_in, take_away
   subtotal      Decimal        @db.Decimal(12, 2)
   discount      Decimal        @default(0) @db.Decimal(12, 2)
@@ -226,6 +233,7 @@ model PosOrder {
   items         PosOrderItem[]
 
   @@index([businessId])
+  @@index([customerId])
   @@index([shiftId])
   @@index([tableId])
   @@map("pos_orders")
@@ -279,5 +287,81 @@ model PosPlatformConfig {
   updatedAt DateTime @updatedAt
 
   @@map("pos_platform_configs")
+}
+
+
+model PosMaterial {
+  id           Int             @id @default(autoincrement())
+  businessId   Int
+  business     PosBusiness     @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  name         String
+  category     String          @default("Lainnya")
+  unit         String          @default("pcs")
+  currentStock Decimal         @default(0) @db.Decimal(12, 3)
+  minimumStock Decimal         @default(5) @db.Decimal(12, 3)
+  costPerUnit  Decimal         @default(0) @db.Decimal(12, 2)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  recipeItems  PosRecipeItem[]
+
+  @@index([businessId])
+  @@map("pos_materials")
+}
+
+model PosRecipeItem {
+  id         Int         @id @default(autoincrement())
+  productId  Int
+  product    PosProduct  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  materialId Int
+  material   PosMaterial @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  amount     Decimal     @db.Decimal(12, 3)
+  unit       String
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@index([productId])
+  @@index([materialId])
+  @@map("pos_recipe_items")
+}
+
+model PosCustomer {
+  id              Int         @id @default(autoincrement())
+  businessId      Int
+  business        PosBusiness @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  name            String
+  phone           String?
+  email           String?
+  membershipLevel String      @default("Bronze")
+  totalPoints     Int         @default(0)
+  totalSpend      Decimal     @default(0) @db.Decimal(14, 2)
+  totalVisit      Int         @default(1)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  orders          PosOrder[]
+
+  @@index([businessId])
+  @@map("pos_customers")
+}
+
+model PosPromotion {
+  id            Int         @id @default(autoincrement())
+  businessId    Int
+  business      PosBusiness @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  name          String
+  code          String
+  type          String      @default("percentage") // percentage, fixed
+  discountValue Decimal     @db.Decimal(12, 2)
+  minPurchase   Decimal     @default(0) @db.Decimal(12, 2)
+  usageCount    Int         @default(0)
+  usageLimit    Int?
+  endDate       DateTime?
+  isActive      Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([businessId])
+  @@map("pos_promotions")
 }
 

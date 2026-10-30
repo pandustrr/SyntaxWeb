@@ -1,5 +1,6 @@
 'use server';
 
+import bcrypt from 'bcryptjs';
 import { prisma } from '@/core/db/prisma';
 import { setSession, clearSession } from '@/core/auth/session';
 import type { LoginCredentials, LoginResult } from '../types';
@@ -12,13 +13,28 @@ export async function loginAction(credentials: LoginCredentials): Promise<LoginR
       return { success: false, message: 'Email dan password harus diisi.' };
     }
 
-    const user = await (prisma.user as any).findFirst({
+    const user = await prisma.user.findFirst({
       where: {
         OR: [{ email }, { username: email }],
       },
     });
 
-    if (!user || user.password !== password) {
+    if (!user) {
+      return { success: false, message: 'Email atau password salah.' };
+    }
+
+    const isHashed = Boolean(
+      user.password &&
+      (user.password.startsWith('$2a$') ||
+       user.password.startsWith('$2b$') ||
+       user.password.startsWith('$2y$'))
+    );
+
+    const isPasswordValid = isHashed
+      ? await bcrypt.compare(password, user.password)
+      : user.password === password;
+
+    if (!isPasswordValid) {
       return { success: false, message: 'Email atau password salah.' };
     }
 

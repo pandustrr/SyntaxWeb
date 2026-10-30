@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
       return apiError('Unauthorized', 401);
     }
 
-    const promotions = PosPromotionService.getPromotions();
+    const promotions = await PosPromotionService.getPromotions(session.businessId);
     return apiSuccess(promotions, 'Daftar promosi berhasil dimuat');
   } catch (error: any) {
     return apiError(error.message || 'Gagal memuat promosi', 400);
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const created = PosPromotionService.createPromotion(body);
+    const created = await PosPromotionService.createPromotion(session.businessId, body);
     return apiSuccess(created, 'Promosi berhasil dibuat', 201);
   } catch (error: any) {
     return apiError(error.message || 'Gagal membuat promosi', 400);

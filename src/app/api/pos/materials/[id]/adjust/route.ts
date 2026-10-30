@@ -15,10 +15,12 @@ export async function POST(
 
     const { id } = await params;
     const body = await request.json();
-    const type = body.type === 'out' ? 'out' : 'in';
-    const amount = Number(body.amount || 0);
+    const isOut = body.type === 'out' || body.type === 'keluar';
+    const type = isOut ? 'out' : 'in';
+    const rawAmount = body.amount !== undefined ? body.amount : (body.quantity !== undefined ? body.quantity : 0);
+    const amount = Number(rawAmount);
 
-    const updated = PosMaterialService.adjustStock(Number(id), type, amount);
+    const updated = await PosMaterialService.adjustStock(session.businessId, Number(id), type, isNaN(amount) ? 0 : amount);
     return apiSuccess(updated, 'Stok bahan baku berhasil disesuaikan');
   } catch (error: any) {
     return apiError(error.message || 'Gagal menyesuaikan stok bahan baku', 400);

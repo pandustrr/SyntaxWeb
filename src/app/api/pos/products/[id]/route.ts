@@ -3,6 +3,24 @@ import { getPosSessionFromRequest } from '@/modules/pos/core/pos-guard';
 import { PosProductService } from '@/modules/pos/products/product.service';
 import { apiSuccess, apiError } from '@/modules/pos/core/pos-response';
 
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = getPosSessionFromRequest(request);
+    if (!session) {
+      return apiError('Unauthorized', 401);
+    }
+
+    const { id } = await params;
+    const product = await PosProductService.getProductById(session.businessId, Number(id));
+    return apiSuccess(product, 'Detail produk berhasil diambil');
+  } catch (error: any) {
+    return apiError(error.message || 'Produk tidak ditemukan', 404);
+  }
+}
+
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }

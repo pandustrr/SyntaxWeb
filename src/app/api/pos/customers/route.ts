@@ -11,9 +11,9 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const query = searchParams.get('q') || '';
+    const query = searchParams.get('search') || searchParams.get('q') || '';
 
-    const customers = PosCustomerService.getCustomers(query);
+    const customers = await PosCustomerService.getCustomers(session.businessId, query);
     return apiSuccess(customers, 'Daftar pelanggan berhasil dimuat');
   } catch (error: any) {
     return apiError(error.message || 'Gagal memuat pelanggan', 400);
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const created = PosCustomerService.createCustomer(body);
+    const created = await PosCustomerService.createCustomer(session.businessId, body);
     return apiSuccess(created, 'Pelanggan berhasil disimpan', 201);
   } catch (error: any) {
     return apiError(error.message || 'Gagal menyimpan pelanggan', 400);
