@@ -75,28 +75,36 @@ export class PosAuthService {
     // Validasi tenant / business
     if (!user.businessId || !user.business) {
       if (user.role === 'admin' || user.role === 'super_admin') {
-        const adminSession: PosUserSession = {
-          userId: user.id,
-          businessId: 0,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          businessName: 'Syntax Platform Admin',
-        };
-        const token = signPosToken(adminSession);
-        return {
-          token,
-          user: adminSession,
-          business: {
-            id: 0,
-            name: 'Syntax SuperAdmin Platform',
-            slug: 'superadmin',
-            address: null,
-            phone: null,
-            receiptNotes: null,
-            status: 'ACTIVE',
-          },
-        };
+        // Ambil toko aktif pertama (default tenant) agar SuperAdmin dapat langsung mengoperasikan & menguji POS
+        const activeBusiness = await prisma.posBusiness.findFirst({
+          where: { isActive: true },
+          orderBy: { id: 'asc' },
+        });
+
+        if (activeBusiness) {
+          const adminSession: PosUserSession = {
+            userId: user.id,
+            businessId: activeBusiness.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            businessName: activeBusiness.name,
+          };
+          const token = signPosToken(adminSession);
+          return {
+            token,
+            user: adminSession,
+            business: {
+              id: activeBusiness.id,
+              name: activeBusiness.name,
+              slug: activeBusiness.slug,
+              address: activeBusiness.address,
+              phone: activeBusiness.phone,
+              receiptNotes: activeBusiness.receiptNotes,
+              status: activeBusiness.status,
+            },
+          };
+        }
       }
       throw new Error('Pengguna ini belum terdaftar di toko/bisnis POS manapun.');
     }

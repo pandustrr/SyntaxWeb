@@ -52,6 +52,10 @@ export class PosShiftService {
    * Buka shift kasir baru dengan modal uang kas awal (cash float)
    */
   static async openShift(businessId: number, userId: number, startingCash: number, notes?: string) {
+    if (!businessId || businessId <= 0) {
+      throw new Error('Akun Anda belum ditautkan ke toko/bisnis POS manapun.');
+    }
+
     // Cek apakah ada shift yang masih menggantung/belum ditutup
     const existing = await prisma.posShift.findFirst({
       where: {

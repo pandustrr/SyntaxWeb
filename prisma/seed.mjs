@@ -47,6 +47,12 @@ async function main() {
   });
   console.log("✅ POS Business ready:", business.name);
 
+  // Link Admin to default business
+  await prisma.user.update({
+    where: { email: "admin@syntaxweb.com" },
+    data: { businessId: business.id },
+  });
+
   // 3. Seed POS Staff
   const cashier1 = await prisma.user.upsert({
     where: { email: "kasir@syntax.id" },

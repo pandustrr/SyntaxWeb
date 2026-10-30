@@ -24,6 +24,10 @@ export class PosOrderService {
    * Transaksi checkout kasir (DB Transaction aman: buat order & kurangi stok)
    */
   static async createOrder(businessId: number, userId: number, input: CreateOrderInput) {
+    if (!businessId || businessId <= 0) {
+      throw new Error('Akun Anda belum ditautkan ke toko/bisnis POS manapun.');
+    }
+
     if (!input.items || input.items.length === 0) {
       throw new Error('Keranjang belanja tidak boleh kosong.');
     }
