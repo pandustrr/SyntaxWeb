@@ -48,7 +48,10 @@ export async function DELETE(
         where: { businessId: cafeId },
       });
 
-      // 3. Hapus variants & products
+      // 3. Hapus variants, recipes & products
+      await tx.posRecipeItem.deleteMany({
+        where: { product: { businessId: cafeId } },
+      });
       await tx.posProductVariant.deleteMany({
         where: { product: { businessId: cafeId } },
       });
@@ -56,7 +59,18 @@ export async function DELETE(
         where: { businessId: cafeId },
       });
 
-      // 4. Hapus categories & tables
+      // 4. Hapus materials, customers, promotions
+      await tx.posMaterial.deleteMany({
+        where: { businessId: cafeId },
+      });
+      await tx.posCustomer.deleteMany({
+        where: { businessId: cafeId },
+      });
+      await tx.posPromotion.deleteMany({
+        where: { businessId: cafeId },
+      });
+
+      // 5. Hapus categories & tables
       await tx.posCategory.deleteMany({
         where: { businessId: cafeId },
       });
@@ -64,7 +78,7 @@ export async function DELETE(
         where: { businessId: cafeId },
       });
 
-      // 5. Hapus akun pengguna (selain SuperAdmin utama)
+      // 6. Hapus akun pengguna (selain SuperAdmin utama)
       await tx.user.deleteMany({
         where: {
           businessId: cafeId,
@@ -72,7 +86,7 @@ export async function DELETE(
         },
       });
 
-      // 6. Hapus kafe
+      // 7. Hapus kafe
       await tx.posBusiness.delete({
         where: { id: cafeId },
       });

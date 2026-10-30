@@ -122,7 +122,19 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { businessName, name, email, password, phone, address, isTrial, trialDays, status } = body;
+    const {
+      businessName,
+      name,
+      email,
+      password,
+      phone,
+      address,
+      isTrial,
+      trialDays,
+      status,
+      planId,
+      planCode,
+    } = body;
 
     if (!businessName || !name || !email || !password) {
       return NextResponse.json({ message: 'Nama bisnis, nama PIC/owner, email, dan password wajib diisi.' }, { status: 400 });
@@ -138,6 +150,8 @@ export async function POST(request: NextRequest) {
       address,
       isTrial: isTrial !== undefined ? Boolean(isTrial) : true,
       trialDays: trialDays ? Number(trialDays) : 14,
+      planId: planId ? Number(planId) : undefined,
+      planCode: planCode ? String(planCode) : undefined,
     });
 
     if (status && ['ACTIVE', 'PENDING_APPROVAL', 'SUSPENDED'].includes(status)) {

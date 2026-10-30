@@ -54,6 +54,11 @@ export async function PUT(request: NextRequest) {
       return apiError('Unauthorized', 401);
     }
 
+    const ALLOWED_MANAGEMENT_ROLES = ['owner', 'manager', 'admin', 'super_admin'];
+    if (!ALLOWED_MANAGEMENT_ROLES.includes(session.role)) {
+      return apiError('Hanya Owner atau Store Manager yang diizinkan mengubah pengaturan toko.', 403);
+    }
+
     const body = await request.json();
     const updateData: Prisma.PosBusinessUpdateInput = {};
 

@@ -71,20 +71,37 @@ export class PosProductService {
    * Tambah produk baru
    */
   static async createProduct(businessId: number, data: any) {
-    return await prisma.posProduct.create({
+    const created = await prisma.posProduct.create({
       data: {
         businessId,
-        categoryId: Number(data.categoryId || data.category_id),
+        categoryId: data.categoryId || data.category_id ? Number(data.categoryId || data.category_id) : null,
         name: data.name,
         sku: data.sku || `SKU-${Date.now()}`,
         price: Number(data.price),
-        costPrice: data.costPrice || data.cost_price ? Number(data.costPrice || data.cost_price) : 0,
+        costPrice: data.costPrice !== undefined ? Number(data.costPrice) : (data.cost_price !== undefined ? Number(data.cost_price) : 0),
         stock: data.stock !== undefined ? Number(data.stock) : 50,
-        trackStock: true,
-        isActive: true,
+        trackStock: data.trackStock !== undefined ? Boolean(data.trackStock) : (data.track_stock !== undefined ? Boolean(data.track_stock) : true),
+        image: data.image || null,
+        description: data.description || null,
+        isActive: data.isActive !== undefined ? Boolean(data.isActive) : (data.is_active !== undefined ? Boolean(data.is_active) : true),
       },
-      include: { variants: true, category: true },
     });
+
+    if (Array.isArray(data.variants) && data.variants.length > 0) {
+      for (const v of data.variants) {
+        if (!v.name) continue;
+        await prisma.posProductVariant.create({
+          data: {
+            productId: created.id,
+            name: v.name,
+            priceAdjustment: Number(v.priceAdjustment || v.price_adjustment || 0),
+            stock: v.stock !== undefined ? Number(v.stock) : null,
+          },
+        });
+      }
+    }
+
+    return await this.getProductById(businessId, created.id);
   }
 
   /**
@@ -99,17 +116,73 @@ export class PosProductService {
     }
 
     const updateData: any = {};
-    if (data.name) updateData.name = data.name;
+    if (data.name !== undefined) updateData.name = data.name;
     if (data.price !== undefined) updateData.price = Number(data.price);
+    if (data.costPrice !== undefined) updateData.costPrice = Number(data.costPrice);
+    else if (data.cost_price !== undefined) updateData.costPrice = Number(data.cost_price);
     if (data.stock !== undefined) updateData.stock = Number(data.stock);
-    if (data.categoryId || data.category_id) updateData.categoryId = Number(data.categoryId || data.category_id);
-    if (data.sku) updateData.sku = data.sku;
+    if (data.categoryId !== undefined || data.category_id !== undefined) {
+      updateData.categoryId = data.categoryId ? Number(data.categoryId) : (data.category_id ? Number(data.category_id) : null);
+    }
+    if (data.sku !== undefined) updateData.sku = data.sku;
+    if (data.image !== undefined) updateData.image = data.image;
+    if (data.description !== undefined) updateData.description = data.description;
+    if (data.trackStock !== undefined) updateData.trackStock = Boolean(data.trackStock);
+    else if (data.track_stock !== undefined) updateData.trackStock = Boolean(data.track_stock);
+    if (data.isActive !== undefined) updateData.isActive = Boolean(data.isActive);
+    else if (data.is_active !== undefined) updateData.isActive = Boolean(data.is_active);
 
-    return await prisma.posProduct.update({
+    await prisma.posProduct.update({
       where: { id },
       data: updateData,
-      include: { variants: true, category: true },
     });
+
+    if (Array.isArray(data.variants)) {
+      await prisma.posProductVariant.deleteMany({ where: { productId: id } });
+      for (const v of data.variants) {
+        if (!v.name) continue;
+        await prisma.posProductVariant.create({
+          data: {
+            productId: id,
+            name: v.name,
+            priceAdjustment: Number(v.priceAdjustment || v.price_adjustment || 0),
+            stock: v.stock !== undefined ? Number(v.stock) : null,
+          },
+        });
+      }
+    }
+
+    return await this.getProductById(businessId, id);
+  }
+
+  /**
+   * Mengambil detail produk tunggal lengkap (varian + resep)
+   */
+  static async getProductById(businessId: number, id: number) {
+    const product = await prisma.posProduct.findFirst({
+      where: { id, businessId },
+      include: {
+        category: {
+          select: { id: true, name: true, icon: true },
+        },
+        variants: {
+          select: { id: true, name: true, priceAdjustment: true, stock: true },
+        },
+        recipes: {
+          include: {
+            material: {
+              select: { id: true, name: true, unit: true, costPerUnit: true, currentStock: true },
+            },
+          },
+        },
+      },
+    });
+
+    if (!product) {
+      throw new Error('Produk tidak ditemukan atau Anda tidak memiliki akses.');
+    }
+
+    return product;
   }
 
   /**
@@ -166,10 +239,31 @@ export class PosProductService {
    * Mengambil daftar meja cafe
    */
   static async getTables(businessId: number) {
-    return await prisma.posCafeTable.findMany({
+    const tables = await prisma.posCafeTable.findMany({
       where: { businessId },
       orderBy: { name: 'asc' },
+      include: {
+        orders: {
+          where: {
+            status: { not: 'cancelled' },
+          },
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+          select: { id: true, status: true },
+        },
+      },
     });
+
+    return tables.map((t) => ({
+      id: t.id,
+      name: t.name,
+      code: t.name,
+      capacity: t.capacity,
+      status: t.status,
+      current_order_id: t.orders[0]?.id || null,
+      createdAt: t.createdAt,
+      updatedAt: t.updatedAt,
+    }));
   }
 
   /**

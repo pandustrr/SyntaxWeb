@@ -11,7 +11,8 @@ import {
   Mail, 
   Server, 
   CheckCircle2, 
-  AlertCircle 
+  AlertCircle,
+  Sparkles
 } from 'lucide-react';
 
 export default function AdminSettingsPage() {
@@ -19,8 +20,9 @@ export default function AdminSettingsPage() {
   const [saving, setSaving] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-  // Platform Configs
+  // Platform Configs (Gabungan Diki & Pandu)
   const [trialDays, setTrialDays] = useState(14);
+  const [appName, setAppName] = useState('SyntaxPOS');
   const [supportWa, setSupportWa] = useState('6281234567890');
   const [supportEmail, setSupportEmail] = useState('support@syntaxweb.id');
   const [appVersion, setAppVersion] = useState('1.0.0');
@@ -39,7 +41,8 @@ export default function AdminSettingsPage() {
         const d = await res.json();
         const cfg = d.data || {};
         if (cfg.default_trial_days) setTrialDays(Number(cfg.default_trial_days));
-        if (cfg.support_whatsapp) setSupportWa(cfg.support_whatsapp);
+        if (cfg.app_name) setAppName(cfg.app_name);
+        if (cfg.support_whatsapp || cfg.support_phone) setSupportWa(cfg.support_whatsapp || cfg.support_phone);
         if (cfg.support_email) setSupportEmail(cfg.support_email);
         if (cfg.app_version) setAppVersion(cfg.app_version);
       }
@@ -62,6 +65,8 @@ export default function AdminSettingsPage() {
     try {
       const updates = [
         { key: 'default_trial_days', value: String(trialDays) },
+        { key: 'app_name', value: appName },
+        { key: 'support_phone', value: supportWa },
         { key: 'support_whatsapp', value: supportWa },
         { key: 'support_email', value: supportEmail },
         { key: 'app_version', value: appVersion },

@@ -11,11 +11,9 @@ const nextConfig = {
     workerThreads: false,
     cpus: 1,
   },
+  turbopack: {},
   typescript: {
     ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
   },
   async headers() {
     return [
