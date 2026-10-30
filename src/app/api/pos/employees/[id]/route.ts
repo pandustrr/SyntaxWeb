@@ -16,12 +16,23 @@ export async function PUT(
     const { id } = await params;
     const body = await request.json();
 
+    const updateData: any = {};
+    if (body.name !== undefined) updateData.name = body.name;
+    if (body.email !== undefined) updateData.email = body.email;
+    if (body.phone !== undefined) updateData.phone = body.phone;
+    if (body.position !== undefined) updateData.position = body.position;
+    if (body.base_salary !== undefined) updateData.baseSalary = Number(body.base_salary);
+    if (body.role !== undefined) updateData.role = String(body.role).toLowerCase();
+
+    if (body.permissions !== undefined) {
+      updateData.permissions = Array.isArray(body.permissions)
+        ? JSON.stringify(body.permissions)
+        : null;
+    }
+
     const updated = await prisma.user.update({
       where: { id: Number(id) },
-      data: {
-        name: body.name,
-        email: body.email,
-      },
+      data: updateData,
     });
 
     return apiSuccess(updated, 'Data karyawan berhasil diperbarui');

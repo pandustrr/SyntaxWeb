@@ -32,7 +32,71 @@ export interface PosLoginResponse {
     phone: string | null;
     receiptNotes: string | null;
     status?: string;
+    isTrial?: boolean;
+    trialEndsAt?: Date | null;
+    enableDashboard?: boolean;
+    enablePos?: boolean;
+    enableTables?: boolean;
+    enableKds?: boolean;
+    enableProducts?: boolean;
+    enableInventory?: boolean;
+    enableCustomers?: boolean;
+    enablePromotions?: boolean;
+    enableEmployees?: boolean;
+    attendanceMode?: string;
+    enableReports?: boolean;
+    enableSettings?: boolean;
   };
+}
+
+export function resolveUserPermissions(
+  role: string,
+  customPermissionsJson?: string | null,
+  businessRolePermissionsJson?: string | null
+): string[] {
+  const cleanRole = (role || '').toLowerCase();
+
+  // 1. OWNER selalu default mendapatkan SEMUA 12 FITUR!
+  if (['owner', 'admin', 'super_admin'].includes(cleanRole)) {
+    return [
+      'dashboard', 'pos', 'tables', 'kds', 'products', 'inventory',
+      'customers', 'promotions', 'employees', 'attendance', 'reports', 'settings'
+    ];
+  }
+
+  // 2. Jika user memiliki izin khusus perorangan yang diatur Owner
+  if (customPermissionsJson) {
+    try {
+      const parsed = JSON.parse(customPermissionsJson);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    } catch (_) {}
+  }
+
+  // 3. Jika outlet memiliki template per-role yang diatur SuperAdmin di /admin/cafes
+  if (businessRolePermissionsJson) {
+    try {
+      const bizPerms = JSON.parse(businessRolePermissionsJson);
+      const roleMapped = cleanRole === 'kitchen_bar' || cleanRole === 'barista' ? 'kitchen' : (cleanRole === 'kasir' ? 'cashier' : cleanRole);
+      if (Array.isArray(bizPerms[roleMapped]) && bizPerms[roleMapped].length > 0) {
+        return bizPerms[roleMapped];
+      }
+    } catch (_) {}
+  }
+
+  // 4. Default role standar
+  if (cleanRole === 'manager') {
+    return [
+      'dashboard', 'pos', 'tables', 'kds', 'products', 'inventory',
+      'customers', 'promotions', 'employees', 'attendance', 'reports'
+    ];
+  }
+
+  if (['kitchen', 'kitchen_bar', 'barista'].includes(cleanRole)) {
+    return ['kds', 'inventory'];
+  }
+
+  // Default cashier / kasir
+  return ['pos', 'tables', 'kds', 'customers', 'promotions', 'employees'];
 }
 
 export class PosAuthService {
@@ -93,6 +157,7 @@ export class PosAuthService {
             email: user.email,
             role: user.role,
             businessName: activeBusiness.name,
+            permissions: resolveUserPermissions(user.role, user.permissions, activeBusiness.rolePermissions),
           };
           const token = signPosToken(adminSession);
           return {
@@ -106,6 +171,20 @@ export class PosAuthService {
               phone: activeBusiness.phone,
               receiptNotes: activeBusiness.receiptNotes,
               status: activeBusiness.status,
+              isTrial: activeBusiness.isTrial,
+              trialEndsAt: activeBusiness.trialEndsAt,
+              enableDashboard: activeBusiness.enableDashboard,
+              enablePos: activeBusiness.enablePos,
+              enableTables: activeBusiness.enableTables,
+              enableKds: activeBusiness.enableKds,
+              enableProducts: activeBusiness.enableProducts,
+              enableInventory: activeBusiness.enableInventory,
+              enableCustomers: activeBusiness.enableCustomers,
+              enablePromotions: activeBusiness.enablePromotions,
+              enableEmployees: activeBusiness.enableEmployees,
+              attendanceMode: activeBusiness.attendanceMode,
+              enableReports: activeBusiness.enableReports,
+              enableSettings: activeBusiness.enableSettings,
             },
           };
         }
@@ -147,6 +226,7 @@ export class PosAuthService {
       email: user.email,
       role: user.role,
       businessName: user.business.name,
+      permissions: resolveUserPermissions(user.role, user.permissions, user.business.rolePermissions),
     };
 
     const token = signPosToken(session);
@@ -162,6 +242,20 @@ export class PosAuthService {
         phone: user.business.phone,
         receiptNotes: user.business.receiptNotes,
         status: user.business.status,
+        isTrial: user.business.isTrial,
+        trialEndsAt: user.business.trialEndsAt,
+        enableDashboard: user.business.enableDashboard,
+        enablePos: user.business.enablePos,
+        enableTables: user.business.enableTables,
+        enableKds: user.business.enableKds,
+        enableProducts: user.business.enableProducts,
+        enableInventory: user.business.enableInventory,
+        enableCustomers: user.business.enableCustomers,
+        enablePromotions: user.business.enablePromotions,
+        enableEmployees: user.business.enableEmployees,
+        attendanceMode: user.business.attendanceMode,
+        enableReports: user.business.enableReports,
+        enableSettings: user.business.enableSettings,
       },
     };
   }

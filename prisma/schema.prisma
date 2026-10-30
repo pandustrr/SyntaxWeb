@@ -14,6 +14,10 @@ model User {
   password   String
   name       String
   role       String       @default("user")
+  phone      String?
+  position   String?
+  baseSalary Decimal?     @db.Decimal(12, 2)
+  permissions String?     @db.Text
   createdAt  DateTime     @default(now())
 
   // POS Multi-Tenant
@@ -21,6 +25,7 @@ model User {
   business   PosBusiness? @relation(fields: [businessId], references: [id], onDelete: SetNull)
   shifts     PosShift[]
   orders     PosOrder[]
+  attendances PosAttendance[]
 
   @@map("user")
 }
@@ -86,6 +91,29 @@ model PosBusiness {
   plan              PosSubscriptionPlan? @relation(fields: [planId], references: [id], onDelete: SetNull)
   subscribedAt      DateTime?
   subscriptionEndsAt DateTime?
+
+  // Integrasi Absensi Eksternal (SLOVV)
+  slovvBaseUrl      String?        @default("https://myabsensislovv.my.id")
+  slovvUsername     String?
+  slovvPassword     String?
+  slovvSyncEnabled  Boolean        @default(false)
+  lastAttendanceSync DateTime?
+
+  // 12 Modul & Fitur Permissions Lengkap per Outlet
+  enableDashboard   Boolean        @default(true)  // 1. Dashboard
+  enablePos         Boolean        @default(true)  // 2. Kasir POS
+  enableTables      Boolean        @default(true)  // 3. Meja Dine-in
+  enableKds         Boolean        @default(true)  // 4. Dapur (KDS)
+  enableProducts    Boolean        @default(true)  // 5. Produk Menu
+  enableInventory   Boolean        @default(true)  // 6. Bahan & Resep (BOM)
+  enableCustomers   Boolean        @default(true)  // 7. CRM & Pelanggan
+  enablePromotions  Boolean        @default(true)  // 8. Voucher & Promo
+  enableEmployees   Boolean        @default(true)  // 9. Karyawan & Shift
+  attendanceMode    String         @default("disabled") // 10. Absensi & Gaji (disabled, internal, slovv)
+  enableReports     Boolean        @default(true)  // 11. Laporan Bisnis
+  enableSettings    Boolean        @default(true)  // 12. Pengaturan Toko
+  rolePermissions   String?        @db.Text        // JSON: {"owner": [...], "manager": [...], "cashier": [...], "kitchen": [...]}
+
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @updatedAt
 
@@ -95,6 +123,8 @@ model PosBusiness {
   tables            PosCafeTable[]
   shifts            PosShift[]
   orders            PosOrder[]
+  attendances       PosAttendance[]
+  payrolls          PosPayroll[]
 
   @@index([planId])
   @@map("pos_businesses")
@@ -279,5 +309,74 @@ model PosPlatformConfig {
   updatedAt DateTime @updatedAt
 
   @@map("pos_platform_configs")
+}
+
+// ==========================================
+// 3. Modul Absensi & Penggajian (Attendance & Payroll)
+// ==========================================
+
+model PosAttendance {
+  id            Int          @id @default(autoincrement())
+  businessId    Int
+  business      PosBusiness  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  userId        Int?
+  user          User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  employeeName  String       // Nama staf / karyawan
+  employeeId    String?      // ID karyawan (misal EMP-UM-26-959 atau username)
+  source        String       @default("internal") // "internal" atau "slovv"
+  externalRefId String?      // ID Absensi asli jika dari Slovv (misal: ABS-1793375103572-96)
+
+  date          String       // Format: YYYY-MM-DD
+  checkinTime   String?      // Format: HH:mm
+  checkoutTime  String?      // Format: HH:mm
+  duration      String?      // Durasi kerja (misal: "7j 20m")
+  lateMinutes   Int          @default(0) // Menit terlambat
+  status        String       @default("Tepat Waktu") // Tepat Waktu, Terlambat, Izin, Sakit, Alpha
+  shift         String?      // Jadwal shift (misal: Shift 1, Shift 2)
+  photoUrl      String?      @db.LongText // Foto selfie check-in (Base64 atau URL)
+  checkinLat    String?
+  checkinLng    String?
+
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@unique([businessId, externalRefId])
+  @@index([businessId])
+  @@index([date])
+  @@map("pos_attendances")
+}
+
+model PosPayroll {
+  id              Int          @id @default(autoincrement())
+  businessId      Int
+  business        PosBusiness  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  period          String       // Format: YYYY-MM (misal: 2026-10)
+  employeeName    String
+  employeeId      String?
+  position        String?      // Jabatan (Kasir, Barista, Part Time)
+
+  totalPresent    Int          @default(0) // Jumlah hari/shift hadir
+  totalLateMinutes Int         @default(0) // Total akumulasi menit keterlambatan
+  totalAlpha      Int          @default(0) // Hari alpha / mangkir
+  totalLeave      Int          @default(0) // Izin / Sakit
+
+  baseSalary      Decimal      @default(0) @db.Decimal(12, 2)
+  allowance       Decimal      @default(0) @db.Decimal(12, 2) // Tunjangan transport / makan
+  lateDeduction   Decimal      @default(0) @db.Decimal(12, 2) // Potongan denda keterlambatan
+  alphaDeduction  Decimal      @default(0) @db.Decimal(12, 2) // Potongan denda alpha
+  netSalary       Decimal      @default(0) @db.Decimal(12, 2) // Gaji bersih
+
+  status          String       @default("draft") // draft, confirmed, paid
+  paidAt          DateTime?
+
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@unique([businessId, period, employeeName])
+  @@index([businessId])
+  @@index([period])
+  @@map("pos_payrolls")
 }
 
