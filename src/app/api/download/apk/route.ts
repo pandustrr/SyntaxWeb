@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import { Readable } from 'stream';
+import { prisma } from '@/core/db/prisma';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,6 +32,15 @@ export async function GET() {
       );
     }
 
+    let appVersion = '1.0.0';
+    try {
+      const config = await prisma.posPlatformConfig.findUnique({
+        where: { key: 'app_version' },
+      });
+      if (config?.value) appVersion = config.value.trim();
+    } catch (_) {}
+
+    const filename = `syntax-pos-v${appVersion}.apk`;
     const stat = fs.statSync(targetPath);
     const fileStream = fs.createReadStream(targetPath);
     const webStream = Readable.toWeb(fileStream) as ReadableStream;
@@ -38,9 +48,9 @@ export async function GET() {
     return new NextResponse(webStream, {
       headers: {
         'Content-Type': 'application/vnd.android.package-archive',
-        'Content-Disposition': 'attachment; filename="syntax-pos-v1.0.0.apk"',
+        'Content-Disposition': `attachment; filename="${filename}"`,
         'Content-Length': stat.size.toString(),
-        'Cache-Control': 'public, max-age=3600',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
       },
     });
   } catch (error: unknown) {
