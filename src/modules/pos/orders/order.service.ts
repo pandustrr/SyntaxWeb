@@ -123,6 +123,7 @@ export class PosOrderService {
           price: unitPrice,
           quantity: item.quantity,
           subtotal: lineSubtotal,
+          station: (item as any).station || (product as any).station || 'kitchen',
           notes: item.notes || null,
         });
       }
@@ -378,7 +379,13 @@ export class PosOrderService {
       take: options?.limit || 50,
       orderBy: { createdAt: 'desc' },
       include: {
-        items: true,
+        items: {
+          include: {
+            product: {
+              select: { id: true, name: true, station: true },
+            },
+          },
+        },
         table: { select: { id: true, name: true } },
         customer: { select: { id: true, name: true, phone: true, membershipLevel: true, totalPoints: true } },
         user: { select: { id: true, name: true } },
@@ -396,6 +403,7 @@ export class PosOrderService {
       items: o.items.map((it) => ({
         ...it,
         name_snapshot: it.productName,
+        station: (it as any).station || (it as any).product?.station || 'kitchen',
         unit_price: Number(it.price),
       })),
     }));
