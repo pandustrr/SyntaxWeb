@@ -398,6 +398,8 @@ export class PosOrderService {
       payment_method: o.paymentMethod,
       channel: o.orderType,
       created_at: o.createdAt.toISOString(),
+      updated_at: o.updatedAt.toISOString(),
+      completed_at: o.status === 'completed' ? o.updatedAt.toISOString() : null,
       cafe_table: o.table ? { id: o.table.id, code: o.table.name, name: o.table.name } : null,
       customer: o.customer ? { id: o.customer.id, name: o.customer.name, phone: o.customer.phone, membershipLevel: o.customer.membershipLevel } : { name: 'Pelanggan Umum' },
       items: o.items.map((it) => ({
