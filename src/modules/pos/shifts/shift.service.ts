@@ -1,5 +1,16 @@
 import { prisma } from '@/core/db/prisma';
 
+export interface OpenShiftInput {
+  startingCash: number;
+  shiftName?: string;
+  cashierNames?: string[] | string;
+  baristaNames?: string[] | string;
+  kitchenNames?: string[] | string;
+  leaderName?: string;
+  openedByName?: string;
+  notes?: string;
+}
+
 export class PosShiftService {
   /**
    * Mengambil shift yang sedang aktif (status: open) untuk kasir di toko ini
@@ -49,12 +60,23 @@ export class PosShiftService {
   }
 
   /**
-   * Buka shift kasir baru dengan modal uang kas awal (cash float)
+   * Buka shift kasir baru dengan modal uang kas awal (cash float) & tim roster bertugas
    */
-  static async openShift(businessId: number, userId: number, startingCash: number, notes?: string) {
+  static async openShift(
+    businessId: number,
+    userId: number,
+    startingCashOrInput: number | OpenShiftInput,
+    legacyNotes?: string
+  ) {
     if (!businessId || businessId <= 0) {
       throw new Error('Akun Anda belum ditautkan ke toko/bisnis POS manapun.');
     }
+
+    const input: OpenShiftInput = typeof startingCashOrInput === 'number'
+      ? { startingCash: startingCashOrInput, notes: legacyNotes }
+      : startingCashOrInput;
+
+    const startingCash = Number(input.startingCash || 0);
 
     // Cek apakah ada shift yang masih menggantung/belum ditutup
     const existing = await prisma.posShift.findFirst({
@@ -69,12 +91,24 @@ export class PosShiftService {
       throw new Error('Anda masih memiliki shift aktif yang belum ditutup.');
     }
 
+    const formatArray = (val?: string[] | string) => {
+      if (!val) return null;
+      if (Array.isArray(val)) return JSON.stringify(val);
+      return String(val);
+    };
+
     return await prisma.posShift.create({
       data: {
         businessId,
         userId,
+        shiftName: input.shiftName || 'Shift 1 (Pagi)',
+        cashierNames: formatArray(input.cashierNames),
+        baristaNames: formatArray(input.baristaNames),
+        kitchenNames: formatArray(input.kitchenNames),
+        leaderName: input.leaderName || null,
+        openedByName: input.openedByName || null,
         startingCash,
-        notes: notes || null,
+        notes: input.notes || null,
         status: 'open',
         startTime: new Date(),
       },
@@ -84,7 +118,14 @@ export class PosShiftService {
   /**
    * Tutup shift kasir dan hitung rekonsiliasi kas (selisih uang fisik vs sistem)
    */
-  static async closeShift(businessId: number, userId: number, shiftId: number, actualCash: number, notes?: string) {
+  static async closeShift(
+    businessId: number,
+    userId: number,
+    shiftId: number,
+    actualCash: number,
+    notes?: string,
+    closedByName?: string
+  ) {
     const shift = await prisma.posShift.findFirst({
       where: {
         id: shiftId,
@@ -120,6 +161,7 @@ export class PosShiftService {
         expectedCash,
         actualCash,
         difference,
+        closedByName: closedByName || null,
         notes: notes ? (shift.notes ? `${shift.notes}\n${notes}` : notes) : shift.notes,
       },
     });

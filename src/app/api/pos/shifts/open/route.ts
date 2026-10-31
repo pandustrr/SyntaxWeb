@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { startingCash, notes } = body;
+    const { startingCash, shiftName, cashierNames, baristaNames, kitchenNames, leaderName, openedByName, notes } = body;
 
     if (startingCash === undefined || startingCash === null || Number(startingCash) < 0) {
       return apiError('Modal kas awal wajib diisi dan tidak boleh negatif', 400);
@@ -20,8 +20,16 @@ export async function POST(request: NextRequest) {
     const newShift = await PosShiftService.openShift(
       session.businessId,
       session.userId,
-      Number(startingCash),
-      notes
+      {
+        startingCash: Number(startingCash),
+        shiftName,
+        cashierNames,
+        baristaNames,
+        kitchenNames,
+        leaderName,
+        openedByName: openedByName || session.name,
+        notes,
+      }
     );
 
     return apiSuccess(newShift, 'Shift kasir berhasil dibuka', 201);
