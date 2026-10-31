@@ -81,6 +81,7 @@ export class PosProductService {
         costPrice: data.costPrice !== undefined ? Number(data.costPrice) : (data.cost_price !== undefined ? Number(data.cost_price) : 0),
         stock: data.stock !== undefined ? Number(data.stock) : 50,
         trackStock: data.trackStock !== undefined ? Boolean(data.trackStock) : (data.track_stock !== undefined ? Boolean(data.track_stock) : true),
+        station: data.station || 'kitchen',
         image: data.image || null,
         description: data.description || null,
         isActive: data.isActive !== undefined ? Boolean(data.isActive) : (data.is_active !== undefined ? Boolean(data.is_active) : true),
@@ -129,6 +130,7 @@ export class PosProductService {
     if (data.description !== undefined) updateData.description = data.description;
     if (data.trackStock !== undefined) updateData.trackStock = Boolean(data.trackStock);
     else if (data.track_stock !== undefined) updateData.trackStock = Boolean(data.track_stock);
+    if (data.station !== undefined) updateData.station = data.station;
     if (data.isActive !== undefined) updateData.isActive = Boolean(data.isActive);
     else if (data.is_active !== undefined) updateData.isActive = Boolean(data.is_active);
 
