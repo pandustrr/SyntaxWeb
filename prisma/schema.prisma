@@ -84,6 +84,7 @@ model PosBusiness {
   receiptPaperSize  String         @default("58mm") // 58mm, 80mm
   showLogoOnReceipt Boolean        @default(true)
   showWifiOnReceipt Boolean        @default(false)
+  wifiSsid          String?
   wifiPassword      String?
   taxPercent        Decimal        @default(10.00) @db.Decimal(5, 2)
   isTaxInclusive    Boolean        @default(false)
