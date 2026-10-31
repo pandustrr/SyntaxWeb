@@ -1,4 +1,5 @@
 {
   "/api/pos/materials/route": "app/api/pos/materials/route.js",
+  "/api/pos/categories/route": "app/api/pos/categories/route.js",
   "/api/pos/products/route": "app/api/pos/products/route.js"
 }
