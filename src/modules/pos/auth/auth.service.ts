@@ -374,6 +374,7 @@ export class PosAuthService {
         username,
         password: hashedPassword,
         role: 'owner',
+        pin: '0000',
         businessId: business.id,
       },
     });
