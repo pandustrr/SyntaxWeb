@@ -19,6 +19,7 @@ export interface CreateOrderInput {
   paidAmount: number;
   status?: string;
   notes?: string;
+  createdAt?: Date | string | null;
   items: CreateOrderItemInput[];
 }
 
@@ -279,6 +280,7 @@ export class PosOrderService {
           changeAmount,
           status: input.status || (orderType === 'dine_in' ? 'pending' : 'completed'),
           notes: input.notes || null,
+          createdAt: input.createdAt ? new Date(input.createdAt) : undefined,
           items: {
             create: preparedItems,
           },

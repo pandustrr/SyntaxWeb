@@ -23,6 +23,7 @@ export async function POST(request: NextRequest) {
       paidAmount: body.paidAmount !== undefined ? Number(body.paidAmount) : Number(body.paid_amount || 0),
       status: body.status || undefined,
       notes: body.notes,
+      createdAt: body.createdAt || body.created_at || undefined,
       items: (body.items || []).map((it: any) => ({
         productId: it.productId || it.product_id,
         variantId: it.variantId || it.variant_id || null,
