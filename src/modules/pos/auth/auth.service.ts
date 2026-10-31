@@ -46,6 +46,9 @@ export interface PosLoginResponse {
     attendanceMode?: string;
     enableReports?: boolean;
     enableSettings?: boolean;
+    taxPercent?: number;
+    isTaxInclusive?: boolean;
+    servicePercent?: number;
   };
 }
 
@@ -185,6 +188,9 @@ export class PosAuthService {
               attendanceMode: activeBusiness.attendanceMode,
               enableReports: activeBusiness.enableReports,
               enableSettings: activeBusiness.enableSettings,
+              taxPercent: Number(activeBusiness.taxPercent ?? 10.0),
+              isTaxInclusive: Boolean(activeBusiness.isTaxInclusive ?? false),
+              servicePercent: Number(activeBusiness.servicePercent ?? 0.0),
             },
           };
         }
@@ -256,6 +262,9 @@ export class PosAuthService {
         attendanceMode: user.business.attendanceMode,
         enableReports: user.business.enableReports,
         enableSettings: user.business.enableSettings,
+        taxPercent: Number(user.business.taxPercent ?? 10.0),
+        isTaxInclusive: Boolean(user.business.isTaxInclusive ?? false),
+        servicePercent: Number(user.business.servicePercent ?? 0.0),
       },
     };
   }
@@ -392,6 +401,9 @@ export class PosAuthService {
         phone: business.phone,
         isTrial: business.isTrial,
         trialEndsAt: business.trialEndsAt,
+        taxPercent: Number(business.taxPercent ?? 10.0),
+        isTaxInclusive: Boolean(business.isTaxInclusive ?? false),
+        servicePercent: Number(business.servicePercent ?? 0.0),
       },
       message: isFreeTrial
         ? `Pendaftaran uji coba gratis berhasil! Masa aktif uji coba ${validTrialDays} hari.`

@@ -175,8 +175,18 @@ export class PosOrderService {
 
       const changeAmount = input.paymentMethod === 'cash' ? Math.max(0, paidAmount - total) : 0;
 
-      // 5. Auto-link ke Shift kasir aktif bila tidak dikirim
-      let resolvedShiftId = input.shiftId || null;
+      // 5. Auto-link ke Shift kasir aktif bila tidak dikirim & validasi tenant shift
+      let resolvedShiftId: number | null = null;
+      if (input.shiftId) {
+        const targetShift = await tx.posShift.findFirst({
+          where: { id: input.shiftId, businessId, status: 'open' },
+          select: { id: true },
+        });
+        if (targetShift) {
+          resolvedShiftId = targetShift.id;
+        }
+      }
+
       if (!resolvedShiftId) {
         const openShift = await tx.posShift.findFirst({
           where: { businessId, userId, status: 'open' },
@@ -217,13 +227,22 @@ export class PosOrderService {
         }
       }
 
-      // 7. Otomatisasi Status Meja Dine-in -> Occupied
+      // 7. Otomatisasi Status Meja Dine-in -> Occupied & Validasi Tenant Meja
       const orderType = input.orderType || 'dine_in';
-      if (input.tableId && orderType === 'dine_in') {
-        await tx.posCafeTable.updateMany({
+      let resolvedTableId: number | null = null;
+      if (input.tableId) {
+        const table = await tx.posCafeTable.findFirst({
           where: { id: input.tableId, businessId },
-          data: { status: 'occupied' },
         });
+        if (table) {
+          resolvedTableId = table.id;
+          if (orderType === 'dine_in') {
+            await tx.posCafeTable.update({
+              where: { id: table.id },
+              data: { status: 'occupied' },
+            });
+          }
+        }
       }
 
       // 8. Generate Order Number unik: TRX-YYYYMMDD-XXXX
@@ -246,7 +265,7 @@ export class PosOrderService {
           userId,
           customerId: resolvedCustomerId,
           shiftId: resolvedShiftId,
-          tableId: input.tableId || null,
+          tableId: resolvedTableId,
           promoCode: appliedPromoCode,
           orderNumber,
           orderType,
