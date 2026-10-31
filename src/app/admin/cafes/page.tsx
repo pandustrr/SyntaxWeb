@@ -245,6 +245,10 @@ export default function AdminCafesPage() {
   const [editingTrial, setEditingTrial] = useState(false);
   const [tempTrialDays, setTempTrialDays] = useState(14);
 
+  const [technicianPin, setTechnicianPin] = useState('2026');
+  const [editingTechPin, setEditingTechPin] = useState(false);
+  const [tempTechPin, setTempTechPin] = useState('2026');
+
   const fetchConfig = useCallback(async () => {
     try {
       const res = await fetch('/api/admin/platform-config');
@@ -253,6 +257,10 @@ export default function AdminCafesPage() {
         if (d.data?.default_trial_days) {
           setDefaultTrialDays(Number(d.data.default_trial_days));
           setTempTrialDays(Number(d.data.default_trial_days));
+        }
+        if (d.data?.technician_pin) {
+          setTechnicianPin(d.data.technician_pin);
+          setTempTechPin(d.data.technician_pin);
         }
       }
     } catch {
@@ -271,6 +279,24 @@ export default function AdminCafesPage() {
         setDefaultTrialDays(tempTrialDays);
         setEditingTrial(false);
         setFeedbackMsg({ type: 'success', text: `Durasi uji coba gratis berhasil disetel ke ${tempTrialDays} hari!` });
+      }
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleSaveTechPin = async () => {
+    if (!tempTechPin.trim()) return;
+    try {
+      const res = await fetch('/api/admin/platform-config', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key: 'technician_pin', value: tempTechPin.trim() }),
+      });
+      if (res.ok) {
+        setTechnicianPin(tempTechPin.trim());
+        setEditingTechPin(false);
+        setFeedbackMsg({ type: 'success', text: `PIN Teknisi POS berhasil diperbarui!` });
       }
     } catch {
       // ignore
@@ -469,6 +495,42 @@ export default function AdminCafesPage() {
                 className="ml-1 text-[11px] text-purple-700 dark:text-purple-300 underline font-semibold hover:text-purple-900"
               >
                 Ubah
+              </button>
+            )}
+          </div>
+
+          {/* Technician Security PIN Pill */}
+          <div className="flex items-center gap-2 px-3.5 py-1.5 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-xl text-xs text-amber-900 dark:text-amber-200 shadow-sm">
+            <KeyRound size={14} className="text-amber-600 dark:text-amber-400 shrink-0" />
+            <span>PIN Teknisi POS: <strong>{editingTechPin ? '' : (technicianPin ? '••••' : 'Belum disetel')}</strong></span>
+            {editingTechPin ? (
+              <div className="flex items-center gap-1.5 ml-1">
+                <input
+                  type="text"
+                  value={tempTechPin}
+                  onChange={(e) => setTempTechPin(e.target.value)}
+                  placeholder="PIN Baru"
+                  className="w-24 px-2 py-0.5 rounded bg-white dark:bg-gray-800 border border-amber-300 dark:border-amber-600 text-xs font-mono font-bold tracking-widest text-amber-900 dark:text-amber-100"
+                />
+                <button
+                  onClick={handleSaveTechPin}
+                  className="px-2 py-0.5 bg-amber-600 hover:bg-amber-700 text-white rounded text-[11px] font-bold"
+                >
+                  Simpan
+                </button>
+                <button
+                  onClick={() => setEditingTechPin(false)}
+                  className="text-gray-400 hover:text-gray-600 text-xs"
+                >
+                  ✕
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => { setTempTechPin(technicianPin); setEditingTechPin(true); }}
+                className="ml-1 text-[11px] text-amber-700 dark:text-amber-300 underline font-semibold hover:text-amber-900"
+              >
+                Ubah PIN
               </button>
             )}
           </div>
