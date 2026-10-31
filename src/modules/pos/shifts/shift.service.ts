@@ -15,7 +15,7 @@ export class PosShiftService {
   /**
    * Mengambil shift yang sedang aktif (status: open) untuk toko/outlet ini
    */
-  static async getCurrentShift(businessId: number, userId?: number) {
+  static async getCurrentShift(businessId: number, _userId?: number) {
     // Cari shift toko yang berstatus 'open'
     const shift = await prisma.posShift.findFirst({
       where: {
