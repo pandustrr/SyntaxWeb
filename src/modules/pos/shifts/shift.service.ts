@@ -13,13 +13,13 @@ export interface OpenShiftInput {
 
 export class PosShiftService {
   /**
-   * Mengambil shift yang sedang aktif (status: open) untuk kasir di toko ini
+   * Mengambil shift yang sedang aktif (status: open) untuk toko/outlet ini
    */
-  static async getCurrentShift(businessId: number, userId: number) {
+  static async getCurrentShift(businessId: number, userId?: number) {
+    // Cari shift toko yang berstatus 'open'
     const shift = await prisma.posShift.findFirst({
       where: {
         businessId,
-        userId,
         status: 'open',
       },
       orderBy: {
@@ -78,17 +78,16 @@ export class PosShiftService {
 
     const startingCash = Number(input.startingCash || 0);
 
-    // Cek apakah ada shift yang masih menggantung/belum ditutup
+    // Cek apakah ada shift yang masih aktif di toko ini
     const existing = await prisma.posShift.findFirst({
       where: {
         businessId,
-        userId,
         status: 'open',
       },
     });
 
     if (existing) {
-      throw new Error('Anda masih memiliki shift aktif yang belum ditutup.');
+      throw new Error(`Outlet ini masih memiliki shift aktif (${existing.shiftName || 'Shift'}) yang belum ditutup.`);
     }
 
     const formatArray = (val?: string[] | string) => {
