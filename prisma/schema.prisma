@@ -129,6 +129,7 @@ model PosBusiness {
   promotions        PosPromotion[]
   attendances       PosAttendance[]
   payrolls          PosPayroll[]
+  shiftSchedules    PosShiftSchedule[]
 
   @@index([planId])
   @@map("pos_businesses")
@@ -238,6 +239,25 @@ model PosShift {
   @@index([businessId])
   @@index([userId])
   @@map("pos_shifts")
+}
+
+model PosShiftSchedule {
+  id           Int         @id @default(autoincrement())
+  businessId   Int
+  business     PosBusiness @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  name         String      // e.g. "Shift 1 (Pagi)", "Shift 2 (Sore)"
+  startTime    String      // e.g. "08:00"
+  endTime      String      // e.g. "16:00"
+  cashierNames String?     @db.Text // JSON: ["Budi Santoso", "Siti Rahma"]
+  baristaNames String?     @db.Text // JSON: ["Fajar W.", "Ilham M."]
+  kitchenNames String?     @db.Text // JSON: ["Chef Joko", "Rian Helper"]
+  leaderName   String?
+  isActive     Boolean     @default(true)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@index([businessId])
+  @@map("pos_shift_schedules")
 }
 
 model PosOrder {

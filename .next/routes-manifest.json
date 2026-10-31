@@ -162,6 +162,14 @@
       "namedRegex": "^/api/pos/promotions/(?<nxtPid>[^/]+?)(?:/)?$"
     },
     {
+      "page": "/api/pos/shifts/schedules/[id]",
+      "regex": "^/api/pos/shifts/schedules/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/pos/shifts/schedules/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
       "page": "/api/pos/tables/[id]",
       "regex": "^/api/pos/tables/([^/]+?)(?:/)?$",
       "routeKeys": {
