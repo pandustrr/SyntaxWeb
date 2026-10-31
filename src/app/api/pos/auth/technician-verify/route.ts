@@ -44,17 +44,20 @@ export async function POST(request: NextRequest) {
       }, 'Otorisasi Teknisi SuperAdmin Berhasil');
     }
 
-    // 2. Verifikasi via PIN Keamanan Server
+    // 2. Verifikasi via PIN Keamanan Dinamis Server (Diaturlan di Website SuperAdmin)
     if (pin) {
-      const envPin = process.env.TECHNICIAN_PIN || '2026';
-      if (String(pin).trim() === envPin || String(pin).trim() === '8888') {
+      const config = await prisma.posPlatformConfig.findUnique({
+        where: { key: 'technician_pin' },
+      });
+      const validPin = config?.value?.trim() || process.env.TECHNICIAN_PIN?.trim() || '2026';
+      if (String(pin).trim() === validPin) {
         return apiSuccess({
           authorized: true,
-          method: 'secure_pin',
+          method: 'dynamic_server_pin',
           technician: 'Syntax Authorized Technician',
         }, 'Otorisasi PIN Teknisi Berhasil');
       }
-      return apiError('PIN Keamanan Teknisi salah.', 401);
+      return apiError('PIN Keamanan Teknisi salah. Silakan periksa PIN di website admin Syntax.', 401);
     }
 
     return apiError('Kredensial SuperAdmin atau PIN Teknisi wajib dikirim.', 400);

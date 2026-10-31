@@ -77,22 +77,38 @@ export async function POST(request: NextRequest) {
     }
 
     const username = rawName.toLowerCase().replace(/[^a-z0-9]/g, '_') + '_' + Math.floor(Math.random() * 1000);
+    const posLower = (body.position || '').toLowerCase();
 
-    let assignedRole = 'cashier';
-    const posLower = (body.position || body.role || '').toLowerCase();
-    if (posLower.includes('kitchen') || posLower.includes('barista')) {
-      assignedRole = 'kitchen';
-    } else if (posLower.includes('manager')) {
-      if (session.role !== 'owner' && session.role !== 'admin' && session.role !== 'super_admin') {
-        return apiError('Hanya Owner yang dapat mengangkat Store Manager baru', 403);
-      }
-      assignedRole = 'manager';
+    // Tentukan role staf (Manager, Cashier, Kitchen)
+    let targetRole = body.role ? String(body.role).toLowerCase() : (posLower.includes('kitchen') || posLower.includes('barista') ? 'kitchen' : (posLower.includes('manager') ? 'manager' : 'cashier'));
+    if (!['owner', 'manager', 'cashier', 'kitchen'].includes(targetRole)) {
+      targetRole = 'cashier';
     }
 
-    // Tentukan role staf
-    let targetRole = body.role ? String(body.role).toLowerCase() : 'cashier';
-    if (!['owner', 'manager', 'cashier', 'kitchen'].includes(targetRole)) {
-      targetRole = body.position?.toLowerCase().includes('manager') ? 'manager' : 'cashier';
+    if (targetRole === 'owner') {
+      return apiError('Hanya dapat ada 1 akun Owner per outlet kafe.', 400);
+    }
+
+    if (targetRole === 'manager' && session.role !== 'owner' && session.role !== 'admin' && session.role !== 'super_admin') {
+      return apiError('Hanya Owner yang dapat mengangkat Store Manager baru', 403);
+    }
+
+    // Validasi pembatasan role: maksimal 1 akun Manager, 1 akun Kasir, 1 akun Kitchen per outlet
+    if (['manager', 'cashier', 'kitchen'].includes(targetRole)) {
+      const existingRoleUser = await prisma.user.findFirst({
+        where: {
+          businessId: session.businessId,
+          role: targetRole,
+        },
+        select: { id: true, name: true },
+      });
+
+      if (existingRoleUser) {
+        const roleLabel = targetRole === 'manager'
+          ? 'Store Manager'
+          : (targetRole === 'kitchen' ? 'Kitchen / Barista' : 'Kasir POS');
+        return apiError(`Outlet Anda sudah memiliki 1 akun ${roleLabel} (${existingRoleUser.name}). Silakan edit akun karyawan tersebut jika ingin mengalihkan role ini.`, 400);
+      }
     }
 
     const permissionsJson = Array.isArray(body.permissions)
@@ -105,9 +121,9 @@ export async function POST(request: NextRequest) {
         username,
         name: rawName,
         password: defaultPassword,
-        role: targetRole || assignedRole,
+        role: targetRole,
         phone: body.phone ? String(body.phone) : null,
-        position: body.position ? String(body.position) : null,
+        position: body.position ? String(body.position) : (targetRole === 'manager' ? 'Store Manager' : (targetRole === 'kitchen' ? 'Barista / Kitchen' : 'Kasir POS')),
         baseSalary: body.base_salary ? Number(body.base_salary) : null,
         permissions: permissionsJson,
         businessId: session.businessId,

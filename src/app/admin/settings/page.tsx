@@ -26,6 +26,7 @@ export default function AdminSettingsPage() {
   const [supportWa, setSupportWa] = useState('6281234567890');
   const [supportEmail, setSupportEmail] = useState('support@syntaxweb.id');
   const [appVersion, setAppVersion] = useState('1.0.0');
+  const [technicianPin, setTechnicianPin] = useState('2026');
 
   // Password Update
   const [currentPassword, setCurrentPassword] = useState('');
@@ -45,6 +46,7 @@ export default function AdminSettingsPage() {
         if (cfg.support_whatsapp || cfg.support_phone) setSupportWa(cfg.support_whatsapp || cfg.support_phone);
         if (cfg.support_email) setSupportEmail(cfg.support_email);
         if (cfg.app_version) setAppVersion(cfg.app_version);
+        if (cfg.technician_pin) setTechnicianPin(cfg.technician_pin);
       }
     } catch {
       // ignore
@@ -70,6 +72,7 @@ export default function AdminSettingsPage() {
         { key: 'support_whatsapp', value: supportWa },
         { key: 'support_email', value: supportEmail },
         { key: 'app_version', value: appVersion },
+        { key: 'technician_pin', value: technicianPin },
       ];
 
       for (const item of updates) {
@@ -214,6 +217,23 @@ export default function AdminSettingsPage() {
                     />
                     <span className="text-[10px] text-gray-400 mt-1 block">Email resmi bantuan teknis tenant</span>
                   </div>
+                </div>
+
+                <div className="p-4 bg-amber-50/60 dark:bg-amber-950/20 rounded-2xl border border-amber-200/60 dark:border-amber-800/40">
+                  <label className="text-xs font-bold text-amber-900 dark:text-amber-200 flex items-center gap-1.5">
+                    <ShieldCheck size={15} className="text-amber-600" />
+                    PIN Teknisi POS (Mode Diagnostik & URL Server)
+                  </label>
+                  <input
+                    type="text"
+                    value={technicianPin}
+                    onChange={(e) => setTechnicianPin(e.target.value)}
+                    placeholder="2026"
+                    className="w-full sm:w-64 mt-2 px-3.5 py-2 bg-white dark:bg-gray-900 border border-amber-300 dark:border-amber-700 rounded-xl text-xs font-mono font-bold tracking-widest text-amber-900 dark:text-amber-100 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  />
+                  <span className="text-[11px] text-amber-700/80 dark:text-amber-400 mt-1.5 block">
+                    PIN dinamis yang diatur SuperAdmin untuk membuka dialog teknisi POS (ketuk logo kasir 7x). Ubah kapan saja tanpa recompile Flutter.
+                  </span>
                 </div>
 
                 <div className="pt-2 flex justify-end">
