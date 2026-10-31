@@ -94,24 +94,6 @@ export async function POST(request: NextRequest) {
       return apiError('Hanya Owner yang dapat mengangkat Store Manager baru', 403);
     }
 
-    // Validasi pembatasan role: maksimal 1 akun Manager, 1 akun Kasir, 1 akun Kitchen per outlet
-    if (['manager', 'cashier', 'kitchen'].includes(targetRole)) {
-      const existingRoleUser = await prisma.user.findFirst({
-        where: {
-          businessId: session.businessId,
-          role: targetRole,
-        },
-        select: { id: true, name: true },
-      });
-
-      if (existingRoleUser) {
-        const roleLabel = targetRole === 'manager'
-          ? 'Store Manager'
-          : (targetRole === 'kitchen' ? 'Kitchen / Barista' : 'Kasir POS');
-        return apiError(`Outlet Anda sudah memiliki 1 akun ${roleLabel} (${existingRoleUser.name}). Silakan edit akun karyawan tersebut jika ingin mengalihkan role ini.`, 400);
-      }
-    }
-
     const defaultPin = body.pin ? String(body.pin).trim() : (targetRole === 'manager' ? '2222' : (targetRole === 'kitchen' ? '5555' : '1234'));
 
     const permissionsJson = Array.isArray(body.permissions)

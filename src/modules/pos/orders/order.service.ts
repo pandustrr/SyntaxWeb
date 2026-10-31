@@ -246,9 +246,11 @@ export class PosOrderService {
         }
       }
 
-      // 8. Generate Order Number unik: TRX-YYYYMMDD-XXXX
+      // 8. Generate Order Number unik anti-bentrok: TRX-[BIZ]-[YYYYMMDD]-[SEQ]-[RANDOM]
       const today = new Date();
       const dateStr = today.toISOString().slice(0, 10).replace(/-/g, '');
+      const bizPrefix = String(businessId).padStart(2, '0');
+
       const countToday = await tx.posOrder.count({
         where: {
           businessId,
@@ -257,7 +259,26 @@ export class PosOrderService {
           },
         },
       });
-      const orderNumber = `TRX-${dateStr}-${String(countToday + 1).padStart(4, '0')}`;
+
+      // Loop pencegahan benturan milidetik saat multi-device checkout serentak
+      let orderNumber = '';
+      let isUnique = false;
+      let attempt = 0;
+
+      while (!isUnique && attempt < 5) {
+        attempt++;
+        const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+        const sequence = String(countToday + attempt).padStart(4, '0');
+        orderNumber = `TRX-${bizPrefix}-${dateStr}-${sequence}-${randomSuffix}`;
+
+        const existing = await tx.posOrder.findFirst({
+          where: { businessId, orderNumber },
+          select: { id: true },
+        });
+        if (!existing) {
+          isUnique = true;
+        }
+      }
 
       // 9. Simpan Order & Items
       const order = await tx.posOrder.create({

@@ -215,6 +215,13 @@ model PosShift {
   business     PosBusiness @relation(fields: [businessId], references: [id], onDelete: Cascade)
   userId       Int
   user         User        @relation(fields: [userId], references: [id])
+  shiftName    String?     @default("Shift 1") // e.g. "Shift 1 (Pagi)", "Shift 2 (Sore)"
+  cashierNames String?     @db.Text            // JSON: ["Budi Santoso", "Siti Rahma"]
+  baristaNames String?     @db.Text            // JSON: ["Fajar W.", "Ilham M."]
+  kitchenNames String?     @db.Text            // JSON: ["Chef Joko", "Rian Helper"]
+  leaderName   String?                         // e.g. "Dimas Pratama"
+  openedByName String?                         // Staf pembuka shift
+  closedByName String?                         // Staf penutup shift
   startTime    DateTime    @default(now())
   endTime      DateTime?
   startingCash Decimal     @db.Decimal(12, 2)
@@ -245,7 +252,7 @@ model PosOrder {
   shift         PosShift?      @relation(fields: [shiftId], references: [id], onDelete: SetNull)
   tableId       Int?
   table         PosCafeTable?  @relation(fields: [tableId], references: [id], onDelete: SetNull)
-  orderNumber   String         @unique
+  orderNumber   String
   promoCode     String?
   orderType     String         @default("dine_in") // dine_in, take_away
   subtotal      Decimal        @db.Decimal(12, 2)
@@ -263,6 +270,7 @@ model PosOrder {
 
   items         PosOrderItem[]
 
+  @@unique([businessId, orderNumber])
   @@index([businessId])
   @@index([customerId])
   @@index([shiftId])

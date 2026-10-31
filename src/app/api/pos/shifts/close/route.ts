@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { shiftId, actualCash, notes } = body;
+    const { shiftId, actualCash, notes, closedByName } = body;
 
     if (!shiftId || actualCash === undefined || actualCash === null) {
       return apiError('shiftId dan nominal kas aktual wajib diisi', 400);
@@ -22,7 +22,8 @@ export async function POST(request: NextRequest) {
       session.userId,
       Number(shiftId),
       Number(actualCash),
-      notes
+      notes,
+      closedByName || session.name
     );
 
     return apiSuccess(closedShift, 'Shift kasir berhasil ditutup');

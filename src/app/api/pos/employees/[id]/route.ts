@@ -89,22 +89,6 @@ export async function PUT(
           return apiError('Hanya Owner yang dapat mengangkat role Manager.', 403);
         }
         if (['cashier', 'kitchen', 'manager'].includes(cleanTargetRole)) {
-          if (cleanTargetRole !== targetUser.role) {
-            const existingRoleUser = await prisma.user.findFirst({
-              where: {
-                businessId: session.businessId,
-                role: cleanTargetRole,
-                id: { not: employeeId },
-              },
-              select: { id: true, name: true },
-            });
-            if (existingRoleUser) {
-              const roleLabel = cleanTargetRole === 'manager'
-                ? 'Store Manager'
-                : (cleanTargetRole === 'kitchen' ? 'Kitchen / Barista' : 'Kasir POS');
-              return apiError(`Outlet Anda sudah memiliki akun ${roleLabel} (${existingRoleUser.name}). Ganti atau edit role karyawan tersebut terlebih dahulu.`, 400);
-            }
-          }
           updateData.role = cleanTargetRole;
         }
       }
