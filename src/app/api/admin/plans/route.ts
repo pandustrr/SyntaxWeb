@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/core/auth/session';
 import { getPosSessionFromRequest } from '@/modules/pos/core/pos-guard';
 import { prisma } from '@/core/db/prisma';
-import { DEFAULT_POS_PLANS } from '@/app/api/pos/plans/route';
+import { DEFAULT_POS_PLANS } from '@/modules/pos/core/pos-plans';
 
 export async function GET(request: NextRequest) {
   try {
