@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/core/auth/session';
 import { getPosSessionFromRequest } from '@/modules/pos/core/pos-guard';
 import { prisma } from '@/core/db/prisma';
+import { DEFAULT_POS_PLANS } from '@/app/api/pos/plans/route';
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,9 +16,43 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
-    const plans = await prisma.posSubscriptionPlan.findMany({
+    let plans = await prisma.posSubscriptionPlan.findMany({
       orderBy: { sortOrder: 'asc' },
     });
+
+    if (plans.length === 0) {
+      for (const p of DEFAULT_POS_PLANS) {
+        await prisma.posSubscriptionPlan.upsert({
+          where: { code: p.code },
+          update: {
+            name: p.name,
+            price: p.price,
+            period: p.period,
+            badge: p.badge,
+            description: p.description,
+            isPopular: p.isPopular,
+            isActive: p.isActive,
+            sortOrder: p.sortOrder,
+            benefits: JSON.stringify(p.benefits),
+          },
+          create: {
+            name: p.name,
+            code: p.code,
+            price: p.price,
+            period: p.period,
+            badge: p.badge,
+            description: p.description,
+            isPopular: p.isPopular,
+            isActive: p.isActive,
+            sortOrder: p.sortOrder,
+            benefits: JSON.stringify(p.benefits),
+          },
+        });
+      }
+      plans = await prisma.posSubscriptionPlan.findMany({
+        orderBy: { sortOrder: 'asc' },
+      });
+    }
 
     return NextResponse.json({
       success: true,
