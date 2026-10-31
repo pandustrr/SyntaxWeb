@@ -15,14 +15,21 @@ export async function PUT(
       return apiError('Unauthorized', 401);
     }
 
-    if (!ALLOWED_MANAGEMENT_ROLES.includes(session.role)) {
-      return apiError('Akses ditolak. Hanya Owner atau Store Manager yang dapat mengedit karyawan.', 403);
-    }
-
     const { id } = await params;
     const employeeId = Number(id);
     if (isNaN(employeeId)) {
       return apiError('ID karyawan tidak valid', 400);
+    }
+
+    const currentRole = String(session.role || '').toLowerCase();
+    const isOwner = currentRole === 'owner' || currentRole === 'admin' || currentRole === 'super_admin';
+    const isManager = currentRole === 'manager';
+    const isManagement = isOwner || isManager;
+    const isSelf = session.userId === employeeId;
+
+    // Diizinkan jika dia adalah management (Owner/Manager) ATAU dia sedang mengedit profil/PIN akunnya sendiri
+    if (!isManagement && !isSelf) {
+      return apiError('Akses ditolak. Anda hanya diizinkan untuk mengedit profil dan PIN akun Anda sendiri.', 403);
     }
 
     // Pastikan karyawan milik tenant yang sama (Cross-tenant IDOR protection)
@@ -37,8 +44,8 @@ export async function PUT(
       return apiError('Karyawan tidak ditemukan di toko Anda', 404);
     }
 
-    // Manager tidak boleh mengubah data Owner
-    if (session.role === 'manager' && targetUser.role === 'owner') {
+    // Manager tidak boleh mengubah data Owner (kecuali akunnya sendiri jika owner)
+    if (isManager && targetUser.role === 'owner' && !isSelf) {
       return apiError('Manager tidak memiliki izin untuk mengedit akun Owner.', 403);
     }
 
@@ -56,57 +63,60 @@ export async function PUT(
 
     if (body.name) updateData.name = String(body.name).trim();
     if (body.pin !== undefined) updateData.pin = body.pin ? String(body.pin).trim() : null;
-
-    if (body.email) {
-      const cleanEmail = String(body.email).trim().toLowerCase();
-      if (cleanEmail !== targetUser.email) {
-        const existing = await prisma.user.findUnique({
-          where: { email: cleanEmail },
-        });
-        if (existing) {
-          return apiError('Email sudah digunakan oleh akun lain.', 400);
-        }
-        updateData.email = cleanEmail;
-      }
-    }
-
-    if (body.role && ALLOWED_MANAGEMENT_ROLES.includes(session.role)) {
-      const cleanTargetRole = String(body.role).toLowerCase();
-      if (['owner', 'manager'].includes(cleanTargetRole) && session.role !== 'owner' && session.role !== 'admin' && session.role !== 'super_admin') {
-        return apiError('Hanya Owner yang dapat mengangkat role Manager.', 403);
-      }
-      if (cleanTargetRole === 'owner') {
-        return apiError('Role Owner tidak dapat dialihkan sembarangan.', 400);
-      }
-      if (['cashier', 'kitchen', 'manager'].includes(cleanTargetRole)) {
-        if (cleanTargetRole !== targetUser.role) {
-          const existingRoleUser = await prisma.user.findFirst({
-            where: {
-              businessId: session.businessId,
-              role: cleanTargetRole,
-              id: { not: employeeId },
-            },
-            select: { id: true, name: true },
-          });
-          if (existingRoleUser) {
-            const roleLabel = cleanTargetRole === 'manager'
-              ? 'Store Manager'
-              : (cleanTargetRole === 'kitchen' ? 'Kitchen / Barista' : 'Kasir POS');
-            return apiError(`Outlet Anda sudah memiliki akun ${roleLabel} (${existingRoleUser.name}). Ganti atau edit role karyawan tersebut terlebih dahulu.`, 400);
-          }
-        }
-        updateData.role = cleanTargetRole;
-      }
-    }
-
     if (body.phone !== undefined) updateData.phone = body.phone ? String(body.phone).trim() : null;
-    if (body.position !== undefined) updateData.position = body.position ? String(body.position).trim() : null;
-    if (body.base_salary !== undefined) updateData.baseSalary = Number(body.base_salary);
 
-    if (body.permissions !== undefined) {
-      updateData.permissions = Array.isArray(body.permissions)
-        ? JSON.stringify(body.permissions)
-        : null;
+    // Field posisi, gaji, hak akses & role hanya boleh diatur oleh Management (Owner/Manager)
+    if (isManagement) {
+      if (body.email) {
+        const cleanEmail = String(body.email).trim().toLowerCase();
+        if (cleanEmail !== targetUser.email) {
+          const existing = await prisma.user.findUnique({
+            where: { email: cleanEmail },
+          });
+          if (existing) {
+            return apiError('Email sudah digunakan oleh akun lain.', 400);
+          }
+          updateData.email = cleanEmail;
+        }
+      }
+
+      if (body.role) {
+        const cleanTargetRole = String(body.role).toLowerCase();
+        if (cleanTargetRole === 'owner' && targetUser.role !== 'owner') {
+          return apiError('Role Owner tidak dapat dialihkan sembarangan.', 400);
+        }
+        if (['owner', 'manager'].includes(cleanTargetRole) && cleanTargetRole !== targetUser.role && !isOwner) {
+          return apiError('Hanya Owner yang dapat mengangkat role Manager.', 403);
+        }
+        if (['cashier', 'kitchen', 'manager'].includes(cleanTargetRole)) {
+          if (cleanTargetRole !== targetUser.role) {
+            const existingRoleUser = await prisma.user.findFirst({
+              where: {
+                businessId: session.businessId,
+                role: cleanTargetRole,
+                id: { not: employeeId },
+              },
+              select: { id: true, name: true },
+            });
+            if (existingRoleUser) {
+              const roleLabel = cleanTargetRole === 'manager'
+                ? 'Store Manager'
+                : (cleanTargetRole === 'kitchen' ? 'Kitchen / Barista' : 'Kasir POS');
+              return apiError(`Outlet Anda sudah memiliki akun ${roleLabel} (${existingRoleUser.name}). Ganti atau edit role karyawan tersebut terlebih dahulu.`, 400);
+            }
+          }
+          updateData.role = cleanTargetRole;
+        }
+      }
+
+      if (body.position !== undefined) updateData.position = body.position ? String(body.position).trim() : null;
+      if (body.base_salary !== undefined) updateData.baseSalary = Number(body.base_salary);
+
+      if (body.permissions !== undefined) {
+        updateData.permissions = Array.isArray(body.permissions)
+          ? JSON.stringify(body.permissions)
+          : null;
+      }
     }
 
     const updated = await prisma.user.update({
