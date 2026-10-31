@@ -50,10 +50,12 @@ export async function PUT(
       phone?: string | null;
       position?: string | null;
       baseSalary?: number | null;
+      pin?: string | null;
       permissions?: string | null;
     } = {};
 
     if (body.name) updateData.name = String(body.name).trim();
+    if (body.pin !== undefined) updateData.pin = body.pin ? String(body.pin).trim() : null;
 
     if (body.email) {
       const cleanEmail = String(body.email).trim().toLowerCase();

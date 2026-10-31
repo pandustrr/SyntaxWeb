@@ -26,6 +26,7 @@ export async function GET(request: NextRequest) {
         email: u.email,
         role: u.role,
         phone: u.phone || '08123456789',
+        pin: u.pin || '',
         position:
           u.position ||
           (u.role === 'owner'
@@ -111,6 +112,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    const defaultPin = body.pin ? String(body.pin).trim() : (targetRole === 'manager' ? '2222' : (targetRole === 'kitchen' ? '5555' : '1234'));
+
     const permissionsJson = Array.isArray(body.permissions)
       ? JSON.stringify(body.permissions)
       : null;
@@ -122,6 +125,7 @@ export async function POST(request: NextRequest) {
         name: rawName,
         password: defaultPassword,
         role: targetRole,
+        pin: defaultPin,
         phone: body.phone ? String(body.phone) : null,
         position: body.position ? String(body.position) : (targetRole === 'manager' ? 'Store Manager' : (targetRole === 'kitchen' ? 'Barista / Kitchen' : 'Kasir POS')),
         baseSalary: body.base_salary ? Number(body.base_salary) : null,

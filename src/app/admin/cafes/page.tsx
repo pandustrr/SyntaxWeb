@@ -18,11 +18,13 @@ import {
   Sparkles,
   Trash2,
   Package,
-  SlidersHorizontal
+  SlidersHorizontal,
+  KeyRound
 } from 'lucide-react';
 import { CreateTenantModal } from '@/modules/admin/components/CreateTenantModal';
 import { ManagePlansModal } from '@/modules/admin/components/ManagePlansModal';
 import { ManageFeaturesModal } from '@/modules/admin/components/ManageFeaturesModal';
+import { ManageTenantUsersModal } from '@/modules/admin/components/ManageTenantUsersModal';
 
 interface CafeOwner {
   id: number;
@@ -71,10 +73,11 @@ interface CafeRowProps {
   onUpdateStatus: (id: number, status: string) => void;
   onDeleteCafe: (id: number, name: string) => void;
   onManageFeatures: (cafe: CafeItem) => void;
+  onManageUsers: (cafe: CafeItem) => void;
   renderStatusBadge: (status: string, cafe?: CafeItem) => React.ReactNode;
 }
 
-function CafeRow({ cafe, actionLoadingId, onUpdateStatus, onDeleteCafe, onManageFeatures, renderStatusBadge }: CafeRowProps) {
+function CafeRow({ cafe, actionLoadingId, onUpdateStatus, onDeleteCafe, onManageFeatures, onManageUsers, renderStatusBadge }: CafeRowProps) {
   const isLoading = actionLoadingId === cafe.id;
   const formattedDate = new Date(cafe.createdAt).toLocaleDateString('id-ID', {
     day: 'numeric',
@@ -196,6 +199,16 @@ function CafeRow({ cafe, actionLoadingId, onUpdateStatus, onDeleteCafe, onManage
           </button>
 
           <button
+            onClick={() => onManageUsers(cafe)}
+            disabled={isLoading}
+            title="Kelola Akun & PIN Staf Kasir"
+            className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 dark:bg-blue-950/40 dark:hover:bg-blue-900/60 dark:text-blue-300 rounded-lg text-xs font-semibold active:scale-95 transition-all"
+          >
+            <KeyRound size={13} />
+            Akun & PIN
+          </button>
+
+          <button
             onClick={() => onDeleteCafe(cafe.id, cafe.name)}
             disabled={isLoading}
             title="Hapus Kafe"
@@ -226,6 +239,7 @@ export default function AdminCafesPage() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showPlansModal, setShowPlansModal] = useState(false);
   const [selectedFeaturesCafe, setSelectedFeaturesCafe] = useState<CafeItem | null>(null);
+  const [selectedUsersCafe, setSelectedUsersCafe] = useState<CafeItem | null>(null);
 
   const [defaultTrialDays, setDefaultTrialDays] = useState(14);
   const [editingTrial, setEditingTrial] = useState(false);
@@ -627,6 +641,7 @@ export default function AdminCafesPage() {
                     onUpdateStatus={handleUpdateStatus}
                     onDeleteCafe={handleDeleteCafe}
                     onManageFeatures={(c) => setSelectedFeaturesCafe(c)}
+                    onManageUsers={(c) => setSelectedUsersCafe(c)}
                     renderStatusBadge={getStatusBadge}
                   />
                 ))
@@ -660,6 +675,16 @@ export default function AdminCafesPage() {
         cafe={selectedFeaturesCafe}
         onSuccess={() => {
           setFeedbackMsg({ type: 'success', text: 'Izin fitur kafe berhasil disimpan!' });
+          fetchCafes();
+        }}
+      />
+
+      <ManageTenantUsersModal
+        isOpen={selectedUsersCafe !== null}
+        onClose={() => setSelectedUsersCafe(null)}
+        cafe={selectedUsersCafe}
+        onSuccess={(msg) => {
+          if (msg) setFeedbackMsg({ type: 'success', text: msg });
           fetchCafes();
         }}
       />

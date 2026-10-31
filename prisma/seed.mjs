@@ -53,59 +53,63 @@ async function main() {
     data: { businessId: business.id },
   });
 
-  // 3. Seed POS Staff (Tepat 1 Akun untuk Setiap Role)
+  // 3. Seed POS Staff (Tepat 1 Akun untuk Setiap Role dengan Quick PIN)
   await prisma.user.upsert({
     where: { email: "owner@syntax.id" },
-    update: { businessId: business.id, role: "owner" },
+    update: { businessId: business.id, role: "owner", pin: "0000" },
     create: {
       email: "owner@syntax.id",
       username: "owner",
       password: defaultPasswordHash,
       name: "Pandu Satria (Owner)",
       role: "owner",
+      pin: "0000",
       businessId: business.id,
     },
   });
 
   await prisma.user.upsert({
     where: { email: "manager@syntax.id" },
-    update: { businessId: business.id, role: "manager" },
+    update: { businessId: business.id, role: "manager", pin: "2222" },
     create: {
       email: "manager@syntax.id",
       username: "manager",
       password: defaultPasswordHash,
       name: "Dimas Pratama (Store Manager)",
       role: "manager",
+      pin: "2222",
       businessId: business.id,
     },
   });
 
   await prisma.user.upsert({
     where: { email: "kasir@syntax.id" },
-    update: { businessId: business.id, role: "cashier" },
+    update: { businessId: business.id, role: "cashier", pin: "1234" },
     create: {
       email: "kasir@syntax.id",
       username: "kasir",
       password: defaultPasswordHash,
       name: "Budi Santoso (Kasir)",
       role: "cashier",
+      pin: "1234",
       businessId: business.id,
     },
   });
 
   await prisma.user.upsert({
     where: { email: "barista@syntax.id" },
-    update: { businessId: business.id, role: "kitchen" },
+    update: { businessId: business.id, role: "kitchen", pin: "5555" },
     create: {
       email: "barista@syntax.id",
       username: "barista",
       password: defaultPasswordHash,
       name: "Fajar Wicaksono (Head Barista)",
       role: "kitchen",
+      pin: "5555",
       businessId: business.id,
     },
   });
-  console.log("✅ Staff POS ready: 1 Admin, 1 Owner, 1 Manager, 1 Kasir, 1 Kitchen/Barista");
+  console.log("✅ Staff POS ready: 1 Admin, 1 Owner (PIN: 0000), 1 Manager (PIN: 2222), 1 Kasir (PIN: 1234), 1 Kitchen (PIN: 5555)");
 
   // 4. Seed Categories
   const categoryMap = {};
