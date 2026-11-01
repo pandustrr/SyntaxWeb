@@ -52,6 +52,8 @@ export async function GET(request: NextRequest) {
     const dateTo = searchParams.get('date_to') || undefined;
     const tableParam = searchParams.get('cafe_table_id') || searchParams.get('table_id') || searchParams.get('tableId');
     const tableId = tableParam ? Number(tableParam) : undefined;
+    const shiftParam = searchParams.get('shift_id') || searchParams.get('shiftId');
+    const shiftId = shiftParam ? Number(shiftParam) : undefined;
 
     const orders = await PosOrderService.getOrderHistory(session.businessId, {
       limit,
@@ -59,6 +61,7 @@ export async function GET(request: NextRequest) {
       dateFrom,
       dateTo,
       tableId,
+      shiftId,
     });
     return apiSuccess(orders, 'Riwayat transaksi berhasil diambil');
   } catch (error: any) {

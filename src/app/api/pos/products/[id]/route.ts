@@ -53,8 +53,12 @@ export async function DELETE(
 
     const { id } = await params;
 
-    await PosProductService.deleteProduct(session.businessId, Number(id));
-    return apiSuccess(null, 'Produk berhasil dihapus');
+    const result = await PosProductService.deleteProduct(session.businessId, Number(id));
+    const message = (result && 'isActive' in result && !result.isActive)
+      ? 'Produk dinonaktifkan dari katalog karena memiliki riwayat transaksi'
+      : 'Produk berhasil dihapus';
+
+    return apiSuccess(result, message);
   } catch (error: any) {
     return apiError(error.message || 'Gagal menghapus produk', 400);
   }
