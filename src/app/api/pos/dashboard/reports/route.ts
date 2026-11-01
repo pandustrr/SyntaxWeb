@@ -13,10 +13,13 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const dateFrom = searchParams.get('date_from') || undefined;
     const dateTo = searchParams.get('date_to') || undefined;
+    const shiftParam = searchParams.get('shift_id') || searchParams.get('shiftId');
+    const shiftId = shiftParam ? Number(shiftParam) : undefined;
 
     const report = await PosDashboardService.getBusinessReport(session.businessId, {
       dateFrom,
       dateTo,
+      shiftId,
     });
 
     return apiSuccess(report, 'Laporan performa bisnis berhasil dimuat');

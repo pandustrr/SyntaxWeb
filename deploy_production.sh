@@ -87,8 +87,8 @@ if command -v npx &> /dev/null; then
         echo "⚡ Prisma client sudah sesuai skema terbaru."
     fi
 
-    echo "🗄️ Sinkronisasi skema database MySQL (prisma db push)..."
-    RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 npx prisma db push --skip-generate --accept-data-loss || echo "ℹ️ prisma db push dilewati atau sudah sinkron."
+    echo "🗄️ Sinkronisasi skema database MySQL (prisma db push aman tanpa data loss)..."
+    RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 npx prisma db push --skip-generate || echo "ℹ️ prisma db push dilewati atau sudah sinkron."
 fi
 
 # 5. Build Project Check

@@ -199,7 +199,7 @@ export class PosOrderService {
       let resolvedShiftId: number | null = null;
       if (input.shiftId) {
         const targetShift = await tx.posShift.findFirst({
-          where: { id: input.shiftId, businessId, status: 'open' },
+          where: { id: input.shiftId, businessId },
           select: { id: true },
         });
         if (targetShift) {
@@ -366,6 +366,7 @@ export class PosOrderService {
       dateFrom?: string;
       dateTo?: string;
       tableId?: number;
+      shiftId?: number;
     }
   ) {
     const where: any = { businessId };
@@ -382,7 +383,9 @@ export class PosOrderService {
       where.tableId = options.tableId;
     }
 
-    if (options?.dateFrom || options?.dateTo) {
+    if (options?.shiftId) {
+      where.shiftId = options.shiftId;
+    } else if (options?.dateFrom || options?.dateTo) {
       where.createdAt = {};
       if (options.dateFrom) {
         where.createdAt.gte = new Date(`${options.dateFrom}T00:00:00.000Z`);
@@ -394,7 +397,7 @@ export class PosOrderService {
 
     const orders = await prisma.posOrder.findMany({
       where,
-      take: options?.limit || 50,
+      take: options?.limit || 100,
       orderBy: { createdAt: 'desc' },
       include: {
         items: {
@@ -407,11 +410,21 @@ export class PosOrderService {
         table: { select: { id: true, name: true } },
         customer: { select: { id: true, name: true, phone: true, membershipLevel: true, totalPoints: true } },
         user: { select: { id: true, name: true } },
+        shift: { select: { id: true, shiftName: true, status: true, openedByName: true, startTime: true, endTime: true } },
       },
     });
 
     return orders.map((o) => ({
       ...o,
+      shift_id: o.shiftId,
+      shift: o.shift ? {
+        id: o.shift.id,
+        name: o.shift.shiftName || `Shift #${o.shift.id}`,
+        status: o.shift.status,
+        cashier_name: o.shift.openedByName || '',
+        start_time: o.shift.startTime?.toISOString() || null,
+        end_time: o.shift.endTime?.toISOString() || null,
+      } : null,
       order_number: o.orderNumber,
       payment_method: o.paymentMethod,
       channel: o.orderType,
@@ -636,6 +649,7 @@ export class PosOrderService {
         where: { id: orderId },
         data: {
           status: 'cancelled',
+          paymentStatus: 'cancelled',
           notes: reason ? `Dibatalkan: ${reason}` : 'Dibatalkan oleh kasir/dapur',
         },
       });
