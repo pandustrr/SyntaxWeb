@@ -232,6 +232,28 @@ export class PosProductService {
       throw new Error('Produk tidak ditemukan atau Anda tidak memiliki akses.');
     }
 
+    // Cek apakah produk memiliki riwayat transaksi di posOrderItem
+    const orderCount = await prisma.posOrderItem.count({
+      where: { productId: id },
+    });
+
+    if (orderCount > 0) {
+      // Soft-delete: arsipkan agar tidak merusak rekap transaksi dan laporan histori penjualan
+      return await prisma.posProduct.update({
+        where: { id },
+        data: { isActive: false },
+      });
+    }
+
+    // Jika belum ada riwayat transaksi, bersihkan relasi resep & varian lalu hard-delete
+    await prisma.posRecipeItem.deleteMany({
+      where: { productId: id },
+    });
+
+    await prisma.posProductVariant.deleteMany({
+      where: { productId: id },
+    });
+
     return await prisma.posProduct.delete({
       where: { id },
     });

@@ -27,6 +27,9 @@ export class PosShiftService {
       },
       include: {
         orders: {
+          where: {
+            status: { not: 'cancelled' },
+          },
           select: {
             id: true,
             orderNumber: true,
@@ -40,9 +43,9 @@ export class PosShiftService {
 
     if (!shift) return null;
 
-    // Hitung ringkasan penerimaan kas sementara
-    const cashOrders = shift.orders.filter((o) => o.paymentMethod === 'cash');
-    const nonCashOrders = shift.orders.filter((o) => o.paymentMethod !== 'cash');
+    // Hitung ringkasan penerimaan kas sementara (case-insensitive & abaikan order dibatalkan)
+    const cashOrders = shift.orders.filter((o) => (o.paymentMethod || '').toLowerCase() === 'cash');
+    const nonCashOrders = shift.orders.filter((o) => (o.paymentMethod || '').toLowerCase() !== 'cash');
 
     const totalCashSales = cashOrders.reduce((sum, o) => sum + Number(o.total), 0);
     const totalNonCashSales = nonCashOrders.reduce((sum, o) => sum + Number(o.total), 0);
@@ -135,6 +138,7 @@ export class PosShiftService {
         orders: {
           where: {
             paymentStatus: 'paid',
+            status: { not: 'cancelled' },
           },
         },
       },
@@ -144,9 +148,9 @@ export class PosShiftService {
       throw new Error('Shift aktif tidak ditemukan.');
     }
 
-    // Hitung total penerimaan kas selama shift ini
+    // Hitung total penerimaan kas selama shift ini (case-insensitive)
     const cashSales = shift.orders
-      .filter((o) => o.paymentMethod === 'cash')
+      .filter((o) => (o.paymentMethod || '').toLowerCase() === 'cash')
       .reduce((sum, o) => sum + Number(o.total), 0);
 
     const expectedCash = Number(shift.startingCash) + cashSales;
@@ -182,37 +186,47 @@ export class PosShiftService {
     const limit = options?.limit ?? 30;
     const where: any = { businessId };
 
+    let targetStart: Date | undefined;
+    let targetEnd: Date | undefined;
+
     if (options?.date) {
       const now = new Date();
-      let targetStart: Date;
-      let targetEnd: Date;
-
       if (options.date === 'today') {
-        targetStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        targetStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
         targetEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
       } else if (options.date === 'yesterday') {
         const y = new Date(now);
         y.setDate(now.getDate() - 1);
-        targetStart = new Date(y.getFullYear(), y.getMonth(), y.getDate());
+        targetStart = new Date(y.getFullYear(), y.getMonth(), y.getDate(), 0, 0, 0, 0);
         targetEnd = new Date(y.getFullYear(), y.getMonth(), y.getDate(), 23, 59, 59, 999);
       } else {
         const parsed = new Date(options.date);
-        targetStart = new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
+        targetStart = new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate(), 0, 0, 0, 0);
         targetEnd = new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate(), 23, 59, 59, 999);
       }
-
-      where.startTime = {
-        gte: targetStart,
-        lte: targetEnd,
-      };
     } else if (options?.dateFrom || options?.dateTo) {
-      where.startTime = {};
       if (options.dateFrom) {
-        where.startTime.gte = new Date(`${options.dateFrom}T00:00:00.000Z`);
+        targetStart = new Date(`${options.dateFrom}T00:00:00.000Z`);
       }
       if (options.dateTo) {
-        where.startTime.lte = new Date(`${options.dateTo}T23:59:59.999Z`);
+        targetEnd = new Date(`${options.dateTo}T23:59:59.999Z`);
       }
+    }
+
+    if (targetStart && targetEnd) {
+      where.OR = [
+        { startTime: { gte: targetStart, lte: targetEnd } },
+        { endTime: { gte: targetStart, lte: targetEnd } },
+        { status: 'open', startTime: { lte: targetEnd } },
+      ];
+    } else if (targetStart) {
+      where.OR = [
+        { startTime: { gte: targetStart } },
+        { endTime: { gte: targetStart } },
+        { status: 'open' },
+      ];
+    } else if (targetEnd) {
+      where.startTime = { lte: targetEnd };
     }
 
     const shifts = await prisma.posShift.findMany({
@@ -267,7 +281,7 @@ export class PosShiftService {
 
         if (pm === 'cash') cashSales += tot;
         else if (pm === 'qris') qrisSales += tot;
-        else if (pm === 'transfer' || pm === 'bank_transfer') transferSales += tot;
+        else if (pm === 'transfer' || pm === 'bank_transfer' || pm === 'midtrans') transferSales += tot;
         else if (pm === 'debit' || pm === 'edc' || pm === 'card') debitSales += tot;
         else otherSales += tot;
       }

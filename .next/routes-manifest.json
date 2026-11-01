@@ -1,6 +1,7 @@
 {
   "version": 3,
   "pages404": true,
+  "appType": "app",
   "caseSensitive": false,
   "basePath": "",
   "redirects": [
@@ -8,6 +9,7 @@
       "source": "/:path+/",
       "destination": "/:path+",
       "internal": true,
+      "priority": true,
       "statusCode": 308,
       "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
     }
@@ -32,6 +34,11 @@
       "regex": "^/api(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))?(?:/)?$"
     }
   ],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [],
+    "fallback": []
+  },
   "dynamicRoutes": [
     {
       "page": "/api/admin/cafes/[id]",
@@ -202,6 +209,12 @@
       "namedRegex": "^/(?:/)?$"
     },
     {
+      "page": "/_global-error",
+      "regex": "^/_global\\-error(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_global\\-error(?:/)?$"
+    },
+    {
       "page": "/_not-found",
       "regex": "^/_not\\-found(?:/)?$",
       "routeKeys": {},
@@ -242,6 +255,252 @@
       "regex": "^/admin/users(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/admin/users(?:/)?$"
+    },
+    {
+      "page": "/api/admin/auth",
+      "regex": "^/api/admin/auth(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/auth(?:/)?$"
+    },
+    {
+      "page": "/api/admin/cafes",
+      "regex": "^/api/admin/cafes(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/cafes(?:/)?$"
+    },
+    {
+      "page": "/api/admin/plans",
+      "regex": "^/api/admin/plans(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/plans(?:/)?$"
+    },
+    {
+      "page": "/api/admin/platform-config",
+      "regex": "^/api/admin/platform\\-config(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/platform\\-config(?:/)?$"
+    },
+    {
+      "page": "/api/admin/projects",
+      "regex": "^/api/admin/projects(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/projects(?:/)?$"
+    },
+    {
+      "page": "/api/admin/system",
+      "regex": "^/api/admin/system(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/system(?:/)?$"
+    },
+    {
+      "page": "/api/download/apk",
+      "regex": "^/api/download/apk(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/download/apk(?:/)?$"
+    },
+    {
+      "page": "/api/pos/addons",
+      "regex": "^/api/pos/addons(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/addons(?:/)?$"
+    },
+    {
+      "page": "/api/pos/attendance",
+      "regex": "^/api/pos/attendance(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/attendance(?:/)?$"
+    },
+    {
+      "page": "/api/pos/attendance/payroll",
+      "regex": "^/api/pos/attendance/payroll(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/attendance/payroll(?:/)?$"
+    },
+    {
+      "page": "/api/pos/attendance/summary",
+      "regex": "^/api/pos/attendance/summary(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/attendance/summary(?:/)?$"
+    },
+    {
+      "page": "/api/pos/attendance/sync-slovv",
+      "regex": "^/api/pos/attendance/sync\\-slovv(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/attendance/sync\\-slovv(?:/)?$"
+    },
+    {
+      "page": "/api/pos/auth/login",
+      "regex": "^/api/pos/auth/login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/auth/login(?:/)?$"
+    },
+    {
+      "page": "/api/pos/auth/me",
+      "regex": "^/api/pos/auth/me(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/auth/me(?:/)?$"
+    },
+    {
+      "page": "/api/pos/auth/password",
+      "regex": "^/api/pos/auth/password(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/auth/password(?:/)?$"
+    },
+    {
+      "page": "/api/pos/auth/pin-login",
+      "regex": "^/api/pos/auth/pin\\-login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/auth/pin\\-login(?:/)?$"
+    },
+    {
+      "page": "/api/pos/auth/register",
+      "regex": "^/api/pos/auth/register(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/auth/register(?:/)?$"
+    },
+    {
+      "page": "/api/pos/auth/register-cafe",
+      "regex": "^/api/pos/auth/register\\-cafe(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/auth/register\\-cafe(?:/)?$"
+    },
+    {
+      "page": "/api/pos/auth/technician-verify",
+      "regex": "^/api/pos/auth/technician\\-verify(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/auth/technician\\-verify(?:/)?$"
+    },
+    {
+      "page": "/api/pos/categories",
+      "regex": "^/api/pos/categories(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/categories(?:/)?$"
+    },
+    {
+      "page": "/api/pos/customers",
+      "regex": "^/api/pos/customers(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/customers(?:/)?$"
+    },
+    {
+      "page": "/api/pos/dashboard/low-stock",
+      "regex": "^/api/pos/dashboard/low\\-stock(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/dashboard/low\\-stock(?:/)?$"
+    },
+    {
+      "page": "/api/pos/dashboard/reports",
+      "regex": "^/api/pos/dashboard/reports(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/dashboard/reports(?:/)?$"
+    },
+    {
+      "page": "/api/pos/dashboard/revenue-chart",
+      "regex": "^/api/pos/dashboard/revenue\\-chart(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/dashboard/revenue\\-chart(?:/)?$"
+    },
+    {
+      "page": "/api/pos/dashboard/summary",
+      "regex": "^/api/pos/dashboard/summary(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/dashboard/summary(?:/)?$"
+    },
+    {
+      "page": "/api/pos/dashboard/top-products",
+      "regex": "^/api/pos/dashboard/top\\-products(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/dashboard/top\\-products(?:/)?$"
+    },
+    {
+      "page": "/api/pos/employees",
+      "regex": "^/api/pos/employees(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/employees(?:/)?$"
+    },
+    {
+      "page": "/api/pos/materials",
+      "regex": "^/api/pos/materials(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/materials(?:/)?$"
+    },
+    {
+      "page": "/api/pos/orders",
+      "regex": "^/api/pos/orders(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/orders(?:/)?$"
+    },
+    {
+      "page": "/api/pos/plans",
+      "regex": "^/api/pos/plans(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/plans(?:/)?$"
+    },
+    {
+      "page": "/api/pos/products",
+      "regex": "^/api/pos/products(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/products(?:/)?$"
+    },
+    {
+      "page": "/api/pos/promotions",
+      "regex": "^/api/pos/promotions(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/promotions(?:/)?$"
+    },
+    {
+      "page": "/api/pos/promotions/validate",
+      "regex": "^/api/pos/promotions/validate(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/promotions/validate(?:/)?$"
+    },
+    {
+      "page": "/api/pos/settings",
+      "regex": "^/api/pos/settings(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/settings(?:/)?$"
+    },
+    {
+      "page": "/api/pos/shifts/close",
+      "regex": "^/api/pos/shifts/close(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/shifts/close(?:/)?$"
+    },
+    {
+      "page": "/api/pos/shifts/current",
+      "regex": "^/api/pos/shifts/current(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/shifts/current(?:/)?$"
+    },
+    {
+      "page": "/api/pos/shifts/history",
+      "regex": "^/api/pos/shifts/history(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/shifts/history(?:/)?$"
+    },
+    {
+      "page": "/api/pos/shifts/open",
+      "regex": "^/api/pos/shifts/open(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/shifts/open(?:/)?$"
+    },
+    {
+      "page": "/api/pos/shifts/schedules",
+      "regex": "^/api/pos/shifts/schedules(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/shifts/schedules(?:/)?$"
+    },
+    {
+      "page": "/api/pos/tables",
+      "regex": "^/api/pos/tables(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/tables(?:/)?$"
+    },
+    {
+      "page": "/api/pos/upload",
+      "regex": "^/api/pos/upload(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pos/upload(?:/)?$"
     },
     {
       "page": "/contact",
@@ -294,20 +553,20 @@
   ],
   "dataRoutes": [],
   "rsc": {
-    "header": "RSC",
-    "varyHeader": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Router-Segment-Prefetch",
-    "prefetchHeader": "Next-Router-Prefetch",
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
     "didPostponeHeader": "x-nextjs-postponed",
     "contentTypeHeader": "text/x-component",
     "suffix": ".rsc",
-    "prefetchSuffix": ".prefetch.rsc",
-    "prefetchSegmentHeader": "Next-Router-Segment-Prefetch",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
     "prefetchSegmentSuffix": ".segment.rsc",
-    "prefetchSegmentDirSuffix": ".segments"
+    "prefetchSegmentDirSuffix": ".segments",
+    "clientParamParsing": false,
+    "dynamicRSCPrerender": false
   },
   "rewriteHeaders": {
     "pathHeader": "x-nextjs-rewritten-path",
     "queryHeader": "x-nextjs-rewritten-query"
-  },
-  "rewrites": []
+  }
 }
