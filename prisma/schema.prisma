@@ -84,6 +84,7 @@ model PosBusiness {
   receiptPaperSize  String         @default("58mm") // 58mm, 80mm
   showLogoOnReceipt Boolean        @default(true)
   showWifiOnReceipt Boolean        @default(false)
+  wifiSsid          String?
   wifiPassword      String?
   taxPercent        Decimal        @default(10.00) @db.Decimal(5, 2)
   isTaxInclusive    Boolean        @default(false)
@@ -164,6 +165,7 @@ model PosProduct {
   costPrice   Decimal?            @db.Decimal(12, 2)
   stock       Int                 @default(0)
   trackStock  Boolean             @default(true)
+  station     String              @default("kitchen") // kitchen, bar, none
   image       String?
   isActive    Boolean             @default(true)
   createdAt   DateTime            @default(now())
@@ -310,6 +312,7 @@ model PosOrderItem {
   price           Decimal            @db.Decimal(12, 2)
   quantity        Int                @default(1)
   subtotal        Decimal            @db.Decimal(12, 2)
+  station         String?            @default("kitchen") // kitchen, bar, none
   notes           String?
   createdAt       DateTime           @default(now())
 

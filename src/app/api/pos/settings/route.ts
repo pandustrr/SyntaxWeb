@@ -30,6 +30,7 @@ export async function GET(request: NextRequest) {
       receipt_paper_size: biz.receiptPaperSize || '58mm',
       show_logo_on_receipt: biz.showLogoOnReceipt ?? true,
       show_wifi_on_receipt: biz.showWifiOnReceipt ?? false,
+      wifi_ssid: (biz as any).wifiSsid || '',
       wifi_password: biz.wifiPassword || '',
       tax_percent: biz.taxPercent ? Number(biz.taxPercent) : 10.0,
       is_tax_inclusive: biz.isTaxInclusive ?? false,
@@ -73,6 +74,7 @@ export async function PUT(request: NextRequest) {
     if (body.receipt_paper_size !== undefined) updateData.receiptPaperSize = body.receipt_paper_size;
     if (body.show_logo_on_receipt !== undefined) updateData.showLogoOnReceipt = Boolean(body.show_logo_on_receipt);
     if (body.show_wifi_on_receipt !== undefined) updateData.showWifiOnReceipt = Boolean(body.show_wifi_on_receipt);
+    if (body.wifi_ssid !== undefined) (updateData as any).wifiSsid = body.wifi_ssid;
     if (body.wifi_password !== undefined) updateData.wifiPassword = body.wifi_password;
     if (body.tax_percent !== undefined) updateData.taxPercent = Number(body.tax_percent);
     if (body.is_tax_inclusive !== undefined) updateData.isTaxInclusive = Boolean(body.is_tax_inclusive);

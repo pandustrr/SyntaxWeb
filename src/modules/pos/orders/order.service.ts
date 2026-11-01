@@ -141,7 +141,8 @@ export class PosOrderService {
           price: unitPrice,
           quantity: item.quantity,
           subtotal: lineSubtotal,
-          notes: fullNotes || null,
+          station: (item as any).station || (product as any).station || 'kitchen',
+          notes: fullNotes || item.notes || null,
         });
       }
 
@@ -396,7 +397,13 @@ export class PosOrderService {
       take: options?.limit || 50,
       orderBy: { createdAt: 'desc' },
       include: {
-        items: true,
+        items: {
+          include: {
+            product: {
+              select: { id: true, name: true, station: true },
+            },
+          },
+        },
         table: { select: { id: true, name: true } },
         customer: { select: { id: true, name: true, phone: true, membershipLevel: true, totalPoints: true } },
         user: { select: { id: true, name: true } },
@@ -409,11 +416,14 @@ export class PosOrderService {
       payment_method: o.paymentMethod,
       channel: o.orderType,
       created_at: o.createdAt.toISOString(),
+      updated_at: o.updatedAt.toISOString(),
+      completed_at: o.status === 'completed' ? o.updatedAt.toISOString() : null,
       cafe_table: o.table ? { id: o.table.id, code: o.table.name, name: o.table.name } : null,
       customer: o.customer ? { id: o.customer.id, name: o.customer.name, phone: o.customer.phone, membershipLevel: o.customer.membershipLevel } : { name: 'Pelanggan Umum' },
       items: o.items.map((it) => ({
         ...it,
         name_snapshot: it.productName,
+        station: (it as any).station || (it as any).product?.station || 'kitchen',
         unit_price: Number(it.price),
       })),
     }));
