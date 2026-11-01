@@ -74,6 +74,14 @@
       "namedRegex": "^/api/admin/plans/(?<nxtPid>[^/]+?)(?:/)?$"
     },
     {
+      "page": "/api/pos/addons/[id]",
+      "regex": "^/api/pos/addons/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/pos/addons/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
       "page": "/api/pos/categories/[id]",
       "regex": "^/api/pos/categories/([^/]+?)(?:/)?$",
       "routeKeys": {
