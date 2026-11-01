@@ -71,6 +71,14 @@ export class PosProductService {
    * Tambah produk baru
    */
   static async createProduct(businessId: number, data: any) {
+    let finalDesc = data.description || null;
+    if (data.modifierGroups && Array.isArray(data.modifierGroups)) {
+      finalDesc = JSON.stringify({
+        text: typeof data.description === 'string' ? data.description : '',
+        modifierGroups: data.modifierGroups,
+      });
+    }
+
     const created = await prisma.posProduct.create({
       data: {
         businessId,
@@ -82,7 +90,7 @@ export class PosProductService {
         stock: data.stock !== undefined ? Number(data.stock) : 50,
         trackStock: data.trackStock !== undefined ? Boolean(data.trackStock) : (data.track_stock !== undefined ? Boolean(data.track_stock) : true),
         image: data.image || null,
-        description: data.description || null,
+        description: finalDesc,
         isActive: data.isActive !== undefined ? Boolean(data.isActive) : (data.is_active !== undefined ? Boolean(data.is_active) : true),
       },
     });
@@ -126,7 +134,16 @@ export class PosProductService {
     }
     if (data.sku !== undefined) updateData.sku = data.sku;
     if (data.image !== undefined) updateData.image = data.image;
-    if (data.description !== undefined) updateData.description = data.description;
+    if (data.description !== undefined || data.modifierGroups !== undefined) {
+      if (data.modifierGroups && Array.isArray(data.modifierGroups)) {
+        updateData.description = JSON.stringify({
+          text: typeof data.description === 'string' ? data.description : (existing.description || ''),
+          modifierGroups: data.modifierGroups,
+        });
+      } else if (data.description !== undefined) {
+        updateData.description = data.description;
+      }
+    }
     if (data.trackStock !== undefined) updateData.trackStock = Boolean(data.trackStock);
     else if (data.track_stock !== undefined) updateData.trackStock = Boolean(data.track_stock);
     if (data.isActive !== undefined) updateData.isActive = Boolean(data.isActive);
@@ -153,6 +170,20 @@ export class PosProductService {
     }
 
     return await this.getProductById(businessId, id);
+  }
+
+  private static parseModifierGroups(description: string | null) {
+    if (!description) return [];
+    try {
+      const parsed = JSON.parse(description);
+      if (parsed && Array.isArray(parsed.modifierGroups)) {
+        return parsed.modifierGroups;
+      }
+      if (Array.isArray(parsed)) {
+        return parsed;
+      }
+    } catch (_) {}
+    return [];
   }
 
   /**
@@ -182,7 +213,10 @@ export class PosProductService {
       throw new Error('Produk tidak ditemukan atau Anda tidak memiliki akses.');
     }
 
-    return product;
+    return {
+      ...product,
+      modifierGroups: this.parseModifierGroups(product.description),
+    };
   }
 
   /**
@@ -207,7 +241,7 @@ export class PosProductService {
   static async getProducts(businessId: number, options?: GetProductsOptions) {
     const { categoryId, search } = options || {};
 
-    return await prisma.posProduct.findMany({
+    const products = await prisma.posProduct.findMany({
       where: {
         businessId,
         isActive: true,
@@ -233,6 +267,11 @@ export class PosProductService {
         name: 'asc',
       },
     });
+
+    return products.map((p) => ({
+      ...p,
+      modifierGroups: this.parseModifierGroups(p.description),
+    }));
   }
 
   /**

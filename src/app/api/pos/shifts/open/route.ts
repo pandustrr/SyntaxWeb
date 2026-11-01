@@ -11,7 +11,14 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { startingCash, shiftName, cashierNames, baristaNames, kitchenNames, leaderName, openedByName, notes } = body;
+    const startingCash = body.startingCash ?? body.starting_cash;
+    const shiftName = body.shiftName ?? body.shift_name;
+    const cashierNames = body.cashierNames ?? body.cashier_names;
+    const baristaNames = body.baristaNames ?? body.barista_names;
+    const kitchenNames = body.kitchenNames ?? body.kitchen_names;
+    const leaderName = body.leaderName ?? body.leader_name;
+    const openedByName = body.openedByName ?? body.opened_by_name;
+    const notes = body.notes ?? body.note;
 
     if (startingCash === undefined || startingCash === null || Number(startingCash) < 0) {
       return apiError('Modal kas awal wajib diisi dan tidak boleh negatif', 400);

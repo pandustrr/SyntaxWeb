@@ -1,0 +1,3 @@
+{
+  "/api/pos/promotions/validate/route": "app/api/pos/promotions/validate/route.js"
+}

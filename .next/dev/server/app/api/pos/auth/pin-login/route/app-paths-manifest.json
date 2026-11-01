@@ -1,0 +1,3 @@
+{
+  "/api/pos/auth/pin-login/route": "app/api/pos/auth/pin-login/route.js"
+}

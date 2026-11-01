@@ -5,6 +5,7 @@ export interface CreateOrderItemInput {
   variantId?: number | null;
   quantity: number;
   notes?: string;
+  modifiers?: any[];
 }
 
 export interface CreateOrderInput {
@@ -76,6 +77,18 @@ export class PosOrderService {
           variantName = ` (${variant.name})`;
         }
 
+        let modifierPrice = 0;
+        let modifierSummary = '';
+        if (Array.isArray(item.modifiers) && item.modifiers.length > 0) {
+          for (const m of item.modifiers) {
+            const mPrice = Number(m.price || 0) * Number(m.quantity || 1);
+            modifierPrice += mPrice;
+          }
+          const modNames = item.modifiers.map((m: any) => m.name).join(', ');
+          modifierSummary = ` + [${modNames}]`;
+        }
+
+        unitPrice += modifierPrice;
         const lineSubtotal = unitPrice * item.quantity;
         subtotal += lineSubtotal;
 
@@ -116,14 +129,19 @@ export class PosOrderService {
           }
         }
 
+        const fullNotes = [
+          item.notes,
+          modifierSummary ? `Add-on: ${item.modifiers.map((m: any) => `${m.name}${Number(m.price) > 0 ? ` (+Rp ${m.price})` : ''}`).join(', ')}` : null,
+        ].filter(Boolean).join(' | ');
+
         preparedItems.push({
           productId: product.id,
           variantId: item.variantId || null,
-          productName: `${product.name}${variantName}`,
+          productName: `${product.name}${variantName}${modifierSummary}`,
           price: unitPrice,
           quantity: item.quantity,
           subtotal: lineSubtotal,
-          notes: item.notes || null,
+          notes: fullNotes || null,
         });
       }
 
@@ -272,7 +290,7 @@ export class PosOrderService {
         orderNumber = `TRX-${bizPrefix}-${dateStr}-${sequence}-${randomSuffix}`;
 
         const existing = await tx.posOrder.findFirst({
-          where: { businessId, orderNumber },
+          where: { orderNumber },
           select: { id: true },
         });
         if (!existing) {

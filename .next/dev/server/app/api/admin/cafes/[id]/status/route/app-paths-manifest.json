@@ -1,0 +1,3 @@
+{
+  "/api/admin/cafes/[id]/status/route": "app/api/admin/cafes/[id]/status/route.js"
+}
