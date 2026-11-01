@@ -109,6 +109,88 @@ export class PosDashboardService {
   }
 
   /**
+   * Peringkat Penjualan Produk: Produk Terlaris (Top Selling) & Produk Terendah (Least Selling)
+   */
+  static async getProductSalesRanking(
+    businessId: number,
+    options?: { dateFrom?: string; dateTo?: string; limit?: number }
+  ) {
+    const limit = options?.limit ?? 10;
+    const allProducts = await prisma.posProduct.findMany({
+      where: { businessId, isActive: true },
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        stock: true,
+        category: { select: { name: true } },
+      },
+    });
+
+    const whereOrder: any = {
+      businessId,
+      status: { not: 'cancelled' },
+    };
+
+    if (options?.dateFrom || options?.dateTo) {
+      whereOrder.createdAt = {};
+      if (options.dateFrom) {
+        whereOrder.createdAt.gte = new Date(`${options.dateFrom}T00:00:00.000Z`);
+      }
+      if (options.dateTo) {
+        whereOrder.createdAt.lte = new Date(`${options.dateTo}T23:59:59.999Z`);
+      }
+    }
+
+    const salesGroup = await prisma.posOrderItem.groupBy({
+      by: ['productId', 'productName'],
+      where: {
+        order: whereOrder,
+      },
+      _sum: {
+        quantity: true,
+        subtotal: true,
+      },
+    });
+
+    const salesMap = new Map<number, { qty: number; revenue: number }>();
+    for (const s of salesGroup) {
+      salesMap.set(s.productId, {
+        qty: s._sum.quantity || 0,
+        revenue: Number(s._sum.subtotal || 0),
+      });
+    }
+
+    const performanceList = allProducts.map((p) => {
+      const sales = salesMap.get(p.id) || { qty: 0, revenue: 0 };
+      return {
+        id: p.id,
+        name: p.name,
+        category: p.category?.name || 'Menu',
+        price: Number(p.price || 0),
+        stock: p.stock ?? 0,
+        total_qty: sales.qty,
+        revenue: sales.revenue,
+      };
+    });
+
+    // 1. Top Products: Qty terbanyak descending
+    const topProducts = [...performanceList]
+      .sort((a, b) => b.total_qty !== a.total_qty ? b.total_qty - a.total_qty : b.revenue - a.revenue)
+      .slice(0, limit);
+
+    // 2. Least Products: Qty terendah ascending
+    const leastProducts = [...performanceList]
+      .sort((a, b) => a.total_qty !== b.total_qty ? a.total_qty - b.total_qty : a.revenue - b.revenue)
+      .slice(0, limit);
+
+    return {
+      top_products: topProducts,
+      least_products: leastProducts,
+    };
+  }
+
+  /**
    * Produk terlaris (Top Selling)
    */
   static async getTopProducts(businessId: number, limit: number = 5) {

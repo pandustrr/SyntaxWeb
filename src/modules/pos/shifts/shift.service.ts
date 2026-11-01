@@ -167,11 +167,56 @@ export class PosShiftService {
   }
 
   /**
-   * Mengambil riwayat seluruh shift kasir
+   * Mengambil riwayat shift kasir dengan filter tanggal (Hari ini, Kemarin, rentang tanggal)
+   * dan rincian breakdown metode pembayaran serta tim operasional
    */
-  static async getShiftHistory(businessId: number, limit: number = 30) {
+  static async getShiftHistory(
+    businessId: number,
+    options?: {
+      limit?: number;
+      date?: string; // 'today' | 'yesterday' | 'YYYY-MM-DD'
+      dateFrom?: string;
+      dateTo?: string;
+    }
+  ) {
+    const limit = options?.limit ?? 30;
+    const where: any = { businessId };
+
+    if (options?.date) {
+      const now = new Date();
+      let targetStart: Date;
+      let targetEnd: Date;
+
+      if (options.date === 'today') {
+        targetStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        targetEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+      } else if (options.date === 'yesterday') {
+        const y = new Date(now);
+        y.setDate(now.getDate() - 1);
+        targetStart = new Date(y.getFullYear(), y.getMonth(), y.getDate());
+        targetEnd = new Date(y.getFullYear(), y.getMonth(), y.getDate(), 23, 59, 59, 999);
+      } else {
+        const parsed = new Date(options.date);
+        targetStart = new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
+        targetEnd = new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate(), 23, 59, 59, 999);
+      }
+
+      where.startTime = {
+        gte: targetStart,
+        lte: targetEnd,
+      };
+    } else if (options?.dateFrom || options?.dateTo) {
+      where.startTime = {};
+      if (options.dateFrom) {
+        where.startTime.gte = new Date(`${options.dateFrom}T00:00:00.000Z`);
+      }
+      if (options.dateTo) {
+        where.startTime.lte = new Date(`${options.dateTo}T23:59:59.999Z`);
+      }
+    }
+
     const shifts = await prisma.posShift.findMany({
-      where: { businessId },
+      where,
       orderBy: { id: 'desc' },
       take: limit,
       include: {
@@ -180,35 +225,99 @@ export class PosShiftService {
           select: {
             id: true,
             total: true,
+            subtotal: true,
+            discount: true,
+            tax: true,
             paymentMethod: true,
+            status: true,
+            createdAt: true,
           },
         },
       },
     });
 
+    const parseList = (val: any) => {
+      if (!val) return [];
+      if (Array.isArray(val)) return val;
+      try {
+        const parsed = JSON.parse(val);
+        if (Array.isArray(parsed)) return parsed;
+      } catch (_) {
+        if (typeof val === 'string' && val.trim()) return [val.trim()];
+      }
+      return [];
+    };
+
     return shifts.map((s) => {
-      const cashSales = s.orders
-        .filter((o) => o.paymentMethod === 'cash')
-        .reduce((sum, o) => sum + Number(o.total), 0);
-      const totalSales = s.orders.reduce((sum, o) => sum + Number(o.total), 0);
+      const validOrders = s.orders.filter((o) => o.status !== 'cancelled');
+
+      let cashSales = 0;
+      let qrisSales = 0;
+      let transferSales = 0;
+      let debitSales = 0;
+      let otherSales = 0;
+      let totalDiscount = 0;
+      let totalTax = 0;
+
+      for (const o of validOrders) {
+        const tot = Number(o.total || 0);
+        totalDiscount += Number(o.discount || 0);
+        totalTax += Number(o.tax || 0);
+        const pm = (o.paymentMethod || 'cash').toLowerCase();
+
+        if (pm === 'cash') cashSales += tot;
+        else if (pm === 'qris') qrisSales += tot;
+        else if (pm === 'transfer' || pm === 'bank_transfer') transferSales += tot;
+        else if (pm === 'debit' || pm === 'edc' || pm === 'card') debitSales += tot;
+        else otherSales += tot;
+      }
+
+      const nonCashSales = qrisSales + transferSales + debitSales + otherSales;
+      const totalSales = cashSales + nonCashSales;
+      const startCash = Number(s.startingCash || 0);
+      const expectedCash = s.expectedCash !== null && s.expectedCash !== undefined
+        ? Number(s.expectedCash)
+        : startCash + cashSales;
+      const actualCash = s.actualCash !== null && s.actualCash !== undefined
+        ? Number(s.actualCash)
+        : null;
+      const difference = actualCash !== null ? actualCash - expectedCash : Number(s.difference || 0);
+
+      const cashierList = parseList(s.cashierNames);
+      const baristaList = parseList(s.baristaNames);
+      const kitchenList = parseList(s.kitchenNames);
 
       return {
         id: s.id,
-        user: { name: s.user?.name || 'Kasir' },
-        cashier_name: s.user?.name || 'Kasir',
+        shift_name: s.shiftName || 'Shift 1 (Pagi)',
+        shiftName: s.shiftName || 'Shift 1 (Pagi)',
+        user: { name: s.user?.name || s.openedByName || 'Kasir' },
+        cashier_name: cashierList.length > 0 ? cashierList.join(', ') : (s.openedByName || s.user?.name || 'Kasir'),
+        leader_name: s.leaderName || null,
+        opened_by: s.openedByName || s.user?.name || 'Kasir',
+        closed_by: s.closedByName || null,
+        cashier_names: cashierList,
+        barista_names: baristaList,
+        kitchen_names: kitchenList,
         start_time: s.startTime ? s.startTime.toISOString() : null,
         opened_at: s.startTime ? s.startTime.toISOString() : null,
         end_time: s.endTime ? s.endTime.toISOString() : null,
         closed_at: s.endTime ? s.endTime.toISOString() : null,
         status: s.status,
-        starting_cash: Number(s.startingCash),
-        opening_cash: Number(s.startingCash),
-        expected_cash: s.expectedCash ? Number(s.expectedCash) : null,
-        actual_cash: s.actualCash ? Number(s.actualCash) : null,
-        difference: s.difference ? Number(s.difference) : 0,
+        starting_cash: startCash,
+        opening_cash: startCash,
+        expected_cash: expectedCash,
+        actual_cash: actualCash,
+        difference: difference,
         cash_sales: cashSales,
+        non_cash_sales: nonCashSales,
+        qris_sales: qrisSales,
+        transfer_sales: transferSales,
+        debit_sales: debitSales,
         total_sales: totalSales,
-        transaction_count: s.orders.length,
+        total_discount: totalDiscount,
+        total_tax: totalTax,
+        transaction_count: validOrders.length,
         notes: s.notes,
       };
     });
