@@ -10,7 +10,16 @@ export async function GET(request: NextRequest) {
       return apiError('Unauthorized', 401);
     }
 
-    const materials = await PosMaterialService.getMaterials(session.businessId);
+    const { searchParams } = new URL(request.url);
+    const category = searchParams.get('category') || undefined;
+    const status = searchParams.get('status') || undefined;
+    const search = searchParams.get('search') || searchParams.get('q') || undefined;
+
+    const materials = await PosMaterialService.getMaterials(session.businessId, {
+      category,
+      status,
+      search,
+    });
     return apiSuccess(materials, 'Data inventori bahan baku berhasil dimuat');
   } catch (error: any) {
     return apiError(error.message || 'Gagal memuat bahan baku', 400);

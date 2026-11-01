@@ -126,6 +126,7 @@ model PosBusiness {
   shifts            PosShift[]
   orders            PosOrder[]
   materials         PosMaterial[]
+  materialCategories PosMaterialCategory[]
   customers         PosCustomer[]
   promotions        PosPromotion[]
   attendances       PosAttendance[]
@@ -423,6 +424,19 @@ model PosPayroll {
 // ==========================================
 // 4. Modul Bahan, Resep, CRM & Promosi
 // ==========================================
+
+model PosMaterialCategory {
+  id         Int           @id @default(autoincrement())
+  businessId Int
+  business   PosBusiness   @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  name       String
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  @@unique([businessId, name])
+  @@index([businessId])
+  @@map("pos_material_categories")
+}
 
 model PosMaterial {
   id           Int             @id @default(autoincrement())
