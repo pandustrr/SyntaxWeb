@@ -12,8 +12,16 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const limit = searchParams.get('limit') ? Number(searchParams.get('limit')) : 30;
+    const date = searchParams.get('date') || undefined;
+    const dateFrom = searchParams.get('date_from') || undefined;
+    const dateTo = searchParams.get('date_to') || undefined;
 
-    const history = await PosShiftService.getShiftHistory(session.businessId, limit);
+    const history = await PosShiftService.getShiftHistory(session.businessId, {
+      limit,
+      date,
+      dateFrom,
+      dateTo,
+    });
     return apiSuccess(history, 'Riwayat shift kasir berhasil diambil');
   } catch (error: any) {
     return apiError(error.message || 'Gagal memuat riwayat shift', 400);
