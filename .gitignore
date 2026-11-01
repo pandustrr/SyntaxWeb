@@ -51,3 +51,4 @@ next-env.d.ts
 stderr.log
 stdout.log
 /tmp/
+.next/
