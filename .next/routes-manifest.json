@@ -106,6 +106,14 @@
       "namedRegex": "^/api/pos/employees/(?<nxtPid>[^/]+?)(?:/)?$"
     },
     {
+      "page": "/api/pos/materials/categories/[id]",
+      "regex": "^/api/pos/materials/categories/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/pos/materials/categories/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
       "page": "/api/pos/materials/[id]",
       "regex": "^/api/pos/materials/([^/]+?)(?:/)?$",
       "routeKeys": {
