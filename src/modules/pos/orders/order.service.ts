@@ -367,6 +367,7 @@ export class PosOrderService {
       dateTo?: string;
       tableId?: number;
       shiftId?: number;
+      paymentMethod?: string;
     }
   ) {
     const where: any = { businessId };
@@ -377,6 +378,10 @@ export class PosOrderService {
       } else {
         where.status = options.status;
       }
+    }
+
+    if (options?.paymentMethod && options.paymentMethod !== 'all') {
+      where.paymentMethod = { equals: options.paymentMethod, mode: 'insensitive' };
     }
 
     if (options?.tableId) {

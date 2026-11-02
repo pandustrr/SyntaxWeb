@@ -128,25 +128,48 @@ export class PosShiftService {
     notes?: string,
     closedByName?: string
   ) {
-    const shift = await prisma.posShift.findFirst({
-      where: {
-        id: shiftId,
-        businessId,
-        status: 'open',
-      },
-      include: {
-        orders: {
-          where: {
-            paymentStatus: 'paid',
-            status: { not: 'cancelled' },
+    let shift = null;
+    if (shiftId && shiftId > 0) {
+      shift = await prisma.posShift.findFirst({
+        where: {
+          id: shiftId,
+          businessId,
+          status: 'open',
+        },
+        include: {
+          orders: {
+            where: {
+              paymentStatus: 'paid',
+              status: { not: 'cancelled' },
+            },
           },
         },
-      },
-    });
+      });
+    }
+
+    if (!shift) {
+      shift = await prisma.posShift.findFirst({
+        where: {
+          businessId,
+          status: 'open',
+        },
+        orderBy: { id: 'desc' },
+        include: {
+          orders: {
+            where: {
+              paymentStatus: 'paid',
+              status: { not: 'cancelled' },
+            },
+          },
+        },
+      });
+    }
 
     if (!shift) {
       throw new Error('Shift aktif tidak ditemukan.');
     }
+
+    const shiftToCloseId = shift.id;
 
     // Hitung total penerimaan kas selama shift ini (case-insensitive)
     const cashSales = shift.orders
@@ -157,7 +180,7 @@ export class PosShiftService {
     const difference = actualCash - expectedCash;
 
     return await prisma.posShift.update({
-      where: { id: shiftId },
+      where: { id: shiftToCloseId },
       data: {
         status: 'closed',
         endTime: new Date(),

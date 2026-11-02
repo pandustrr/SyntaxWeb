@@ -56,6 +56,7 @@ export async function GET(request: NextRequest) {
     const tableId = tableParam ? Number(tableParam) : undefined;
     const shiftParam = searchParams.get('shift_id') || searchParams.get('shiftId');
     const shiftId = shiftParam ? Number(shiftParam) : undefined;
+    const paymentMethod = searchParams.get('payment_method') || searchParams.get('paymentMethod') || undefined;
 
     const orders = await PosOrderService.getOrderHistory(session.businessId, {
       limit,
@@ -64,6 +65,7 @@ export async function GET(request: NextRequest) {
       dateTo,
       tableId,
       shiftId,
+      paymentMethod,
     });
     return apiSuccess(orders, 'Riwayat transaksi berhasil diambil');
   } catch (error: any) {
