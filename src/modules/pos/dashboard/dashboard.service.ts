@@ -113,7 +113,7 @@ export class PosDashboardService {
    */
   static async getProductSalesRanking(
     businessId: number,
-    options?: { dateFrom?: string; dateTo?: string; limit?: number }
+    options?: { dateFrom?: string; dateTo?: string; limit?: number; shiftId?: number; paymentMethod?: string }
   ) {
     const limit = options?.limit ?? 10;
     const allProducts = await prisma.posProduct.findMany({
@@ -132,7 +132,13 @@ export class PosDashboardService {
       status: { not: 'cancelled' },
     };
 
-    if (options?.dateFrom || options?.dateTo) {
+    if (options?.paymentMethod) {
+      whereOrder.paymentMethod = options.paymentMethod;
+    }
+
+    if (options?.shiftId) {
+      whereOrder.shiftId = options.shiftId;
+    } else if (options?.dateFrom || options?.dateTo) {
       whereOrder.createdAt = {};
       if (options.dateFrom) {
         whereOrder.createdAt.gte = new Date(`${options.dateFrom}T00:00:00.000Z`);
@@ -301,12 +307,16 @@ export class PosDashboardService {
    */
   static async getBusinessReport(
     businessId: number,
-    options?: { dateFrom?: string; dateTo?: string; shiftId?: number }
+    options?: { dateFrom?: string; dateTo?: string; shiftId?: number; paymentMethod?: string }
   ) {
     const where: any = {
       businessId,
       status: { not: 'cancelled' },
     };
+
+    if (options?.paymentMethod) {
+      where.paymentMethod = options.paymentMethod;
+    }
 
     if (options?.shiftId) {
       where.shiftId = options.shiftId;
@@ -349,16 +359,22 @@ export class PosDashboardService {
       take_away: { count: 0, total: 0 },
     };
 
+    let totalServiceCharge = 0;
+
     for (const order of orders) {
       const sub = Number(order.subtotal);
       const disc = Number(order.discount);
       const tax = Number(order.tax);
+      const sc = Number(order.serviceCharge || 0);
       const tot = Number(order.total);
 
       grossRevenue += sub;
       totalDiscount += disc;
       totalTax += tax;
-      totalNet += tot;
+      totalServiceCharge += sc;
+      // netSales = grossRevenue - totalDiscount (SEBELUM pajak & service charge)
+      // totalNet (legacy) = sub - disc + tax + sc (untuk backward compat)
+      totalNet += sub - disc + tax + sc;
 
       // Hitung HPP / COGS estimasi dari costPrice produk
       for (const item of order.items) {
@@ -383,9 +399,11 @@ export class PosDashboardService {
       channels[ch].total += tot;
     }
 
-    const grossProfit = Math.max(0, totalNet - totalEstimatedCOGS);
-    const profitMargin = totalNet > 0 ? Math.round((grossProfit / totalNet) * 100) : 0;
-    const aov = orders.length > 0 ? Math.round(totalNet / orders.length) : 0;
+    // netSales = grossRevenue - totalDiscount (standar akuntansi F&B: SEBELUM pajak & service charge)
+    const netSales = grossRevenue - totalDiscount;
+    const grossProfit = Math.max(0, netSales - totalEstimatedCOGS);
+    const profitMargin = netSales > 0 ? Math.round((grossProfit / netSales) * 100) : 0;
+    const aov = orders.length > 0 ? Math.round(netSales / orders.length) : 0;
 
     // Rekonsiliasi perbandingan sesi shift vs transaksi harian pada rentang waktu yang sama
     const shiftWhere: any = { businessId };
@@ -418,7 +436,7 @@ export class PosDashboardService {
         user: { select: { id: true, name: true } },
         orders: {
           where: { status: { not: 'cancelled' } },
-          select: { id: true, total: true, paymentMethod: true },
+          select: { id: true, total: true, paymentMethod: true, serviceCharge: true },
         },
       },
     });
@@ -434,14 +452,17 @@ export class PosDashboardService {
     const mappedShifts = shifts.map((sh) => {
       let shCash = 0;
       let shNonCash = 0;
+      let shServiceCharge = 0;
       for (const o of sh.orders) {
         const val = Number(o.total || 0);
+        const sc = Number(o.serviceCharge || 0);
         const pm = (o.paymentMethod || '').toLowerCase();
         if (pm === 'cash') {
           shCash += val;
         } else {
           shNonCash += val;
         }
+        shServiceCharge += sc;
       }
       const shTotal = shCash + shNonCash;
       const shStart = Number(sh.startingCash || 0);
@@ -467,6 +488,7 @@ export class PosDashboardService {
         starting_cash: shStart,
         cash_sales: shCash,
         non_cash_sales: shNonCash,
+        service_charge: shServiceCharge,
         total_sales: shTotal,
         expected_cash: shExpected,
         actual_cash: shActual,
@@ -494,7 +516,9 @@ export class PosDashboardService {
       gross_revenue: grossRevenue,
       total_discount: totalDiscount,
       total_tax: totalTax,
-      net_revenue: totalNet,
+      total_service_charge: totalServiceCharge,
+      net_sales: netSales,
+      net_revenue: totalNet, // legacy: includes tax + service charge
       total_cogs: totalEstimatedCOGS,
       gross_profit: grossProfit,
       profit_margin_percent: profitMargin,
@@ -506,6 +530,7 @@ export class PosDashboardService {
         total_starting_cash: totalShiftStartingCash,
         total_cash_sales: totalShiftCashSales,
         total_non_cash_sales: totalShiftNonCashSales,
+        total_service_charge: totalServiceCharge,
         total_expected_cash: totalShiftExpectedCash,
         total_actual_cash: totalShiftActualCash,
         total_difference: totalShiftDifference,

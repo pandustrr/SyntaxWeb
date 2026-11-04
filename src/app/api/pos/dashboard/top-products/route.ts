@@ -15,12 +15,17 @@ export async function GET(request: NextRequest) {
     const type = searchParams.get('type');
     const dateFrom = searchParams.get('date_from') || undefined;
     const dateTo = searchParams.get('date_to') || undefined;
+    const shiftParam = searchParams.get('shift_id') || searchParams.get('shiftId');
+    const shiftId = shiftParam ? Number(shiftParam) : undefined;
+    const paymentMethod = searchParams.get('payment_method') || undefined;
 
     if (type === 'ranking' || searchParams.has('ranking')) {
       const ranking = await PosDashboardService.getProductSalesRanking(session.businessId, {
         dateFrom,
         dateTo,
         limit,
+        shiftId,
+        paymentMethod,
       });
       return apiSuccess(ranking, 'Peringkat penjualan produk (terlaris & terendah) berhasil dimuat');
     }

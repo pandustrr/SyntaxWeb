@@ -1,16 +1,4 @@
 {
-  "/api/pos/shifts/history/route": "app/api/pos/shifts/history/route.js",
   "/api/pos/orders/route": "app/api/pos/orders/route.js",
-  "/api/pos/dashboard/reports/route": "app/api/pos/dashboard/reports/route.js",
-  "/api/pos/orders/[id]/route": "app/api/pos/orders/[id]/route.js",
-  "/api/pos/settings/route": "app/api/pos/settings/route.js",
-  "/api/pos/categories/route": "app/api/pos/categories/route.js",
-  "/api/pos/dashboard/summary/route": "app/api/pos/dashboard/summary/route.js",
-  "/api/pos/dashboard/revenue-chart/route": "app/api/pos/dashboard/revenue-chart/route.js",
-  "/api/pos/addons/route": "app/api/pos/addons/route.js",
-  "/api/pos/products/route": "app/api/pos/products/route.js",
-  "/api/pos/dashboard/top-products/route": "app/api/pos/dashboard/top-products/route.js",
-  "/api/pos/tables/route": "app/api/pos/tables/route.js",
-  "/api/pos/dashboard/low-stock/route": "app/api/pos/dashboard/low-stock/route.js",
-  "/api/pos/shifts/current/route": "app/api/pos/shifts/current/route.js"
+  "/api/pos/dashboard/reports/route": "app/api/pos/dashboard/reports/route.js"
 }
