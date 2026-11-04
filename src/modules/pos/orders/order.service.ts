@@ -16,6 +16,7 @@ export interface CreateOrderInput {
   promoCode?: string | null;
   discount?: number;
   tax?: number;
+  serviceCharge?: number;
   paymentMethod: 'cash' | 'qris' | 'transfer' | string;
   paidAmount: number;
   status?: string;
@@ -184,9 +185,27 @@ export class PosOrderService {
         }
       }
 
-      // 4. Kalkulasi total
-      const tax = Number(input.tax || 0);
-      const total = Math.max(0, subtotal - discount + tax);
+      // 4. Kalkulasi total — Ambil setting bisnis untuk servicePercent, taxPercent, isTaxInclusive
+      const business = await tx.posBusiness.findUnique({
+        where: { id: businessId },
+        select: { servicePercent: true, taxPercent: true, isTaxInclusive: true },
+      });
+
+      const servicePercent = Number(business?.servicePercent || 0);
+      const taxPercent = Number(business?.taxPercent || 0);
+      const isTaxInclusive = business?.isTaxInclusive ?? false;
+
+      // Service charge: pakai dari client jika dikirim, kalau tidak hitung dari servicePercent bisnis
+      const serviceCharge = Number(input.serviceCharge ?? 0) > 0
+        ? Number(input.serviceCharge)
+        : (servicePercent > 0 ? Math.round(((subtotal - discount) * servicePercent) / 100) : 0);
+
+      const tax = Number(input.tax ?? 0) > 0
+        ? Number(input.tax)
+        : (taxPercent > 0 ? Math.round(((subtotal - discount + serviceCharge) * taxPercent) / 100) : 0);
+
+      // Total: subtotal - discount + serviceCharge + tax
+      const total = Math.max(0, subtotal - discount + serviceCharge + tax);
       const paidAmount = Number(input.paidAmount || 0);
 
       if (input.paymentMethod === 'cash' && paidAmount < total) {
@@ -313,6 +332,7 @@ export class PosOrderService {
           subtotal,
           discount,
           tax,
+          serviceCharge,
           total,
           paymentMethod: input.paymentMethod,
           paymentStatus: 'paid',
@@ -381,7 +401,7 @@ export class PosOrderService {
     }
 
     if (options?.paymentMethod && options.paymentMethod !== 'all') {
-      where.paymentMethod = { equals: options.paymentMethod, mode: 'insensitive' };
+      where.paymentMethod = options.paymentMethod;
     }
 
     if (options?.tableId) {
