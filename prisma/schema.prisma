@@ -514,4 +514,3 @@ model PosPromotion {
   @@index([businessId])
   @@map("pos_promotions")
 }
-
