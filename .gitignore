@@ -13,11 +13,8 @@
 # testing
 /coverage
 
-# next.js (hanya cache dan file dev sementara yang di-ignore, build production disinkronkan)
-/.next/cache/
-/.next/static/webpack/
-/.next/static/development/
-/.next/types/
+# next.js
+/.next/
 /out/
 
 # production
@@ -54,4 +51,4 @@ next-env.d.ts
 stderr.log
 stdout.log
 /tmp/
-.next/
+*.tar.gz
