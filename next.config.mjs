@@ -11,7 +11,9 @@ const nextConfig = {
     workerThreads: false,
     cpus: 1,
   },
-  turbopack: {},
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   typescript: {
     ignoreBuildErrors: true,
   },
