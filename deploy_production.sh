@@ -79,6 +79,12 @@ fi
 
 # 5. Build Project Check
 echo "🔍 Menyeimbangkan folder build (.next)..."
+# Jika .next berisi absolute path Windows (misal E:\...), bersihkan agar server Linux mengompilasi ulang secara native
+if [ -f ".next/required-server-files.json" ] && grep -q ':\\\\' .next/required-server-files.json 2>/dev/null; then
+    echo "⚠️ Terdeteksi artefak build Windows (.next), membersihkan untuk kompilasi Linux native..."
+    rm -rf .next
+fi
+
 if [ -f ".next/BUILD_ID" ] && [ -f ".next/prerender-manifest.json" ]; then
     echo "⚡ Folder build (.next) valid dan lengkap! Melewati build di server."
 else

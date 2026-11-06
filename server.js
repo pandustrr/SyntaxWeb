@@ -8,7 +8,8 @@ const isBuilt = fs.existsSync('./.next/BUILD_ID')
 // On production hosting (Passenger/cPanel), dev must strictly be false unless explicitly set to 'development'
 const dev = process.env.NODE_ENV === 'development'
 const hostname = process.env.HOSTNAME || '0.0.0.0'
-const port = parseInt(process.env.PORT || '3000', 10)
+const rawPort = process.env.PORT || '3000'
+const port = isNaN(Number(rawPort)) ? rawPort : parseInt(rawPort, 10)
 
 // Safety check: if Next.js build artifacts are missing in production mode,
 // serve an informative maintenance page instead of crashing Passenger worker repeatedly.
