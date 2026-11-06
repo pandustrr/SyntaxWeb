@@ -78,30 +78,42 @@ export async function POST(
 
       const validMaterials = await tx.posMaterial.findMany({
         where: { id: { in: matIds }, businessId: session.businessId },
-        select: { id: true },
+        select: { id: true, costPerUnit: true },
       });
-      const validMatSet = new Set(validMaterials.map((m) => m.id));
+      const validMatMap = new Map(validMaterials.map((m) => [m.id, Number(m.costPerUnit || 0)]));
 
       await tx.posRecipeItem.deleteMany({
         where: { productId: product.id },
       });
 
+      let calculatedCostPrice = 0;
+
       for (const item of rawItems) {
         const matId = Number(item.material_id || item.materialId);
-        if (!matId || !validMatSet.has(matId)) continue;
+        if (!matId || !validMatMap.has(matId)) continue;
 
         const rawAmount = item.amount !== undefined ? item.amount : (item.quantity !== undefined ? item.quantity : 0);
         const amount = Number(rawAmount);
+        const validAmount = isNaN(amount) ? 0 : amount;
 
         await tx.posRecipeItem.create({
           data: {
             productId: product.id,
             materialId: matId,
-            amount: isNaN(amount) ? 0 : amount,
+            amount: validAmount,
             unit: String(item.unit || 'pcs'),
           },
         });
+
+        const costPerUnit = validMatMap.get(matId) || 0;
+        calculatedCostPrice += validAmount * costPerUnit;
       }
+
+      // Update modal / HPP produk otomatis dari resep BOM
+      await tx.posProduct.update({
+        where: { id: product.id },
+        data: { costPrice: Math.round(calculatedCostPrice) },
+      });
     });
 
     const refreshed = await prisma.posRecipeItem.findMany({

@@ -16,11 +16,12 @@ export class PosShiftService {
    * Mengambil shift yang sedang aktif (status: open) untuk toko/outlet ini
    */
   static async getCurrentShift(businessId: number, _userId?: number) {
-    // Cari shift toko yang berstatus 'open'
+    const bId = Number(businessId || 0);
+    // Cari shift toko yang berstatus 'open' (case-insensitive)
     const shift = await prisma.posShift.findFirst({
       where: {
-        businessId,
-        status: 'open',
+        ...(bId > 0 ? { businessId: bId } : {}),
+        status: { in: ['open', 'OPEN', 'Open'] },
       },
       orderBy: {
         id: 'desc',
@@ -128,41 +129,101 @@ export class PosShiftService {
     notes?: string,
     closedByName?: string
   ) {
+    const bId = Number(businessId || 0);
+    const sId = Number(shiftId || 0);
+
     let shift = null;
-    if (shiftId && shiftId > 0) {
+
+    // 1. Jika shiftId dikirim dan > 0, cari shift spesifik (case-insensitive status)
+    if (sId > 0) {
       shift = await prisma.posShift.findFirst({
         where: {
-          id: shiftId,
-          businessId,
-          status: 'open',
+          id: sId,
+          ...(bId > 0 ? { businessId: bId } : {}),
+          status: { in: ['open', 'OPEN', 'Open'] },
         },
         include: {
           orders: {
             where: {
-              paymentStatus: 'paid',
-              status: { not: 'cancelled' },
+              paymentStatus: { in: ['paid', 'PAID'] },
+              status: { notIn: ['cancelled', 'CANCELLED'] },
+            },
+          },
+        },
+      });
+
+      // Jika tidak ditemukan dengan filter businessId (misal sesi admin / multi-tenant), cari langsung by id
+      if (!shift) {
+        shift = await prisma.posShift.findFirst({
+          where: {
+            id: sId,
+            status: { in: ['open', 'OPEN', 'Open'] },
+          },
+          include: {
+            orders: {
+              where: {
+                paymentStatus: { in: ['paid', 'PAID'] },
+                status: { notIn: ['cancelled', 'CANCELLED'] },
+              },
+            },
+          },
+        });
+      }
+    }
+
+    // 2. Jika belum ditemukan, cari shift yang sedang open terbaru di outlet ini
+    if (!shift && bId > 0) {
+      shift = await prisma.posShift.findFirst({
+        where: {
+          businessId: bId,
+          status: { in: ['open', 'OPEN', 'Open'] },
+        },
+        orderBy: { id: 'desc' },
+        include: {
+          orders: {
+            where: {
+              paymentStatus: { in: ['paid', 'PAID'] },
+              status: { notIn: ['cancelled', 'CANCELLED'] },
             },
           },
         },
       });
     }
 
+    // 3. Fallback: Cari shift aktif manapun jika user adalah admin/manager tanpa filter bId kaku
     if (!shift) {
       shift = await prisma.posShift.findFirst({
         where: {
-          businessId,
-          status: 'open',
+          status: { in: ['open', 'OPEN', 'Open'] },
         },
         orderBy: { id: 'desc' },
         include: {
           orders: {
             where: {
-              paymentStatus: 'paid',
-              status: { not: 'cancelled' },
+              paymentStatus: { in: ['paid', 'PAID'] },
+              status: { notIn: ['cancelled', 'CANCELLED'] },
             },
           },
         },
       });
+    }
+
+    // 4. Jika shift dengan sId sudah berstatus closed, kembalikan shift tersebut daripada melempar error
+    if (!shift && sId > 0) {
+      const alreadyClosed = await prisma.posShift.findFirst({
+        where: { id: sId },
+        include: {
+          orders: {
+            where: {
+              paymentStatus: { in: ['paid', 'PAID'] },
+              status: { notIn: ['cancelled', 'CANCELLED'] },
+            },
+          },
+        },
+      });
+      if (alreadyClosed && ['closed', 'CLOSED'].includes(alreadyClosed.status.toLowerCase())) {
+        return alreadyClosed;
+      }
     }
 
     if (!shift) {

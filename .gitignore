@@ -13,8 +13,8 @@
 # testing
 /coverage
 
-# next.js
-/.next/
+# next.js (include production build artifacts for cPanel, ignore temporary compiler cache)
+/.next/cache/
 /out/
 
 # production

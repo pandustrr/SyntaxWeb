@@ -19,6 +19,7 @@ export async function POST(request: NextRequest) {
       promoCode: body.promoCode || body.promo_code,
       discount: body.discount !== undefined ? Number(body.discount) : 0,
       tax: body.tax !== undefined ? Number(body.tax) : 0,
+      serviceCharge: body.serviceCharge !== undefined ? Number(body.serviceCharge) : (body.service_charge !== undefined ? Number(body.service_charge) : undefined),
       paymentMethod: body.paymentMethod || body.payment_method || 'cash',
       paidAmount: body.paidAmount !== undefined ? Number(body.paidAmount) : Number(body.paid_amount || 0),
       status: body.status || undefined,

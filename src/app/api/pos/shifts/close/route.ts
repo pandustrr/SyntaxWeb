@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
       return apiError('Unauthorized', 401);
     }
 
-    const body = await request.json();
+    const body = await request.json().catch(() => ({}));
     let shiftId = body.shiftId ?? body.shift_id;
     const actualCash = body.actualCash ?? body.actual_cash;
     const notes = body.notes ?? body.note;
@@ -21,12 +21,14 @@ export async function POST(request: NextRequest) {
       return apiError('Nominal kas aktual fisik wajib diisi', 400);
     }
 
-    // Fallback: Jika shiftId tidak disertakan dari klien, cari shift aktif yang sedang open
-    if (!shiftId) {
+    const bId = Number(session.businessId || 0);
+
+    // Fallback: Jika shiftId tidak disertakan atau <= 0 dari klien, cari shift aktif yang sedang open
+    if (!shiftId || Number(shiftId) <= 0) {
       const activeShift = await prisma.posShift.findFirst({
         where: {
-          businessId: session.businessId,
-          status: 'open',
+          ...(bId > 0 ? { businessId: bId } : {}),
+          status: { in: ['open', 'OPEN', 'Open'] },
         },
         orderBy: { id: 'desc' },
       });
@@ -38,8 +40,8 @@ export async function POST(request: NextRequest) {
     }
 
     const closedShift = await PosShiftService.closeShift(
-      session.businessId,
-      session.userId,
+      bId,
+      Number(session.userId || 0),
       Number(shiftId),
       Number(actualCash),
       notes,

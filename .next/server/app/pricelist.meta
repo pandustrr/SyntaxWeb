@@ -1,0 +1,15 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/(public)/layout,_N_T_/(public)/pricelist/layout,_N_T_/(public)/pricelist/page,_N_T_/pricelist"
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/d091104c28aef1e4691fb8fd95c8393382498c3e65b9b1f62fc87d7eca3d468b/$/pricelist",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/(public)/pricelist/page"
+    },
+    "isFallback": false
+  }
+}

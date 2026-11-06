@@ -1,0 +1,15 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/admin/layout,_N_T_/admin/cafes/layout,_N_T_/admin/cafes/page,_N_T_/admin/cafes"
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/10714b60afe4a492eec7feae1200071b110d47ab05ffc51a4332c510a78c92e2/$/admin/cafes",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/admin/cafes/page"
+    },
+    "isFallback": false
+  }
+}

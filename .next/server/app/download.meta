@@ -1,0 +1,17 @@
+{
+  "status": 307,
+  "headers": {
+    "location": "/pos",
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/(public)/layout,_N_T_/(public)/download/layout,_N_T_/(public)/download/page,_N_T_/download"
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/33fdeed77d4dce791150b81ed93016a78fe7b5891bce02b5228dcc7a51dda9fe/$/download",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/(public)/download/page"
+    },
+    "isFallback": false
+  }
+}
